@@ -1,0 +1,5 @@
+sett
+neardriver_online_byord_geocode smallint 0 not null
+auto_neardriver_allorders smallint 0 not null
+auto_neardriver_alltime int 60 not null
+neardriver_all_byord_geocode smallint 0 not null

@@ -1,0 +1,2 @@
+Sett autotarif_by_driver smallint 0 NOT NULL
+	overtar_by_driver smallint 0 NOT NULL

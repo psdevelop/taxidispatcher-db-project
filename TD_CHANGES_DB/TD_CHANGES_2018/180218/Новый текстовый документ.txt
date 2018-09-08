@@ -1,0 +1,3 @@
+Zakaz src_status_code int not null 0
+
+ALTER TABLE Objekt_vyborki_otchyotnosti ALTER COLUMN addit_rem_params VARCHAR (4000) NOT NULL;

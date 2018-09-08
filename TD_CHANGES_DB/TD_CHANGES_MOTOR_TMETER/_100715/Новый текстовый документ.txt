@@ -1,0 +1,4 @@
+clord_sort_dassign settings
+ZAKAZ: rclient_id rclient_status clsync
+REMOTE_CLIENT acc_status group_id lat lon againregscnt isagainreg 
+authentificate active

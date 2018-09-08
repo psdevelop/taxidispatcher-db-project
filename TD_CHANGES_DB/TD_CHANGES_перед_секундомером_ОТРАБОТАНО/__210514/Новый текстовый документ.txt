@@ -1,0 +1,2 @@
+use_dyn_balance smallint not null def 0 Voditelj
+dont_reset_dr_queue  smallint not null def 0 в Настройках

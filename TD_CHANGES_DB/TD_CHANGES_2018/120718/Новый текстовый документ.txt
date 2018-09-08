@@ -1,0 +1,5 @@
+Settings first_trip_bonus trip_bonus percent_bonus_min_summ bonus_percent
+
+Zakaz bonus_add bonus_use
+
+Sootv_par_zakaza bonus_summ

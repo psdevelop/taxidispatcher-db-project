@@ -1,0 +1,5 @@
+ORDER_OPTION PR_POLICY_ID int not null -1
+ORDER_TARIF PR_POLICY_ID int not null -1
+Voditelj PR_POLICY_ID int not null -1
+Gruppa_voditelei PR_POLICY_ID int not null -1
+Zakaz PR_POLICY_ID int not null -1

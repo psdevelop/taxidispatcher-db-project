@@ -1,0 +1,5 @@
+check_net_time smallint not null def 0 Settings
+last_net_time datetime not null def (getdate()) Settings
+daily_paym_status smallint not null def 0 Voditelj
+paym_check_date datetime not null def (getdate()) Voditelj
+CONFIRMATED smallint not null def 0 TD_EVENT

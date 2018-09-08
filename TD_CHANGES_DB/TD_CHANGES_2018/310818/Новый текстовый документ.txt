@@ -1,0 +1,10 @@
+use_drivers_rating base_referral_bonus base_ref_bonus_interval 
+old_order_rating_bonus order_rating_bonus peak_one_start .... peak_ peak_ peak_ ....
+base_referral_cashback order_late_rating_fine order_refusal_rating_fine 
+order_refusal_balance_fine old_order_time и прочие ..time ..time ..time
+Settings
+rating referral_driver_id referral_set_date Voditelj
+driver_rating_diff Zakaz
+
+driver_rating_expire_date driver_rating_bonus_code Zakaz
+referral_rbonus_expire rating_pretendent_sorting Settings

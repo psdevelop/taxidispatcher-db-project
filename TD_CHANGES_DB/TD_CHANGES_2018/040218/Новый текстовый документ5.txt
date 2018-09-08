@@ -1,0 +1,1 @@
+dont_reset_time Voditelj

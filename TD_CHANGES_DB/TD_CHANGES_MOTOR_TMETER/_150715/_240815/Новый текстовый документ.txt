@@ -1,0 +1,1 @@
+fix_order_pay_with_daily_pay vioditelj ans sett def 1 or 0 - different logic

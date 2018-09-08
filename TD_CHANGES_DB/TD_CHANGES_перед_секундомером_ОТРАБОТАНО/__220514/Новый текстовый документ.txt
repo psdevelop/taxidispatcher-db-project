@@ -1,0 +1,1 @@
+has_active_events smallint not nill def 0 Voditelj

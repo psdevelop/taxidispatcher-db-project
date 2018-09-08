@@ -1,0 +1,3 @@
+clsms_onplaceto Settings smallint not null def 0
+status_accumulate Zakaz varchar(2000) not null ''
+last_lat last_lon Voditelj varchar(50) null

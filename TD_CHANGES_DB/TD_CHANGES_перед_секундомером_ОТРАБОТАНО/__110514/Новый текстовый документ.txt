@@ -1,0 +1,5 @@
+все что связано с wait в заказе и таблице настроек
+Zakaz WAITING send_wait_info send_prev_wait
+
+use_dr_balance_counter
+DRIVER_BALANCE

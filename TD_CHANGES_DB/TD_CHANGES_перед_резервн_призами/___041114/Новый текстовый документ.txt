@@ -1,0 +1,1 @@
+autotarif_by_tplan smallint def 0 Settings

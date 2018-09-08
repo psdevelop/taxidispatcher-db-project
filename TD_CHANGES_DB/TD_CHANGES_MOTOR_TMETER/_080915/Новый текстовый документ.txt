@@ -1,0 +1,1 @@
+tmsale decimal(28, 10) Zazaz not null def 0

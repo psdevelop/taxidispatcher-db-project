@@ -1,0 +1,1 @@
+Zakaz tmhistory varchar(1000) NULL

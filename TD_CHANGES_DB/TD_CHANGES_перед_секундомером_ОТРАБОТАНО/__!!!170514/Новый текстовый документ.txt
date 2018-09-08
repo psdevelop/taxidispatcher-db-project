@@ -1,0 +1,5 @@
+Замеченные косяки
+
+insertfictive driver_id ghjdthbnm
+
+order_accepting REMOTE_SET

@@ -1,0 +1,1 @@
+voditelj require_gps

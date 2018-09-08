@@ -1,0 +1,11 @@
+Settings tmeter_tariff decimal(28, 10)
+Voditelj ftime_tariff decimal(28, 10)
+tmeter_tariff decimal(28, 10)
+GPSC_REQU_FLAG smallint not null 0
+use_tmeter smallint not null -1
+use_nlocserv smallint not null -1
+use_bloc smallint not null -1
+Zakaz tm_distance int not null 0
+	tm_summ dec(28,10) not null 0
+TD_EVENTS LATITUDE, LONGITUDE varchar(20) not null ''
+!!!!!!!!!!!!!!внимательно проверить недостающие по 060914

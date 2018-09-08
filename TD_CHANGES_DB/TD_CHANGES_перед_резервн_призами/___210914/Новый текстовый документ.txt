@@ -1,0 +1,1 @@
+SHORT_NAME varchar(20) not null '' in options, tarifs and tplans

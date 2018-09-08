@@ -1,0 +1,5 @@
+AND 
+						@newPhone=REPLACE(@newPhone,'Фиктивная','');
+SET @dict_adr=ISNULL(@dict_adr, '---');
+
+!!!!!!!!! в двух триггерах 

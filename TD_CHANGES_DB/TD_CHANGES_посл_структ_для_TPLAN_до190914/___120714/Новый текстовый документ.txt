@@ -1,0 +1,2 @@
+rlock_on_calc_debt Voditelj smallint not null def 0
+drcalc_start_date Settings date not null def getdate

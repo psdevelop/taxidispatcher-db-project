@@ -1,0 +1,1 @@
+SUMM decimal(28, 10) not null def 0 TD_EVENTS
