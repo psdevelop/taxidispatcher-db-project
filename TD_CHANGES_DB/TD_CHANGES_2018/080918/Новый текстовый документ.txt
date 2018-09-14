@@ -1,5 +1,0 @@
-AREA_LINES sector_id
-Zakaz detected_sector
-Settings auto_detect_sector_by_addr 
-	geocode_default_prefix
-Voditelj cc_monitoring_upd

@@ -1,0 +1,7 @@
+AREA_LINES sector_id
+Zakaz detected_sector is_coordinates_upd for_all_sectors fail_app_coords_geocode
+Settings auto_detect_sector_by_addr 
+	geocode_default_prefix
+Voditelj cc_monitoring_upd
+drivers_coord_updated
+orders_coord_updated
