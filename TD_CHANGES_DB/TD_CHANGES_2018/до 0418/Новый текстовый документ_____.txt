@@ -1,3 +1,0 @@
-Settings no_percent_before, no_percent_before_summ,
-no_percent_before_payment, use_prize_reserved_limit, 
-prize_reserved_limit, 

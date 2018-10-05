@@ -1,1 +1,0 @@
-src, src_id, src_state, passengers, luggage Zakaz fields

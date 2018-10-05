@@ -1,3 +1,0 @@
-cc_updated Voditelj
-src_wait_sended Zakaz
-lock_reserv_on_limit Settings
