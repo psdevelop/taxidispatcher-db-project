@@ -1,2 +1,2 @@
 Zakaz district_id
-Sector company_id
+Sector company_id district_id
