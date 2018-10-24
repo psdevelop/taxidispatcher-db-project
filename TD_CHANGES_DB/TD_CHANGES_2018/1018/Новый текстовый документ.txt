@@ -11,3 +11,8 @@ Settings
 		auto_assign_driver_by_coords
 		aass_driver_max_radius
 		addr_actualization_time
+		
+		auto_for_all_tender
+		auto_for_all_longtime
+		auto_for_all_empty_sector
+		show_region_in_addr
