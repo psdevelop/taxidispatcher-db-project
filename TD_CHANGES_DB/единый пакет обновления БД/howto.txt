@@ -1,0 +1,6 @@
+1. внимательно MISC.sql - новые таблицы и необязательные преобразования типов
+2. SQLQueryTDUpdateDDL.sql
+3. SQLQueryTDUpdateFUNC.sql
+4. SQLQueryTDUpdateVIEW.sql
+5. SQLQueryTDUpdatePROC.sql
+6. SQLQueryTDUpdateTRG.sql
