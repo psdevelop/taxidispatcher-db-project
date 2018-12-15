@@ -729,7 +729,7 @@ BEGIN
 					WHERE vv.Pozyvnoi=@newDrNum and CAST(vv.Data_postupleniya as date)=CAST(@edate as DATE)
 					and vv.ITS_DAYLY=1;
 					--выставление признака необходимости отчисления
-					IF (@paymentCount=0) 
+					IF (@paymentCount=0 OR @daily_payment_expire > -24) 
 					BEGIN
                         DECLARE @uname varchar(255);
 						set @uname=SUSER_NAME();
