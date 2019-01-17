@@ -711,9 +711,11 @@ BEGIN
 					SET @paymentCount=0;
 					DECLARE @edate datetime, @temp_date datetime, @last_14hours_count int;
 
-					SET @daily_payment_expire = -24
 					IF @daily_payment_expire > 0 BEGIN
 						SET @daily_payment_expire = -@daily_payment_expire
+					END ELSE
+					BEGIN
+						SET @daily_payment_expire = -24
 					END
 
 					SET @temp_date = DATEADD(hour, @daily_payment_expire, GETDATE());

@@ -2858,11 +2858,14 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertNewDriverIncome]    Script Date: 08.12.2018 6:54:15 ******/
+/****** Object:  StoredProcedure [dbo].[InsertNewDriverIncome]    Script Date: 19.12.2018 12:52:37 ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
+
 
 
 
@@ -2872,7 +2875,7 @@ CREATE PROCEDURE [dbo].[InsertNewDriverIncome]
 AS
 BEGIN 
     DECLARE @last_ct datetime, @curr_dt datetime;
-    DECLARE @last_ts int, @bold_ts int, @daily_count int;   
+    DECLARE @last_ts int, @bold_ts int, @daily_count int, @daily_expire smallint;   
 
 	--SET TRANSACTION ISOLATION LEVEL READ COMMITTED
 	
@@ -2883,12 +2886,15 @@ BEGIN
 	SET @dr_num = ISNULL(@dr_num, 0);
 	SET @count=0;
 	
+	SELECT @daily_expire = daily_payment_expire FROM Voditelj 
+	WHERE Pozyvnoi = @dr_num
+	
 	SET @daily_count=0; 
 	SELECT @daily_count=COUNT(*) FROM Vyruchka_ot_voditelya vv
 	WHERE vv.Pozyvnoi=@dr_num and CAST(vv.Data_postupleniya as date)=CAST(@idt as DATE)
 	and vv.ITS_DAYLY=1;
 	
-	IF(NOT ((@its_dayly=1) AND (@daily_count>0)))
+	IF(NOT ((@its_dayly=1) AND (@daily_count>0)) OR (@its_dayly=1 AND @daily_expire > 0 AND @daily_expire < 24))
 	BEGIN
 	
 	BEGIN TRAN
@@ -2946,6 +2952,7 @@ BEGIN
     --SET @ord_num=@new_ord_num;
     --return
 END
+
 
 
 
