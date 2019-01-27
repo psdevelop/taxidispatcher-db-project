@@ -1414,11 +1414,13 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetJSONDriverEarlyOrders]    Script Date: 08.12.2018 6:16:40 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONDriverEarlyOrders]    Script Date: 28.01.2019 1:46:50 ******/
 SET ANSI_NULLS OFF
 GO
+
 SET QUOTED_IDENTIFIER OFF
 GO
+
 
 CREATE FUNCTION [dbo].[GetJSONDriverEarlyOrders] (@driver_id int)
 RETURNS varchar(max)
@@ -1466,7 +1468,7 @@ BEGIN
 	AND ord.REMOTE_SET NOT IN(0,16,26,100) 
 	AND ord.is_early = 1 AND ord.is_started_early = 0 
 	--AND ord.REMOTE_SYNC = 0
-	ORDER BY ISNULL(ord.dr_assign_date,GETDATE()) ASC;	/*Открываем курсор*/
+	ORDER BY ISNULL(ord.early_date,GETDATE()) ASC;	/*Открываем курсор*/
 	OPEN @CURSOR
 
 	/*Выбираем первую строку*/
