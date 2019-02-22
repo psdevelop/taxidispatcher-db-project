@@ -130,6 +130,20 @@ BEGIN
 	ADD [daily_payment_expire] [smallint] NOT NULL CONSTRAINT [DF_Voditelj_daily_payment_expire]  DEFAULT ((0));
 END
 
+IF COL_LENGTH('Voditelj','rating_level') IS NULL
+BEGIN
+	ALTER TABLE dbo.Voditelj 
+	ADD [rating_level] [smallint] NOT NULL 
+	CONSTRAINT [DF_Voditelj_rating_level]  DEFAULT ((0));
+END
+
+IF COL_LENGTH('Voditelj','dont_auto_asgn_by_radius') IS NULL
+BEGIN
+	ALTER TABLE dbo.Voditelj 
+	ADD [dont_auto_asgn_by_radius] [smallint] NOT NULL 
+	CONSTRAINT [DF_Voditelj_dont_auto_asgn_by_radius]  DEFAULT ((0));
+END
+
 GO
 
 ------------------------------------------------------
@@ -943,6 +957,20 @@ BEGIN
 	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_set_addr_manual_enter]  DEFAULT ((0));
 END
 
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','prise_only_online') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [prise_only_online] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_prise_only_online]  DEFAULT ((0));
+END
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','use_rating_levels') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [use_rating_levels] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_use_rating_levels]  DEFAULT ((0));
+END
+
 GO
 
 --------------------------------------------------------------------
@@ -1238,6 +1266,15 @@ BEGIN
 	ALTER TABLE dbo.Zakaz 
 	ADD [early_date] [datetime] NOT NULL 
 	CONSTRAINT [DF_Zakaz_early_date]  DEFAULT (getdate());
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','arhive_sms_state') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [arhive_sms_state] [smallint] NOT NULL 
+	CONSTRAINT [DF_Zakaz_arhive_sms_state]  DEFAULT ((0));
 END
 
 GO

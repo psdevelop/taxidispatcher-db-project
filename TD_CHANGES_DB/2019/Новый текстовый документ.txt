@@ -1,0 +1,3 @@
+arhive_sms_state Zakaz
+prise_only_online use_rating_levels Settings
+rating_level dont_auto_asgn_by_radius Voditelj

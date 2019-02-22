@@ -59,7 +59,8 @@ GO
 IF OBJECT_ID('dbo.ActiveDriversState') IS NOT NULL 
 DROP VIEW [dbo].[ActiveDriversState]
 GO
-/****** Object:  View [dbo].[ActiveDriversState]    Script Date: 08.12.2018 6:48:45 ******/
+
+/****** Object:  View [dbo].[ActiveDriversState]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -72,7 +73,7 @@ FROM         dbo.Voditelj AS dr
 WHERE     (Pozyvnoi > 0)
 
 GO
-/****** Object:  View [dbo].[ActiveOrders]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[ActiveOrders]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -107,7 +108,7 @@ FROM            dbo.Zakaz LEFT OUTER JOIN
                          dbo.DISTRICTS ON dbo.Zakaz.district_id = dbo.DISTRICTS.id
 
 GO
-/****** Object:  View [dbo].[ArhToDelOrders]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[ArhToDelOrders]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -120,7 +121,7 @@ WHERE     (Zavershyon = 1) AND (AUTO_ARHIVED = 1)
 ORDER BY Nachalo_zakaza_data
 
 GO
-/****** Object:  View [dbo].[CallItOrders]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[CallItOrders]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -132,7 +133,7 @@ FROM         dbo.Zakaz
 WHERE     (Arhivnyi = 0) AND (Zavershyon = 0) AND (call_it = 1) AND (ABS(DATEDIFF(minute, Konec_zakaza_data, GETDATE())) < 10) AND (Telefon_klienta <> '')
 
 GO
-/****** Object:  View [dbo].[CallRobotOrders]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[CallRobotOrders]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -157,7 +158,7 @@ WHERE           (ord.Arhivnyi = 0) AND (ord.Zavershyon = 0) AND (ord.CLIENT_CALL
 
 
 GO
-/****** Object:  View [dbo].[DRIVER_RATINGS]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[DRIVER_RATINGS]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -172,7 +173,7 @@ WHERE     (dbo.ORDER_TARIF.IN_RATING = 1) AND (dbo.Voditelj.V_rabote = 1)
 GROUP BY dbo.Voditelj.Pozyvnoi, dbo.Voditelj.Vremya_poslednei_zayavki
 
 GO
-/****** Object:  View [dbo].[DriversActivityIntervals]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[DriversActivityIntervals]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -186,7 +187,7 @@ WHERE (Telefon_klienta = 'Фиктивная') AND (Adres_vyzova_vvodim = 'Постановка на 
 ORDER BY StartDate
 
 GO
-/****** Object:  View [dbo].[EVENTS_VIEW]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[EVENTS_VIEW]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -201,7 +202,7 @@ FROM         dbo.TD_EVENTS AS tde LEFT OUTER JOIN
                       dbo.Voditelj AS dr ON tde.DRIVER_ID = dr.BOLD_ID
 
 GO
-/****** Object:  View [dbo].[LastWeekOrdersView]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[LastWeekOrdersView]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -217,7 +218,7 @@ FROM         dbo.Zakaz
 WHERE     (Nachalo_zakaza_data >= GETDATE() - 7)
 
 GO
-/****** Object:  View [dbo].[OrdersCoords]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[OrdersCoords]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -232,7 +233,7 @@ WHERE        (dbo.Zakaz.Zavershyon = 0) AND (dbo.Voditelj.cc_updated = 1) AND (A
                          (dbo.Zakaz.src_status_code = 8)
 
 GO
-/****** Object:  View [dbo].[RemoteOrders]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[RemoteOrders]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -245,7 +246,7 @@ REMOTE_DRNUM
 FROM         dbo.Zakaz
 WHERE  (REMOTE_SET>=-1) AND (REMOTE_SET<=1)
 GO
-/****** Object:  View [dbo].[SMSSendOrders]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[SMSSendOrders]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -254,16 +255,17 @@ CREATE VIEW [dbo].[SMSSendOrders]
 AS
 SELECT        ord.BOLD_ID, ord.Nomer_zakaza, ord.Telefon_klienta, ord.Adres_vyzova_vvodim, ord.Pozyvnoi_ustan, ord.DRIVER_SMS_SEND_STATE, ord.CLIENT_SMS_SEND_STATE, dr.phone_number AS SMS_SEND_DRNUM, 
                          ord.SMS_SEND_CLPHONE, dbo.GetCustClientInfo(ord.BOLD_ID, ord.Pozyvnoi_ustan) AS CLIENT_ORDER_INFO, ord.Uslovn_stoim, ord.WAITING, dbo.GetOrderAMICommand(ord.BOLD_ID) AS AMI_COMMAND, 
-                         dbo.GetOrderOnPlaceAMICommand(ord.BOLD_ID) AS AMI_ONPLACE_COMMAND, ord.bonus_add, ord.bonus_use, ord.bonus_all
+                         dbo.GetOrderOnPlaceAMICommand(ord.BOLD_ID) AS AMI_ONPLACE_COMMAND, ord.bonus_add, ord.bonus_use, ord.bonus_all, ord.arhive_sms_state
 FROM            dbo.Zakaz AS ord LEFT OUTER JOIN
                          dbo.Voditelj AS dr ON ord.vypolnyaetsya_voditelem = dr.BOLD_ID
 WHERE        (ord.DRIVER_SMS_SEND_STATE = 1) AND (ord.Arhivnyi = 0) AND (ord.Zavershyon = 0) AND (dbo.isSMSWithCallRaplace() = 1) OR
                          (ord.Arhivnyi = 0) AND (ord.Zavershyon = 0) AND (dbo.isSMSWithCallRaplace() = 1) AND (ord.CLIENT_SMS_SEND_STATE = 1) OR
                          (ord.Arhivnyi = 0) AND (ord.Zavershyon = 0) AND (dbo.isSMSWithCallRaplace() = 1) AND (ord.CLIENT_SMS_SEND_STATE = 4) OR
-                         (ord.Arhivnyi = 0) AND (dbo.isSMSWithCallRaplace() = 1) AND (ord.CLIENT_SMS_SEND_STATE = 3) AND (ABS(DATEDIFF(minute, ord.Konec_zakaza_data, GETDATE())) < 10) AND (ISNULL(ord.Uslovn_stoim, 0) > 0)
+                         (ord.Arhivnyi = 0) AND (dbo.isSMSWithCallRaplace() = 1) AND (ord.CLIENT_SMS_SEND_STATE = 3) AND (ABS(DATEDIFF(minute, ord.Konec_zakaza_data, GETDATE())) < 10) AND (ISNULL(ord.Uslovn_stoim, 0) > 0) OR
+                         (ord.arhive_sms_state = 1)
 
 GO
-/****** Object:  View [dbo].[ToArhOrders]    Script Date: 08.12.2018 6:48:45 ******/
+/****** Object:  View [dbo].[ToArhOrders]    Script Date: 23.02.2019 0:33:33 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -276,4 +278,3 @@ WHERE     (Zavershyon = 1) AND (AUTO_ARHIVED = 0)
 ORDER BY Nachalo_zakaza_data
 
 GO
-
