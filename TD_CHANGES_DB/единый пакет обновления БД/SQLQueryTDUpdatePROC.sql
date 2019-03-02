@@ -602,22 +602,15 @@ BEGIN
 
 END
 
-
-
-
-
-
-
-
-
-
-
 GO
-/****** Object:  StoredProcedure [dbo].[AutoSetFromPretendents]    Script Date: 23.02.2019 0:40:28 ******/
+
+/****** Object:  StoredProcedure [dbo].[AutoSetFromPretendents]    Script Date: 02.03.2019 23:23:19 ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -635,10 +628,12 @@ BEGIN
 	DECLARE @order_dr_num int, 
 	@last_status_time datetime, 
 	@driver_id int, @accept_count int,
-	@dr_count int, @rating_pretendent_sorting smallint;
+	@dr_count int, @rating_pretendent_sorting smallint,
+	@use_rating_levels smallint;
 
 	SELECT TOP 1 
-	@rating_pretendent_sorting = rating_pretendent_sorting 
+	@rating_pretendent_sorting = rating_pretendent_sorting,
+	@use_rating_levels = use_rating_levels 
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
 	
@@ -663,10 +658,19 @@ BEGIN
 	SET @accept_count = 0;
 
 	IF @rating_pretendent_sorting = 1 BEGIN
-		SELECT TOP 1 @driver_id=oa.DRIVER_ID 
-		FROM ORDER_ACCEPTING oa 
-		WHERE oa.ORDER_ID=@order_id
-		ORDER BY dbo.GetDriverRating(oa.DRIVER_ID) DESC, oa.ACCEPT_DATE ASC;
+
+		IF @use_rating_levels = 1 BEGIN
+			SELECT TOP 1 @driver_id=oa.DRIVER_ID 
+			FROM ORDER_ACCEPTING oa 
+			WHERE oa.ORDER_ID=@order_id
+			ORDER BY dbo.GetDriverRatingLevel(oa.DRIVER_ID) DESC, oa.ACCEPT_DATE ASC;
+		END
+		ELSE BEGIN
+			SELECT TOP 1 @driver_id=oa.DRIVER_ID 
+			FROM ORDER_ACCEPTING oa 
+			WHERE oa.ORDER_ID=@order_id
+			ORDER BY dbo.GetDriverRating(oa.DRIVER_ID) DESC, oa.ACCEPT_DATE ASC;
+		END;
 
 		SET @accept_count = @@ROWCOUNT;
 	END
@@ -794,6 +798,7 @@ END
 
 
 GO
+
 /****** Object:  StoredProcedure [dbo].[AutoSetOrderFinished]    Script Date: 23.02.2019 0:40:28 ******/
 SET ANSI_NULLS ON
 GO

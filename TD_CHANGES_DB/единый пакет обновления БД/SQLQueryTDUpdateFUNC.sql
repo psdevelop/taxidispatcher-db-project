@@ -241,6 +241,37 @@ GO
 IF OBJECT_ID('dbo.DegToRad') IS NOT NULL 
 DROP FUNCTION [dbo].[DegToRad]
 GO
+/****** Object:  UserDefinedFunction [dbo].[GetDriverRatingLevel]    Script Date: 08.12.2018 6:16:40 ******/
+IF OBJECT_ID('dbo.GetDriverRatingLevel') IS NOT NULL 
+DROP FUNCTION [dbo].[GetDriverRatingLevel]
+GO
+
+/****** Object:  UserDefinedFunction [dbo].[GetDriverRatingLevel]    Script Date: 02.03.2019 23:25:36 ******/
+SET ANSI_NULLS OFF
+GO
+
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+CREATE FUNCTION [dbo].[GetDriverRatingLevel]  (@driver_id int)
+RETURNS smallint
+AS
+BEGIN
+  declare @res smallint
+   
+  SET @res=0
+   
+  select @res=rating_level   
+  from Voditelj 
+  where BOLD_ID=@driver_id 
+
+  SET @res=ISNULL(@res, 0);
+
+  RETURN(@res)
+END
+
+GO
 
 /****** Object:  UserDefinedFunction [dbo].[DegToRad]    Script Date: 23.02.2019 0:37:38 ******/
 SET ANSI_NULLS OFF
