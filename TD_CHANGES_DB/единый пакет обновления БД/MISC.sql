@@ -42,3 +42,72 @@ CREATE TABLE [dbo].[RATING_LEVELS](
 ) ON [PRIMARY]
 
 GO
+
+/****** Object:  Table [dbo].[WAIT_TIMES]    Script Date: 14.03.2019 2:46:37 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[WAIT_TIMES](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[tval] [smallint] NOT NULL,
+	[sound] [varchar](10) NOT NULL
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[WAIT_TIMES] ADD  CONSTRAINT [DF_WAIT_TIMES_tval]  DEFAULT ((0)) FOR [tval]
+GO
+
+ALTER TABLE [dbo].[WAIT_TIMES] ADD  CONSTRAINT [DF_WAIT_TIMES_sound]  DEFAULT ('0') FOR [sound]
+GO
+
+/****** Object:  Table [dbo].[DAILY_PARAMS]    Script Date: 23.03.2019 2:36:08 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[DAILY_PARAMS](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[start_time] [time](7) NOT NULL,
+	[end_time] [time](7) NOT NULL,
+	[its_tax_percent] [smallint] NOT NULL,
+	[tax_percent] [decimal](18, 5) NOT NULL,
+	[fix_payment] [decimal](18, 5) NOT NULL,
+	[no_percent_max_summ] [decimal](18, 5) NOT NULL,
+	[no_percent_ms_payment] [decimal](18, 5) NOT NULL
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_start_time]  DEFAULT ('00:00') FOR [start_time]
+GO
+
+ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_end_time]  DEFAULT ('00:00') FOR [end_time]
+GO
+
+ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_its_tax_percent]  DEFAULT ((0)) FOR [its_tax_percent]
+GO
+
+ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_tax_percent]  DEFAULT ((0)) FOR [tax_percent]
+GO
+
+ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_fix_payment]  DEFAULT ((0)) FOR [fix_payment]
+GO
+
+ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_no_percent_max_summ]  DEFAULT ((0)) FOR [no_percent_max_summ]
+GO
+
+ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_no_percent_ms_payment]  DEFAULT ((0)) FOR [no_percent_ms_payment]
+GO
+

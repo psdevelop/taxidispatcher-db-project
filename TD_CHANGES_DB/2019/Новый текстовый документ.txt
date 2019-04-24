@@ -1,3 +1,15 @@
-arhive_sms_state Zakaz
-prise_only_online use_rating_levels Settings
+arhive_sms_state company_id Zakaz
+prise_only_online use_rating_levels dont_reset_que_early_complete
+auto_set_bonus_value Settings
 rating_level dont_auto_asgn_by_radius Voditelj
+company_id PRICE_POLICY
+
+данные в таблице tickets_categories
+tickets_categories_sub
+метод getAvailable
+контроллер будет создаваться пока что 
+webmaster/modules/api/controllers
+TicketsController назвать новый
+возвращает метод список форм которые включены на данный мемонт
+формат из файла по ссылка
+https://miro.com/app/board/o9J_kxxrp4g=/
