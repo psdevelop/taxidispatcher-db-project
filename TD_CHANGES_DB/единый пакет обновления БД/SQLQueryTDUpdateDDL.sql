@@ -124,11 +124,15 @@ BEGIN
 	CONSTRAINT [DF_Voditelj_cc_monitoring_upd]  DEFAULT ((0));
 END
 
+GO
+
 IF COL_LENGTH('Voditelj','daily_payment_expire') IS NULL
 BEGIN
 	ALTER TABLE dbo.Voditelj 
 	ADD [daily_payment_expire] [smallint] NOT NULL CONSTRAINT [DF_Voditelj_daily_payment_expire]  DEFAULT ((0));
 END
+
+GO
 
 IF COL_LENGTH('Voditelj','rating_level') IS NULL
 BEGIN
@@ -136,6 +140,8 @@ BEGIN
 	ADD [rating_level] [smallint] NOT NULL 
 	CONSTRAINT [DF_Voditelj_rating_level]  DEFAULT ((0));
 END
+
+GO
 
 IF COL_LENGTH('Voditelj','dont_auto_asgn_by_radius') IS NULL
 BEGIN
@@ -163,6 +169,8 @@ BEGIN
 	ALTER TABLE [dbo].[Voditelj]  WITH CHECK 
 	ADD  CONSTRAINT [CK_Voditelj] CHECK  (([Pozyvnoi]<(100000)))
 END
+
+GO
 
 IF @CK_Voditelj_OBJECT_ID IS NULL
 BEGIN
@@ -957,6 +965,8 @@ BEGIN
 	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_set_addr_manual_enter]  DEFAULT ((0));
 END
 
+GO
+
 IF COL_LENGTH('Objekt_vyborki_otchyotnosti','prise_only_online') IS NULL
 BEGIN
 	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
@@ -964,11 +974,40 @@ BEGIN
 	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_prise_only_online]  DEFAULT ((0));
 END
 
+GO
+
 IF COL_LENGTH('Objekt_vyborki_otchyotnosti','use_rating_levels') IS NULL
 BEGIN
 	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
 	ADD [use_rating_levels] [smallint] NOT NULL 
 	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_use_rating_levels]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','dont_reset_que_early_complete') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [dont_reset_que_early_complete] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_dont_reset_que_early_complete]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','auto_set_bonus_value') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [auto_set_bonus_value] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_auto_set_bonus_value]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','use_driver_socket_server') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [use_driver_socket_server] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_use_driver_socket_server]  DEFAULT ((1));
 END
 
 GO
@@ -1279,6 +1318,15 @@ END
 
 GO
 
+IF COL_LENGTH('Zakaz','company_id') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [company_id] [int] NOT NULL 
+	CONSTRAINT [DF_Zakaz_company_id]  DEFAULT ((-1));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- ÑÒÎËÁÖÛ ÒÀÁËÈÖÛ ÑÅÊÒÎÐÎÂ
@@ -1485,5 +1533,31 @@ BEGIN
 	CONSTRAINT [DF_AREA_LINES_sector_id]  DEFAULT ((-1));
 END
 
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+-- ÑÒÎËÁÖÛ ÒÀÁËÈÖÛ ÒÀÐÈÔÍÛÕ ÏËÀÍÎÂ
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+IF COL_LENGTH('PRICE_POLICY','company_id') IS NULL
+BEGIN
+	ALTER TABLE dbo.PRICE_POLICY 
+	ADD [company_id] [int] NOT NULL 
+	CONSTRAINT [DF_PRICE_POLICY_company_id]  DEFAULT ((-1));
+END
+
+GO
+
+SET ANSI_PADDING OFF
 GO
 

@@ -127,14 +127,16 @@ GO
 IF OBJECT_ID('dbo.AFTER_DRIVER_RATING_INSERT') IS NOT NULL
 DROP TRIGGER [dbo].[AFTER_DRIVER_RATING_INSERT]
 GO
+/****** Object:  Trigger [AFTER_ORDER_DISTRICT_OR_SECTOR_SET]    Script Date: 08.12.2018 6:59:40 ******/
+IF OBJECT_ID('dbo.AFTER_ORDER_DISTRICT_OR_SECTOR_SET') IS NOT NULL
+DROP TRIGGER [dbo].[AFTER_ORDER_DISTRICT_OR_SECTOR_SET]
+GO
 
-/****** Object:  Trigger [dbo].[AFTER_DRIVER_RATING_INSERT]    Script Date: 02.03.2019 23:27:52 ******/
+/****** Object:  Trigger [dbo].[AFTER_DRIVER_RATING_INSERT]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 
 -- =============================================
@@ -202,8 +204,7 @@ END
 
 
 GO
-
-/****** Object:  Trigger [dbo].[AFTER_SECTOR_INSERT]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_SECTOR_INSERT]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -248,7 +249,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_EVENT_UPDATE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_EVENT_UPDATE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -304,7 +305,7 @@ BEGIN
 	END
 END
 GO
-/****** Object:  Trigger [dbo].[AFTER_DRIVER_COORD_UPDATE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_DRIVER_COORD_UPDATE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -360,7 +361,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_DRIVER_INSERT]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_DRIVER_INSERT]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -409,7 +410,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_DRIVER_UPDATE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_DRIVER_UPDATE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -605,7 +606,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_DRIVER_WBROADCAST]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_DRIVER_WBROADCAST]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -708,7 +709,7 @@ BEGIN
 END
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_DRIVER_WORKSTART]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_DRIVER_WORKSTART]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -836,7 +837,7 @@ BEGIN
 END
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_INCOME_INSERT]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_INCOME_INSERT]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -885,7 +886,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_INCOME_UPDATE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_INCOME_UPDATE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -946,7 +947,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_COORD_UPDATE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_COORD_UPDATE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1027,7 +1028,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_DRASS_TPLAN]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_DRASS_TPLAN]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1101,7 +1102,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_DRIVER_ASSIGN]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_DRIVER_ASSIGN]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1163,7 +1164,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ONPLACE_TOBE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ONPLACE_TOBE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1214,7 +1215,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_CL_SMS_STATUS_CHANGE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_CL_SMS_STATUS_CHANGE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1282,7 +1283,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_COMPLETE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_COMPLETE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1338,7 +1339,29 @@ BEGIN
 		@driver_rating_bonus_code varchar(255),
 		@referral_driver_id int,
 		@referral_set_date datetime,
-		@expire_date datetime;
+		@expire_date datetime,
+		@tax_percent decimal(18, 5), 
+		@fix_payment decimal(18, 5), --@every_order_pay=Kolich_vyd_benzina
+		@no_percent_max_summ decimal(18, 5), --@no_percent_before_summ = no_percent_before_summ
+		@no_percent_ms_payment decimal(18, 5); --@no_percent_before_payment = no_percent_before_payment
+
+	SET @tax_percent = 0;
+	SET @fix_payment = 0;
+	SET @no_percent_max_summ = 0;
+	SET @no_percent_ms_payment = 0;
+
+	EXEC dbo.GetDailyTaxParams @tax_percent = @tax_percent OUTPUT, @fix_payment = @fix_payment OUTPUT, 
+		@no_percent_max_summ = @no_percent_max_summ OUTPUT,
+		@no_percent_ms_payment = @no_percent_ms_payment OUTPUT;
+
+	IF @no_percent_max_summ > 0 AND @no_percent_ms_payment > 0 BEGIN
+		SET @no_percent_before_summ = @no_percent_max_summ;
+		SET @no_percent_before_payment = @no_percent_ms_payment;
+	END;
+
+	IF @fix_payment > 0 BEGIN
+		SET @every_order_pay = @fix_payment;
+	END;
 		
 	SELECT @nOldValue=b.BOLD_ID, 
 	@completeNewValue=a.Zavershyon,
@@ -1388,7 +1411,7 @@ BEGIN
 			END 
 		ELSE
 			BEGIN
-				SET @taxSumm = @summValue*dbo.GetDrTakePercent(@dr_num);
+				SET @taxSumm = @summValue*dbo.GetDrTakePercent(@dr_num, @tax_percent);
 			END
 
 		IF @priseNum > 0 BEGIN
@@ -1452,7 +1475,65 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_FIXTIMESET]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_DISTRICT_OR_SECTOR_SET]    Script Date: 10.05.2019 0:20:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TRIGGER [dbo].[AFTER_ORDER_DISTRICT_OR_SECTOR_SET] 
+   ON  [dbo].[Zakaz] 
+   AFTER UPDATE
+AS 
+BEGIN
+
+	SET NOCOUNT ON;
+	
+	DECLARE @db_version INT, @use_priority int;
+	
+	SELECT TOP 1 @db_version=ISNULL(db_version,3),
+	@use_priority=ISNULL(use_dr_priority,0) 
+	FROM Objekt_vyborki_otchyotnosti
+	WHERE Tip_objekta='for_drivers';
+	
+	IF((@db_version>=5) AND (@use_priority>0))
+	BEGIN
+
+	DECLARE @idValue int, @newDSIDValue int, 
+		@oldDSIDValue INT, @newDIDlValue INT,
+		@oldDIDValue int, @companyId int;
+			
+	SELECT @idValue=b.BOLD_ID, 
+	@newDSIDValue=a.detected_sector,
+	@oldDSIDValue=b.detected_sector,
+	@newDIDlValue=a.district_id,
+	@oldDIDValue=b.district_id,
+	@companyId = b.company_id
+	FROM inserted a, deleted b
+
+	IF @companyId < 0 BEGIN
+		IF (@newDIDlValue > 0 AND @newDIDlValue <> @oldDIDValue)
+		BEGIN
+			SELECT TOP 1 @companyId = ds.company_id FROM DISTRICTS ds 
+			WHERE ds.id = @newDIDlValue;
+			UPDATE Zakaz SET company_id = @companyId WHERE BOLD_ID = @idValue;
+		END
+		ELSE IF (@newDSIDValue > 0 AND @newDSIDValue <> @oldDSIDValue)
+		BEGIN
+			SELECT TOP 1 @companyId = ws.company_id FROM Sektor_raboty ws 
+			WHERE ws.BOLD_ID = @newDSIDValue;
+			UPDATE Zakaz SET company_id = @companyId WHERE BOLD_ID = @idValue;
+		END;
+	END;
+
+	END;
+	
+END
+
+
+
+GO
+/****** Object:  Trigger [dbo].[AFTER_ORDER_FIXTIMESET]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1532,7 +1613,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_INSERT]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_INSERT]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1904,7 +1985,7 @@ BEGIN
 END
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_INSERT_PRIORITY]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_INSERT_PRIORITY]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1958,7 +2039,7 @@ BEGIN
 END
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_INUM]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_INUM]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2168,7 +2249,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_PHONE_CHANGE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_PHONE_CHANGE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2188,13 +2269,15 @@ BEGIN
 	@oldPhone varchar(255), @nOldValue int,
 	@first_trip_bonus decimal(28, 10), 
 	@trip_bonus decimal(28, 10), @bonus_percent decimal(28, 10), 
-	@percent_bonus_min_summ decimal(28, 10);
+	@percent_bonus_min_summ decimal(28, 10),
+	@auto_set_bonus_value decimal(18, 5);
 	
 	SELECT TOP 1 @db_version=ISNULL(db_version,3),
 	@first_trip_bonus = first_trip_bonus, 
 	@trip_bonus = trip_bonus, 
 	@bonus_percent = bonus_percent, 
-	@percent_bonus_min_summ = percent_bonus_min_summ
+	@percent_bonus_min_summ = percent_bonus_min_summ,
+	@auto_set_bonus_value = auto_set_bonus_value
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
 		
@@ -2211,17 +2294,25 @@ BEGIN
 		(@bonus_percent > 0 AND @percent_bonus_min_summ > 0)))
 	BEGIN
 
-		SELECT BOLD_ID
+		SELECT TOP 1 @phoneBonus = sp.bonus_summ
 		FROM Sootvetstvie_parametrov_zakaza sp
 		WHERE sp.Telefon_klienta = @newPhone;
 
 		IF @@ROWCOUNT = 1 BEGIN
 
-			SELECT  @phoneBonus = sp.bonus_summ
-			FROM Sootvetstvie_parametrov_zakaza sp
-			WHERE sp.Telefon_klienta = @newPhone;
+			SET @phoneBonus = ISNULL(@phoneBonus, 0);
 
-			UPDATE Zakaz SET bonus_all = @phoneBonus
+			IF @auto_set_bonus_value < 0 BEGIN
+				SET @auto_set_bonus_value = 0;
+			END;
+
+			IF @auto_set_bonus_value > 0 AND @auto_set_bonus_value > @phoneBonus
+			BEGIN
+				SET @auto_set_bonus_value = 0;
+			END;
+
+			UPDATE Zakaz SET bonus_all = @phoneBonus,
+			bonus_use = @auto_set_bonus_value
 			WHERE BOLD_ID = @nOldValue;
 		END;
 
@@ -2232,7 +2323,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_PRIORITY]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_PRIORITY]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2291,7 +2382,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_RSTATUS_CHANGE]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_RSTATUS_CHANGE]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2336,7 +2427,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_SDIRECTION]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_SDIRECTION]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2388,7 +2479,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_SYNC]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_SYNC]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2471,7 +2562,7 @@ BEGIN
 END
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_TOPTS]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_TOPTS]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2524,7 +2615,7 @@ BEGIN
 END
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDER_WBROADCAST]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDER_WBROADCAST]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2593,7 +2684,7 @@ END
 
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_ORDERDEL_WBROADCAST]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_ORDERDEL_WBROADCAST]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2635,7 +2726,7 @@ BEGIN
 END
 
 GO
-/****** Object:  Trigger [dbo].[AFTER_REMOTE_CLOSING]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_REMOTE_CLOSING]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2676,7 +2767,9 @@ BEGIN
 		@newDrNum int, @oldDrNum int, @ord_summ DECIMAL(28,10),
 		@dont_reset_time smallint,
 		@prise_only_online smallint,
-		@rclient_id int;
+		@rclient_id int,
+		@dont_reset_que_early_complete smallint,
+		@newEarly smallint;
 		
 	SET @view_bonus=0;
 	SET @view_ab_bonus=0;
@@ -2687,7 +2780,8 @@ BEGIN
 	SELECT TOP 1 @view_bonus=ISNULL(view_bonuses,0),
 		@view_ab_bonus=ISNULL(view_ab_bonuses,0),
 		@use_ab_account = ISNULL(use_ab_account,0),
-		@prise_only_online = prise_only_online 
+		@prise_only_online = prise_only_online,
+		@dont_reset_que_early_complete = dont_reset_que_early_complete
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
 		
@@ -2714,7 +2808,8 @@ BEGIN
 	@newDrNum = ISNULL(a.REMOTE_DRNUM,0), 
 	@oldDrNum = ISNULL(b.REMOTE_DRNUM,0),
 	@ord_summ = ISNULL(a.Uslovn_stoim,0), -- Get the Old and New values
-	@rclient_id = a.rclient_id
+	@rclient_id = a.rclient_id,
+	@newEarly = a.is_early
 	FROM inserted a, deleted b
 
 	SET @newDrId = ISNULL(@newDrId, 0)
@@ -3090,7 +3185,8 @@ BEGIN
 			BEGIN
 				if ((@RSOldValue<=8) and (@ord_summ>0))
 				BEGIN
-				IF ISNULL(@dont_reset_time, 0) <> 1 BEGIN
+				IF ISNULL(@dont_reset_time, 0) <> 1 AND 
+					NOT (@newEarly = 1 AND @dont_reset_que_early_complete = 1) BEGIN
 					UPDATE Voditelj 
 					SET Vremya_poslednei_zayavki=CURRENT_TIMESTAMP
 					WHERE BOLD_ID=@newDrId;
@@ -3157,7 +3253,7 @@ BEGIN
 	
 END
 GO
-/****** Object:  Trigger [dbo].[AFTER_TPLAN_ASSGN]    Script Date: 23.02.2019 0:23:13 ******/
+/****** Object:  Trigger [dbo].[AFTER_TPLAN_ASSGN]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3277,4 +3373,3 @@ END
 
 
 GO
-

@@ -1,4 +1,4 @@
-USE [TD5R1081218SB]
+USE [TD5R1]
 GO
 
 /****** Object:  UserDefinedFunction [dbo].[isSMSWithCallRaplace]    Script Date: 08.12.2018 6:16:40 ******/
@@ -246,34 +246,17 @@ IF OBJECT_ID('dbo.GetDriverRatingLevel') IS NOT NULL
 DROP FUNCTION [dbo].[GetDriverRatingLevel]
 GO
 
-/****** Object:  UserDefinedFunction [dbo].[GetDriverRatingLevel]    Script Date: 02.03.2019 23:25:36 ******/
-SET ANSI_NULLS OFF
+/****** Object:  UserDefinedFunction [dbo].[GetJSONCompanyTOList]    Script Date: 08.12.2018 6:16:40 ******/
+IF OBJECT_ID('dbo.GetJSONCompanyTOList') IS NOT NULL 
+DROP FUNCTION [dbo].[GetJSONCompanyTOList]
 GO
 
-SET QUOTED_IDENTIFIER OFF
+/****** Object:  UserDefinedFunction [dbo].[GetJSONWaitTimesList]    Script Date: 08.12.2018 6:16:40 ******/
+IF OBJECT_ID('dbo.GetJSONWaitTimesList') IS NOT NULL 
+DROP FUNCTION [dbo].[GetJSONWaitTimesList]
 GO
 
-
-CREATE FUNCTION [dbo].[GetDriverRatingLevel]  (@driver_id int)
-RETURNS smallint
-AS
-BEGIN
-  declare @res smallint
-   
-  SET @res=0
-   
-  select @res=rating_level   
-  from Voditelj 
-  where BOLD_ID=@driver_id 
-
-  SET @res=ISNULL(@res, 0);
-
-  RETURN(@res)
-END
-
-GO
-
-/****** Object:  UserDefinedFunction [dbo].[DegToRad]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[DegToRad]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -285,7 +268,7 @@ BEGIN
    RETURN (@deg * PI() / 180)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[DistanceBetweenTwoCoords]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[DistanceBetweenTwoCoords]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -312,7 +295,7 @@ BEGIN
 	RETURN (@earthRadius * @c)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetCustClientInfo]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetCustClientInfo]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -373,7 +356,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetCustComment]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetCustComment]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -448,7 +431,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDevNumByCode]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDevNumByCode]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -476,7 +459,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDiscountNumOnOrderCount]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDiscountNumOnOrderCount]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -542,7 +525,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrComment]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrComment]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -574,7 +557,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrDayliTariff]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrDayliTariff]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -620,7 +603,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrDaysIntervalFixedSumm]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrDaysIntervalFixedSumm]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -680,7 +663,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrDynBalanceByNum]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrDynBalanceByNum]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -705,7 +688,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrIDByNum]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrIDByNum]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -729,7 +712,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDriverDaysFixedSumm]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDriverDaysFixedSumm]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -782,7 +765,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDriverRating]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDriverRating]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -830,7 +813,31 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDriversCCHTTPParams]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDriverRatingLevel]    Script Date: 09.05.2019 23:45:49 ******/
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE FUNCTION [dbo].[GetDriverRatingLevel]  (@driver_id int)
+RETURNS smallint
+AS
+BEGIN
+  declare @res smallint
+   
+  SET @res=0
+   
+  select @res=rating_level   
+  from Voditelj 
+  where BOLD_ID=@driver_id 
+
+  SET @res=ISNULL(@res, 0);
+
+  RETURN(@res)
+END
+
+GO
+/****** Object:  UserDefinedFunction [dbo].[GetDriversCCHTTPParams]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -888,7 +895,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDriversMinBalance]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDriversMinBalance]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -907,7 +914,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrJSONCoordsByNum]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrJSONCoordsByNum]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -937,7 +944,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrLastHoursRateOrdCount]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrLastHoursRateOrdCount]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -965,7 +972,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrLastHoursSumm]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrLastHoursSumm]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -990,7 +997,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrOrderFixedSumm]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrOrderFixedSumm]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1049,13 +1056,13 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrTakePercent]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrTakePercent]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
 GO
 
-CREATE FUNCTION [dbo].[GetDrTakePercent]  (@Drnum int)
+CREATE FUNCTION [dbo].[GetDrTakePercent]  (@Drnum int, @daily_percent decimal(18, 5))
 RETURNS decimal(28, 10)
 AS
 BEGIN
@@ -1084,8 +1091,12 @@ BEGIN
 	 end
 	 else
 	 begin
-		select @res=ovo.Procent_otchisleniya from Objekt_vyborki_otchyotnosti ovo
-		where ovo.Tip_objekta='for_drivers'
+		IF @daily_percent > 0 BEGIN
+			SET @res=@daily_percent
+		END ELSE BEGIN
+			select @res=ovo.Procent_otchisleniya from Objekt_vyborki_otchyotnosti ovo
+			where ovo.Tip_objekta='for_drivers';
+		END;
 	 end
      
    END  
@@ -1095,7 +1106,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrTariffPlanId]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrTariffPlanId]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1132,7 +1143,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrTaxTariff]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrTaxTariff]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1176,7 +1187,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrTimeTariff]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrTimeTariff]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1220,7 +1231,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrUseDynBByNum]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrUseDynBByNum]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1245,7 +1256,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrUseDynBByNumWithSettParam]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrUseDynBByNumWithSettParam]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1287,7 +1298,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetDrWorkSumm]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetDrWorkSumm]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1337,7 +1348,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetEndSector]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetEndSector]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1364,7 +1375,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetEndSectorNameByID]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetEndSectorNameByID]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1386,7 +1397,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetIntervalDrClientSuccessSMSCount]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetIntervalDrClientSuccessSMSCount]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1417,7 +1428,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetIntervalDriverSuccessSMSCount]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetIntervalDriverSuccessSMSCount]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1446,7 +1457,273 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetJSONDriverEarlyOrders]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONCompanyTOList]    Script Date: 09.05.2019 23:45:49 ******/
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE FUNCTION [dbo].[GetJSONCompanyTOList] (@company_id int)
+RETURNS varchar(max)
+AS
+BEGIN
+	declare @res varchar(max);
+	DECLARE @CURSOR cursor;
+	DECLARE @sid int, @scount int,
+		@sname varchar(255), @counter int,
+		@timetr decimal(28,10), @tmetrtr decimal(28,10),
+		@os_coeff decimal(28,10), @os_comp decimal(28,10),
+		@tplan_id int, @short_name varchar(20), 
+		@miss_every_nkm int;
+   
+	SET @res=',"t_cnt":"';
+	SET @counter = 0;
+	
+	SELECT @scount=COUNT(*)  
+	FROM ORDER_TARIF ot INNER JOIN PRICE_POLICY pp ON 
+	ot.PR_POLICY_ID = pp.id 
+	WHERE pp.company_id = @company_id ;
+	
+	DECLARE @fmt_str1 varchar(50), @fmt_str2 varchar(50), 
+		@fmt_str3 varchar(50), @fmt_str4 varchar(50), 
+		@dist_part int, @dpart_tarif decimal(28, 10), 
+		@stop_tarif decimal(28, 10), @dist_start int,
+		@otarid int, @otplid int, @miss_every_nkm_json varchar(100);
+	
+	IF (@scount>0)
+	BEGIN
+	
+	SET @res=@res+CAST(@scount as varchar(20))+'"';
+	
+	SET @CURSOR  = CURSOR SCROLL
+	FOR
+	SELECT ot.ID, ot.TARIF_NAME, ot.TIME_TARIF, ot.TMETER_TARIF, ot.PR_POLICY_ID, ot.SHORT_NAME, 
+	ot.DISTANCE_PART, ot.DPART_TARIF, ot.STOP_TARIF, ot.DISTANCE_START, ot.outher_tarid, 
+	ot.outher_tplid, ot.miss_every_nkm  
+	FROM ORDER_TARIF ot INNER JOIN PRICE_POLICY pp 
+	ON ot.PR_POLICY_ID = pp.id 
+	WHERE pp.company_id = @company_id 
+	ORDER BY ot.ID ASC;
+	/*Открываем курсор*/
+	OPEN @CURSOR
+	/*Выбираем первую строку*/
+	FETCH NEXT FROM @CURSOR INTO @sid, @sname, @timetr, @tmetrtr, @tplan_id, @short_name, @dist_part, @dpart_tarif, @stop_tarif, @dist_start, @otarid, @otplid, @miss_every_nkm
+	/*Выполняем в цикле перебор строк*/
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+
+        
+        IF (CHARINDEX('.',CAST(@tmetrtr as varchar(20)))+2<=
+			LEN(CAST(@tmetrtr as varchar(20))))
+		BEGIN
+			SET @fmt_str1=LEFT(CAST(@tmetrtr as varchar(20)),
+				CHARINDEX('.',CAST(@tmetrtr as varchar(20)))+2);
+		END
+		ELSE
+		BEGIN
+			SET @fmt_str1=CAST(@tmetrtr as varchar(20));
+		END
+		
+		IF (CHARINDEX('.',CAST(@timetr as varchar(20)))+2<=
+			LEN(CAST(@timetr as varchar(20))))
+		BEGIN
+			SET @fmt_str2=LEFT(CAST(@timetr as varchar(20)),
+				CHARINDEX('.',CAST(@timetr as varchar(20)))+2);
+		END
+		ELSE
+		BEGIN
+			SET @fmt_str2=CAST(@timetr as varchar(20));
+		END
+		
+		IF (CHARINDEX('.',CAST(@dpart_tarif as varchar(20)))+2<=
+			LEN(CAST(@dpart_tarif as varchar(20))))
+		BEGIN
+			SET @fmt_str3=LEFT(CAST(@dpart_tarif as varchar(20)),
+				CHARINDEX('.',CAST(@dpart_tarif as varchar(20)))+2);
+		END
+		ELSE
+		BEGIN
+			SET @fmt_str3=CAST(@dpart_tarif as varchar(20));
+		END
+		
+		IF (CHARINDEX('.',CAST(@stop_tarif as varchar(20)))+2<=
+			LEN(CAST(@stop_tarif as varchar(20))))
+		BEGIN
+			SET @fmt_str4=LEFT(CAST(@stop_tarif as varchar(20)),
+				CHARINDEX('.',CAST(@stop_tarif as varchar(20)))+2);
+		END
+		ELSE
+		BEGIN
+			SET @fmt_str4=CAST(@stop_tarif as varchar(20));
+		END
+
+		SET @miss_every_nkm_json = ''
+		IF @miss_every_nkm > 0 BEGIN
+			SET @miss_every_nkm_json = '","mek'+
+				CAST(@counter as varchar(20))+'":"'+
+				CAST(@miss_every_nkm as varchar(20));
+		END
+		
+        SET @res=@res+',"tid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@sid as varchar(20))+'","tn'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@sname,'"',' '),'''',' ')+'","tmt'+
+			CAST(@counter as varchar(20))+'":"'+
+			@fmt_str2+'","txt'+
+			CAST(@counter as varchar(20))+'":"'+
+			@fmt_str1+'","ttpi'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@tplan_id as varchar(20))+'","tdip'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@dist_part as varchar(20))+'","tstds'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@dist_start as varchar(20))+'","tdpt'+
+			CAST(@counter as varchar(20))+'":"'+
+			@fmt_str3+'","tspt'+
+			CAST(@counter as varchar(20))+'":"'+
+			@fmt_str4+'","tshn'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@short_name,'"',' '),'''',' ')+'","otarid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@otarid as varchar(20))+'","otplid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@otplid as varchar(20)) + @miss_every_nkm_json + '"'+
+			dbo.GetTarifAreaCoords(@sid, @counter);
+        SET @counter=@counter+1;
+		/*Выбираем следующую строку*/
+		FETCH NEXT FROM @CURSOR INTO @sid, @sname, @timetr, @tmetrtr, @tplan_id, @short_name, @dist_part, @dpart_tarif, @stop_tarif, @dist_start, @otarid, @otplid, @miss_every_nkm
+	END
+	CLOSE @CURSOR
+	
+	END
+	ELSE
+	BEGIN
+		SET @res=@res+'0"';	
+	END;
+	
+	SELECT @scount=COUNT(*)  
+	FROM ORDER_OPTION oo INNER JOIN PRICE_POLICY pp 
+	ON oo.PR_POLICY_ID = pp.id 
+	WHERE pp.company_id = @company_id ;
+	
+	SET @res=@res+',"op_cnt":"';
+	SET @counter = 0;
+	
+	IF (@scount>0)
+	BEGIN
+	
+	SET @res=@res+CAST(@scount as varchar(20))+'"';
+	
+	SET @CURSOR  = CURSOR SCROLL
+	FOR
+	SELECT oo.ID, oo.OPTION_NAME, oo.OSUMM_COEFF, oo.OS_COMPOSED, oo.PR_POLICY_ID, oo.SHORT_NAME  
+	FROM ORDER_OPTION oo INNER JOIN PRICE_POLICY pp 
+	ON oo.PR_POLICY_ID = pp.id 
+	WHERE pp.company_id = @company_id  
+	ORDER BY oo.ID ASC;
+	/*Открываем курсор*/
+	OPEN @CURSOR
+	/*Выбираем первую строку*/
+	FETCH NEXT FROM @CURSOR INTO @sid, @sname, @os_coeff, @os_comp, @tplan_id, @short_name
+	/*Выполняем в цикле перебор строк*/
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+
+        IF (CHARINDEX('.',CAST(@os_coeff as varchar(20)))+2<=
+			LEN(CAST(@os_coeff as varchar(20))))
+		BEGIN
+			SET @fmt_str1=LEFT(CAST(@os_coeff as varchar(20)),
+				CHARINDEX('.',CAST(@os_coeff as varchar(20)))+2);
+		END
+		ELSE
+		BEGIN
+			SET @fmt_str1=CAST(@os_coeff as varchar(20));
+		END
+		IF (CHARINDEX('.',CAST(@os_comp as varchar(20)))+2<=
+			LEN(CAST(@os_comp as varchar(20))))
+		BEGIN
+			SET @fmt_str2=LEFT(CAST(@os_comp as varchar(20)),
+				CHARINDEX('.',CAST(@os_comp as varchar(20)))+2);
+		END
+		ELSE
+		BEGIN
+			SET @fmt_str2=CAST(@os_comp as varchar(20));
+		END
+        
+        SET @res=@res+',"oid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@sid as varchar(20))+'","on'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@sname,'"',' '),'''',' ')+'","oscf'+
+			CAST(@counter as varchar(20))+'":"'+
+			@fmt_str1+'","oscm'+
+			CAST(@counter as varchar(20))+'":"'+
+			@fmt_str2+'","otpi'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@tplan_id as varchar(20))+'","oshn'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@short_name,'"',' '),'''',' ')+'"';
+        SET @counter=@counter+1;
+		/*Выбираем следующую строку*/
+		FETCH NEXT FROM @CURSOR INTO @sid, @sname, @os_coeff, @os_comp, @tplan_id, @short_name
+	END
+	CLOSE @CURSOR
+	
+	END
+	ELSE
+	BEGIN
+		SET @res=@res+'0"';	
+	END;
+	
+	-----------------------
+	SELECT @scount=COUNT(*)  
+	FROM PRICE_POLICY WHERE company_id = @company_id;
+	
+	SET @res=@res+',"tpl_cnt":"';
+	SET @counter = 0;
+	
+	IF (@scount>0)
+	BEGIN
+	
+	SET @res=@res+CAST(@scount as varchar(20))+'"';
+	
+	SET @CURSOR  = CURSOR SCROLL
+	FOR
+	SELECT ID, POLICY_NAME, SHORT_NAME  
+	FROM PRICE_POLICY WHERE company_id = @company_id ORDER BY ID ASC;
+	/*Открываем курсор*/
+	OPEN @CURSOR
+	/*Выбираем первую строку*/
+	FETCH NEXT FROM @CURSOR INTO @sid, @sname, @short_name
+	/*Выполняем в цикле перебор строк*/
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+
+        SET @res=@res+',"tpid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@sid as varchar(20))+'","tpn'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@sname,'"',' '),'''',' ')+'","tpshn'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@short_name,'"',' '),'''',' ')+'"';
+        SET @counter=@counter+1;
+		/*Выбираем следующую строку*/
+		FETCH NEXT FROM @CURSOR INTO @sid, @sname, @short_name
+	END
+	CLOSE @CURSOR
+	
+	END
+	ELSE
+	BEGIN
+		SET @res=@res+'0"';	
+	END;
+
+	RETURN(@res)
+END
+
+GO
+/****** Object:  UserDefinedFunction [dbo].[GetJSONDriverEarlyOrders]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1611,7 +1888,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetJSONDriverOrdersBCasts]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONDriverOrdersBCasts]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1742,7 +2019,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetJSONDriverSettings]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONDriverSettings]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2040,7 +2317,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetJSONDriversList]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONDriversList]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2114,7 +2391,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetJSONOrdersBCasts]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONOrdersBCasts]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2237,7 +2514,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetJSONSectorList]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONSectorList]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2324,7 +2601,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetJSONSectorsStatus]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONSectorsStatus]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2384,7 +2661,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetJSONTarifAndOptionsList]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONTarifAndOptionsList]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2395,269 +2672,103 @@ RETURNS varchar(max)
 AS
 BEGIN
 	declare @res varchar(max);
-	DECLARE @CURSOR cursor;
-	DECLARE @sid int, @scount int,
-		@sname varchar(255), @counter int,
-		@timetr decimal(28,10), @tmetrtr decimal(28,10),
-		@os_coeff decimal(28,10), @os_comp decimal(28,10),
-		@tplan_id int, @short_name varchar(20), 
-		@miss_every_nkm int, @policy_id int;
+	DECLARE @company_id int;
    
-	SET @res='{"command":"to_lst","t_cnt":"';
-	SET @counter = 0;
-	SET @policy_id = -1;
+	SET @res='{"command":"to_lst"';
+	--SET @counter = 0;
+	--SET @policy_id = -1;
 
-	SELECT @policy_id = gv.PR_POLICY_ID
+	SELECT @company_id = gv.BOLD_ID --@policy_id = gv.PR_POLICY_ID, 
 	FROM Voditelj dr INNER JOIN Gruppa_voditelei gv ON dr.otnositsya_k_gruppe = gv.BOLD_ID
 	WHERE dr.BOLD_ID = @driver_id;
 
-	IF @@ROWCOUNT <= 0 BEGIN
-		SET @policy_id = -1;
-		SELECT @policy_id = dr.PR_POLICY_ID
-		FROM Voditelj dr
-		WHERE dr.BOLD_ID = @driver_id;
+	IF @@ROWCOUNT = 1 BEGIN
+		--SET @policy_id = -1;
+		--SET @company_id = -1;
 
-		IF @@ROWCOUNT <= 0 BEGIN
-			SET @policy_id = -1;
-		END;
-	END;
-	
-	SELECT @scount=COUNT(*)  
-	FROM ORDER_TARIF WHERE PR_POLICY_ID = @policy_id OR @policy_id <= 0;
-	
-	DECLARE @fmt_str1 varchar(50), @fmt_str2 varchar(50), 
-		@fmt_str3 varchar(50), @fmt_str4 varchar(50), 
-		@dist_part int, @dpart_tarif decimal(28, 10), 
-		@stop_tarif decimal(28, 10), @dist_start int,
-		@otarid int, @otplid int, @miss_every_nkm_json varchar(100);
-	
-	IF (@scount>0)
-	BEGIN
-	
-	SET @res=@res+CAST(@scount as varchar(20))+'"';
-	
-	SET @CURSOR  = CURSOR SCROLL
-	FOR
-	SELECT ID, TARIF_NAME, TIME_TARIF, TMETER_TARIF, PR_POLICY_ID, SHORT_NAME, DISTANCE_PART, DPART_TARIF, STOP_TARIF, DISTANCE_START, outher_tarid, outher_tplid, miss_every_nkm  
-	FROM ORDER_TARIF WHERE PR_POLICY_ID = @policy_id OR @policy_id <= 0 ORDER BY ID ASC;
-	/*Открываем курсор*/
-	OPEN @CURSOR
-	/*Выбираем первую строку*/
-	FETCH NEXT FROM @CURSOR INTO @sid, @sname, @timetr, @tmetrtr, @tplan_id, @short_name, @dist_part, @dpart_tarif, @stop_tarif, @dist_start, @otarid, @otplid, @miss_every_nkm
-	/*Выполняем в цикле перебор строк*/
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
+		SET @res = @res + dbo.GetJSONCompanyTOList(@company_id);
+		--SELECT @policy_id = dr.PR_POLICY_ID
+		--FROM Voditelj dr
+		--WHERE dr.BOLD_ID = @driver_id;
 
-        
-        IF (CHARINDEX('.',CAST(@tmetrtr as varchar(20)))+2<=
-			LEN(CAST(@tmetrtr as varchar(20))))
-		BEGIN
-			SET @fmt_str1=LEFT(CAST(@tmetrtr as varchar(20)),
-				CHARINDEX('.',CAST(@tmetrtr as varchar(20)))+2);
-		END
-		ELSE
-		BEGIN
-			SET @fmt_str1=CAST(@tmetrtr as varchar(20));
-		END
-		
-		IF (CHARINDEX('.',CAST(@timetr as varchar(20)))+2<=
-			LEN(CAST(@timetr as varchar(20))))
-		BEGIN
-			SET @fmt_str2=LEFT(CAST(@timetr as varchar(20)),
-				CHARINDEX('.',CAST(@timetr as varchar(20)))+2);
-		END
-		ELSE
-		BEGIN
-			SET @fmt_str2=CAST(@timetr as varchar(20));
-		END
-		
-		IF (CHARINDEX('.',CAST(@dpart_tarif as varchar(20)))+2<=
-			LEN(CAST(@dpart_tarif as varchar(20))))
-		BEGIN
-			SET @fmt_str3=LEFT(CAST(@dpart_tarif as varchar(20)),
-				CHARINDEX('.',CAST(@dpart_tarif as varchar(20)))+2);
-		END
-		ELSE
-		BEGIN
-			SET @fmt_str3=CAST(@dpart_tarif as varchar(20));
-		END
-		
-		IF (CHARINDEX('.',CAST(@stop_tarif as varchar(20)))+2<=
-			LEN(CAST(@stop_tarif as varchar(20))))
-		BEGIN
-			SET @fmt_str4=LEFT(CAST(@stop_tarif as varchar(20)),
-				CHARINDEX('.',CAST(@stop_tarif as varchar(20)))+2);
-		END
-		ELSE
-		BEGIN
-			SET @fmt_str4=CAST(@stop_tarif as varchar(20));
-		END
-
-		SET @miss_every_nkm_json = ''
-		IF @miss_every_nkm > 0 BEGIN
-			SET @miss_every_nkm_json = '","mek'+
-				CAST(@counter as varchar(20))+'":"'+
-				CAST(@miss_every_nkm as varchar(20));
-		END
-		
-        SET @res=@res+',"tid'+
-			CAST(@counter as varchar(20))+'":"'+
-			CAST(@sid as varchar(20))+'","tn'+
-			CAST(@counter as varchar(20))+'":"'+
-			REPLACE(REPLACE(@sname,'"',' '),'''',' ')+'","tmt'+
-			CAST(@counter as varchar(20))+'":"'+
-			@fmt_str2+'","txt'+
-			CAST(@counter as varchar(20))+'":"'+
-			@fmt_str1+'","ttpi'+
-			CAST(@counter as varchar(20))+'":"'+
-			CAST(@tplan_id as varchar(20))+'","tdip'+
-			CAST(@counter as varchar(20))+'":"'+
-			CAST(@dist_part as varchar(20))+'","tstds'+
-			CAST(@counter as varchar(20))+'":"'+
-			CAST(@dist_start as varchar(20))+'","tdpt'+
-			CAST(@counter as varchar(20))+'":"'+
-			@fmt_str3+'","tspt'+
-			CAST(@counter as varchar(20))+'":"'+
-			@fmt_str4+'","tshn'+
-			CAST(@counter as varchar(20))+'":"'+
-			REPLACE(REPLACE(@short_name,'"',' '),'''',' ')+'","otarid'+
-			CAST(@counter as varchar(20))+'":"'+
-			CAST(@otarid as varchar(20))+'","otplid'+
-			CAST(@counter as varchar(20))+'":"'+
-			CAST(@otplid as varchar(20)) + @miss_every_nkm_json + '"'+
-			dbo.GetTarifAreaCoords(@sid, @counter);
-        SET @counter=@counter+1;
-		/*Выбираем следующую строку*/
-		FETCH NEXT FROM @CURSOR INTO @sid, @sname, @timetr, @tmetrtr, @tplan_id, @short_name, @dist_part, @dpart_tarif, @stop_tarif, @dist_start, @otarid, @otplid, @miss_every_nkm
-	END
-	CLOSE @CURSOR
-	
-	END
-	ELSE
-	BEGIN
-		SET @res=@res+'0"';	
-	END;
-	
-	SELECT @scount=COUNT(*)  
-	FROM ORDER_OPTION WHERE PR_POLICY_ID = @policy_id OR @policy_id <= 0;
-	
-	SET @res=@res+',"op_cnt":"';
-	SET @counter = 0;
-	
-	IF (@scount>0)
-	BEGIN
-	
-	SET @res=@res+CAST(@scount as varchar(20))+'"';
-	
-	SET @CURSOR  = CURSOR SCROLL
-	FOR
-	SELECT ID, OPTION_NAME, OSUMM_COEFF, OS_COMPOSED, PR_POLICY_ID, SHORT_NAME  
-	FROM ORDER_OPTION WHERE PR_POLICY_ID = @policy_id OR @policy_id <= 0 ORDER BY ID ASC;
-	/*Открываем курсор*/
-	OPEN @CURSOR
-	/*Выбираем первую строку*/
-	FETCH NEXT FROM @CURSOR INTO @sid, @sname, @os_coeff, @os_comp, @tplan_id, @short_name
-	/*Выполняем в цикле перебор строк*/
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-
-        IF (CHARINDEX('.',CAST(@os_coeff as varchar(20)))+2<=
-			LEN(CAST(@os_coeff as varchar(20))))
-		BEGIN
-			SET @fmt_str1=LEFT(CAST(@os_coeff as varchar(20)),
-				CHARINDEX('.',CAST(@os_coeff as varchar(20)))+2);
-		END
-		ELSE
-		BEGIN
-			SET @fmt_str1=CAST(@os_coeff as varchar(20));
-		END
-		IF (CHARINDEX('.',CAST(@os_comp as varchar(20)))+2<=
-			LEN(CAST(@os_comp as varchar(20))))
-		BEGIN
-			SET @fmt_str2=LEFT(CAST(@os_comp as varchar(20)),
-				CHARINDEX('.',CAST(@os_comp as varchar(20)))+2);
-		END
-		ELSE
-		BEGIN
-			SET @fmt_str2=CAST(@os_comp as varchar(20));
-		END
-        
-        SET @res=@res+',"oid'+
-			CAST(@counter as varchar(20))+'":"'+
-			CAST(@sid as varchar(20))+'","on'+
-			CAST(@counter as varchar(20))+'":"'+
-			REPLACE(REPLACE(@sname,'"',' '),'''',' ')+'","oscf'+
-			CAST(@counter as varchar(20))+'":"'+
-			@fmt_str1+'","oscm'+
-			CAST(@counter as varchar(20))+'":"'+
-			@fmt_str2+'","otpi'+
-			CAST(@counter as varchar(20))+'":"'+
-			CAST(@tplan_id as varchar(20))+'","oshn'+
-			CAST(@counter as varchar(20))+'":"'+
-			REPLACE(REPLACE(@short_name,'"',' '),'''',' ')+'"';
-        SET @counter=@counter+1;
-		/*Выбираем следующую строку*/
-		FETCH NEXT FROM @CURSOR INTO @sid, @sname, @os_coeff, @os_comp, @tplan_id, @short_name
-	END
-	CLOSE @CURSOR
-	
-	END
-	ELSE
-	BEGIN
-		SET @res=@res+'0"';	
-	END;
-	
-	-----------------------
-	SELECT @scount=COUNT(*)  
-	FROM PRICE_POLICY WHERE ID = @policy_id OR @policy_id <= 0;
-	
-	SET @res=@res+',"tpl_cnt":"';
-	SET @counter = 0;
-	
-	IF (@scount>0)
-	BEGIN
-	
-	SET @res=@res+CAST(@scount as varchar(20))+'"';
-	
-	SET @CURSOR  = CURSOR SCROLL
-	FOR
-	SELECT ID, POLICY_NAME, SHORT_NAME  
-	FROM PRICE_POLICY WHERE ID = @policy_id OR @policy_id <= 0 ORDER BY ID ASC;
-	/*Открываем курсор*/
-	OPEN @CURSOR
-	/*Выбираем первую строку*/
-	FETCH NEXT FROM @CURSOR INTO @sid, @sname, @short_name
-	/*Выполняем в цикле перебор строк*/
-	WHILE @@FETCH_STATUS = 0
-	BEGIN
-
-        SET @res=@res+',"tpid'+
-			CAST(@counter as varchar(20))+'":"'+
-			CAST(@sid as varchar(20))+'","tpn'+
-			CAST(@counter as varchar(20))+'":"'+
-			REPLACE(REPLACE(@sname,'"',' '),'''',' ')+'","tpshn'+
-			CAST(@counter as varchar(20))+'":"'+
-			REPLACE(REPLACE(@short_name,'"',' '),'''',' ')+'"';
-        SET @counter=@counter+1;
-		/*Выбираем следующую строку*/
-		FETCH NEXT FROM @CURSOR INTO @sid, @sname, @short_name
-	END
-	CLOSE @CURSOR
-	
-	END
-	ELSE
-	BEGIN
-		SET @res=@res+'0"';	
+		--IF @@ROWCOUNT <= 0 BEGIN
+		--	SET @policy_id = -1;
+		--END;
 	END;
 	------------------------------
 	
-	SET @res=@res+',"msg_end":"ok"}';
+	SET @res = @res + ',"msg_end":"ok"}';
 
 	RETURN(@res)
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetNearestBeginEndDate]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetJSONWaitTimesList]    Script Date: 09.05.2019 23:45:49 ******/
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+CREATE FUNCTION [dbo].[GetJSONWaitTimesList] ()
+RETURNS varchar(max)
+AS
+BEGIN
+	declare @res varchar(max);
+	DECLARE @CURSOR cursor;
+	DECLARE @wid int, @tval smallint, @wcount int,
+		@sector_name varchar(255), @counter int, @for_all smallint, 
+		@scompany_id int;
+   
+	SET @res='"wc":"';
+	SET @counter = 0;
+	
+	SELECT @wcount=COUNT(*)  
+	FROM WAIT_TIMES;
+
+	IF (@wcount>0)
+	BEGIN
+	
+	SET @res=@res+CAST(@wcount as varchar(20))+'",';
+	
+	SET @CURSOR  = CURSOR SCROLL
+	FOR
+	SELECT wt.id, wt.tval  
+	FROM WAIT_TIMES wt;
+	/*Открываем курсор*/
+	OPEN @CURSOR
+	/*Выбираем первую строку*/
+	FETCH NEXT FROM @CURSOR INTO @wid, @tval
+	/*Выполняем в цикле перебор строк*/
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+
+        SET @res=@res+'"id'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@wid as varchar(20));
+
+		SET @res=@res + '","tv'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@tval as varchar(20)) + '",';
+
+        SET @counter=@counter+1;
+		/*Выбираем следующую строку*/
+		FETCH NEXT FROM @CURSOR INTO @wid, @tval
+	END
+	CLOSE @CURSOR
+	
+	END
+	ELSE
+	BEGIN
+		SET @res=@res+'0",';	
+	END;
+
+	RETURN(@res)
+END
+
+
+GO
+/****** Object:  UserDefinedFunction [dbo].[GetNearestBeginEndDate]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2692,7 +2803,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetOrderAMICommand]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetOrderAMICommand]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2710,13 +2821,15 @@ BEGIN
 	@call_demon_netsip_name varchar(50), @demon_call_ctx varchar(50),
 	@demon_call_virtext varchar(50), @demon_call_priority varchar(20),
 	@demon_call_timeout varchar(20), @demon_callerid varchar(50),
-	@waiting int;
+	@waiting int, @state_phone_code varchar(50);
    
    select @call_demon_locsip_name=call_demon_locsip_name,
 		@demon_call_ctx=demon_call_ctx, @demon_call_virtext=demon_call_virtext,
 		@demon_call_priority=demon_call_priority, @demon_call_timeout=demon_call_timeout,
-		@demon_callerid=demon_callerid
+		@demon_callerid=demon_callerid, @state_phone_code = state_phone_code
    from Objekt_vyborki_otchyotnosti where Tip_objekta='for_drivers'
+
+   SET @state_phone_code = ISNULL(@state_phone_code, '+7');
    
    IF (@@ROWCOUNT>0) BEGIN
    SELECT @clphone=Telefon_klienta, @dr_id=vypolnyaetsya_voditelem,
@@ -2756,7 +2869,7 @@ BEGIN
 		END;
 
 		SET @res = 'Action: Originate***___CRLF'+
-		'Channel: SIP/'+@call_demon_locsip_name+'/+7'+@clphone+'***___CRLF'+
+		'Channel: SIP/'+@call_demon_locsip_name + '/' + @state_phone_code + @clphone+'***___CRLF'+
 		'Context: '+@demon_call_ctx+'***___CRLF'+
 		'Exten: '+@demon_call_virtext+'***___CRLFPriority: '+
 		@demon_call_priority+'***___CRLF'+
@@ -2784,7 +2897,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetOrderINumComment]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetOrderINumComment]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2821,7 +2934,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetOrderOnPlaceAMICommand]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetOrderOnPlaceAMICommand]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2840,14 +2953,17 @@ BEGIN
 	@call_demon_netsip_name varchar(50), @demon_call_ctx varchar(50),
 	@demon_call_virtext varchar(50), @demon_call_priority varchar(20),
 	@demon_call_timeout varchar(20), @demon_callerid varchar(50),
-	@onplace_first_song_code int;
+	@onplace_first_song_code int, @state_phone_code varchar(50);
    
    select @call_demon_locsip_name=call_demon_locsip_name,
 		@demon_call_ctx=demon_call_ctx, @demon_call_virtext=demon_call_virtext,
 		@demon_call_priority=demon_call_priority, @demon_call_timeout=demon_call_timeout,
 		@demon_callerid=demon_callerid, 
-		@onplace_first_song_code = onplace_first_song_code
+		@onplace_first_song_code = onplace_first_song_code, 
+		@state_phone_code = state_phone_code
    from Objekt_vyborki_otchyotnosti where Tip_objekta='for_drivers'
+
+   SET @state_phone_code = ISNULL(@state_phone_code, '+7');
    
    IF (@@ROWCOUNT>0) BEGIN
    SELECT @clphone=Telefon_klienta, @dr_id=vypolnyaetsya_voditelem 
@@ -2861,7 +2977,7 @@ BEGIN
    SET @res = ISNULL(@res, 'NONE');
    IF (@@ROWCOUNT > 0 AND ISNULL(@avar2, 0) > 0) BEGIN
 		SET @res = 'Action: Originate***___CRLF'+
-		'Channel: SIP/'+@call_demon_locsip_name+'/+7'+@clphone+'***___CRLF'+
+		'Channel: SIP/'+@call_demon_locsip_name + '/' + @state_phone_code + @clphone+'***___CRLF'+
 		'Context: '+@demon_call_ctx+'***___CRLF'+
 		'Exten: '+@demon_call_virtext+'***___CRLFPriority: '+
 		@demon_call_priority+'***___CRLF'+
@@ -2887,7 +3003,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetOrdOptsStrByOComb]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetOrdOptsStrByOComb]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2941,7 +3057,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetOrdTarifNameByTId]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetOrdTarifNameByTId]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2965,7 +3081,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetPrevCustComment]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetPrevCustComment]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -2997,7 +3113,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetRemoteCustComment]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetRemoteCustComment]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3053,16 +3169,21 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetRemoteOrderStatusInfo]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetRemoteOrderStatusInfo]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
 GO
-CREATE FUNCTION [dbo].[GetRemoteOrderStatusInfo]  ( @REMOTE_SET int, @WAITING int)
+CREATE FUNCTION [dbo].[GetRemoteOrderStatusInfo]  ( @REMOTE_SET int, @WAITING int, @on_place smallint)
 RETURNS varchar(255)
 AS
 BEGIN
-   declare @res varchar(255)
+   declare @res varchar(255), @waiting_msg varchar(50);
+
+   SET @waiting_msg = '';
+   IF @WAITING > 0 AND @on_place = 0 BEGIN
+	SET @waiting_msg = '(' + CAST(@WAITING as varchar(20)) + ' мин.)'
+   END;
 
    SET @res='.....'
    
@@ -3108,7 +3229,7 @@ BEGIN
        end 
 
 	   else if (@REMOTE_SET = 8)  begin
-        SET @res='На исполнении'
+        SET @res= 'На исполнении'
        end 
 
 	   else if (@REMOTE_SET = 9)  begin
@@ -3189,10 +3310,10 @@ BEGIN
 
    end
 
-   RETURN(@res)
+   RETURN(@waiting_msg + @res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetSDSumm]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetSDSumm]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3211,7 +3332,7 @@ CAST(DATEPART(dd, nachalo_zakaza_data)as varchar(2)))
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetSectorAreaCoords]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetSectorAreaCoords]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3300,7 +3421,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetSectorDrCount]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetSectorDrCount]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3322,7 +3443,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetSendSMSCustComment]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetSendSMSCustComment]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3374,7 +3495,7 @@ BEGIN
 	RETURN(@dr_res+' '+@cl_res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetSetManualAddrChange]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetSetManualAddrChange]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3394,7 +3515,7 @@ BEGIN
 	RETURN(@set_manual_addr_change)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetSpecCustComment]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetSpecCustComment]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3425,7 +3546,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetStartSector]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetStartSector]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3452,7 +3573,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetTarifAreaCoords]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetTarifAreaCoords]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3539,7 +3660,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetTarTaxTariff]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetTarTaxTariff]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3565,7 +3686,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetTarTimeTariff]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetTarTimeTariff]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3591,7 +3712,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[GetUseDrBCounter]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[GetUseDrBCounter]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3610,7 +3731,7 @@ BEGIN
 END
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[isCallTimeExpired]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[isCallTimeExpired]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -3650,7 +3771,7 @@ END
 
 
 GO
-/****** Object:  UserDefinedFunction [dbo].[isSMSWithCallRaplace]    Script Date: 23.02.2019 0:37:38 ******/
+/****** Object:  UserDefinedFunction [dbo].[isSMSWithCallRaplace]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF

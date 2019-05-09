@@ -1,4 +1,4 @@
-USE [TD5R1081218SB]
+USE [TD5R1]
 GO
 
 ------------------------------------------------------
@@ -351,7 +351,12 @@ IF OBJECT_ID('dbo.InsertOrderWithParamsRClientWCoords') IS NOT NULL
 DROP PROCEDURE [dbo].[InsertOrderWithParamsRClientWCoords]
 GO
 
-/****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[GetDailyTaxParams]    Script Date: 08.12.2018 6:54:15 ******/
+IF OBJECT_ID('dbo.GetDailyTaxParams') IS NOT NULL
+DROP PROCEDURE [dbo].[GetDailyTaxParams]
+GO
+
+/****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -383,7 +388,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ApplyRClientCoords]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[ApplyRClientCoords]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -409,7 +414,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[AssignDriverByNumOnOrder]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[AssignDriverByNumOnOrder]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -451,7 +456,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[AssignDriverOnOrder]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[AssignDriverOnOrder]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -532,7 +537,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[AutoAssignDriverByCoords]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[AutoAssignDriverByCoords]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -548,10 +553,12 @@ BEGIN
 	@lat decimal(28,10), @lon decimal(28,10),
 	@latDr decimal(28,10), @lonDr decimal(28,10),
 	@aass_driver_max_radius int, @driver_id int,
-	@autoasg_drby_coord_by_rating smallint;
+	@autoasg_drby_coord_by_rating smallint,
+	@use_rating_levels smallint;
 
 	SELECT @aass_driver_max_radius = aass_driver_max_radius,
-	@autoasg_drby_coord_by_rating = autoasg_drby_coord_by_rating
+	@autoasg_drby_coord_by_rating = autoasg_drby_coord_by_rating,
+	@use_rating_levels = use_rating_levels
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
 
@@ -565,19 +572,30 @@ BEGIN
 		IF @lat > -250 AND @lat < 250 AND @lon > -250 AND @lon < 250 BEGIN
 
 			IF @autoasg_drby_coord_by_rating = 1 BEGIN
-				SELECT TOP 1 @latDr = CAST(last_lat as decimal(28, 10)), 
-				@lonDr = CAST(last_lon as decimal(28, 10)), @driver_id = BOLD_ID FROM Voditelj
-				WHERE last_lat <> '' AND last_lon <> '' AND (ABS(DATEDIFF(minute, last_cctime, GETDATE())) < 10) 
-				AND Zanyat_drugim_disp = 0 AND V_rabote = 1 AND Na_pereryve = 0 AND
-				dbo.DistanceBetweenTwoCoords(@lat, @lon, CAST(last_lat as decimal(28, 10)), 
-				CAST(last_lon as decimal(28, 10))) < (@aass_driver_max_radius/1000)
-				ORDER BY dbo.GetDriverRating(BOLD_ID) DESC;
+				IF @use_rating_levels = 1 BEGIN
+					SELECT TOP 1 @latDr = CAST(last_lat as decimal(28, 10)), 
+					@lonDr = CAST(last_lon as decimal(28, 10)), @driver_id = BOLD_ID FROM Voditelj
+					WHERE last_lat <> '' AND last_lon <> '' AND (ABS(DATEDIFF(minute, last_cctime, GETDATE())) < 10) 
+					AND Zanyat_drugim_disp = 0 AND V_rabote = 1 AND Na_pereryve = 0 AND dont_auto_asgn_by_radius <> 1 AND 
+					dbo.DistanceBetweenTwoCoords(@lat, @lon, CAST(last_lat as decimal(28, 10)), 
+					CAST(last_lon as decimal(28, 10))) < (@aass_driver_max_radius/1000)
+					ORDER BY dbo.GetDriverRatingLevel(BOLD_ID) DESC, Vremya_poslednei_zayavki ASC;
+				END
+				ELSE BEGIN
+					SELECT TOP 1 @latDr = CAST(last_lat as decimal(28, 10)), 
+					@lonDr = CAST(last_lon as decimal(28, 10)), @driver_id = BOLD_ID FROM Voditelj
+					WHERE last_lat <> '' AND last_lon <> '' AND (ABS(DATEDIFF(minute, last_cctime, GETDATE())) < 10) 
+					AND Zanyat_drugim_disp = 0 AND V_rabote = 1 AND Na_pereryve = 0 AND dont_auto_asgn_by_radius <> 1 AND 
+					dbo.DistanceBetweenTwoCoords(@lat, @lon, CAST(last_lat as decimal(28, 10)), 
+					CAST(last_lon as decimal(28, 10))) < (@aass_driver_max_radius/1000)
+					ORDER BY dbo.GetDriverRating(BOLD_ID) DESC;
+				END;
 			END
 			ELSE BEGIN
 				SELECT TOP 1 @latDr = CAST(last_lat as decimal(28, 10)), 
 				@lonDr = CAST(last_lon as decimal(28, 10)), @driver_id = BOLD_ID FROM Voditelj
 				WHERE last_lat <> '' AND last_lon <> '' AND (ABS(DATEDIFF(minute, last_cctime, GETDATE())) < 10) 
-				AND Zanyat_drugim_disp = 0 AND V_rabote = 1 AND Na_pereryve = 0 
+				AND Zanyat_drugim_disp = 0 AND V_rabote = 1 AND Na_pereryve = 0 AND dont_auto_asgn_by_radius <> 1
 				ORDER BY dbo.DistanceBetweenTwoCoords(@lat, @lon, CAST(last_lat as decimal(28, 10)), 
 				CAST(last_lon as decimal(28, 10))) ASC;
 			END;
@@ -602,15 +620,22 @@ BEGIN
 
 END
 
-GO
 
-/****** Object:  StoredProcedure [dbo].[AutoSetFromPretendents]    Script Date: 02.03.2019 23:23:19 ******/
+
+
+
+
+
+
+
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[AutoSetFromPretendents]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 
 
@@ -661,29 +686,34 @@ BEGIN
 
 		IF @use_rating_levels = 1 BEGIN
 			SELECT TOP 1 @driver_id=oa.DRIVER_ID 
-			FROM ORDER_ACCEPTING oa 
+			FROM ORDER_ACCEPTING oa INNER JOIN Voditelj dr ON oa.DRIVER_ID = dr.BOLD_ID
 			WHERE oa.ORDER_ID=@order_id
-			ORDER BY dbo.GetDriverRatingLevel(oa.DRIVER_ID) DESC, oa.ACCEPT_DATE ASC;
+			ORDER BY dbo.GetDriverRatingLevel(oa.DRIVER_ID) DESC, 
+			dr.Vremya_poslednei_zayavki ASC;
+
+			SET @accept_count = @@ROWCOUNT;
 		END
 		ELSE BEGIN
 			SELECT TOP 1 @driver_id=oa.DRIVER_ID 
 			FROM ORDER_ACCEPTING oa 
 			WHERE oa.ORDER_ID=@order_id
 			ORDER BY dbo.GetDriverRating(oa.DRIVER_ID) DESC, oa.ACCEPT_DATE ASC;
-		END;
 
-		SET @accept_count = @@ROWCOUNT;
+			SET @accept_count = @@ROWCOUNT;
+		END;
 	END
 	ELSE BEGIN
-		SELECT @accept_count=COUNT(*) FROM
-		ORDER_ACCEPTING WHERE ORDER_ID=@order_id
-		AND DRIVER_NUM=@order_dr_num;
+		if (@sort_with_accept>0) BEGIN
+			SELECT @accept_count=COUNT(*) FROM
+			ORDER_ACCEPTING WHERE ORDER_ID=@order_id
+			AND DRIVER_NUM=@order_dr_num;
 	
-		SELECT TOP 1 @driver_id=oa.DRIVER_ID 
-		FROM ORDER_ACCEPTING oa 
-		WHERE oa.ORDER_ID=@order_id AND 
-		oa.DRIVER_NUM=@order_dr_num
-		ORDER BY oa.ACCEPT_DATE DESC;
+			SELECT TOP 1 @driver_id=oa.DRIVER_ID 
+			FROM ORDER_ACCEPTING oa 
+			WHERE oa.ORDER_ID=@order_id AND 
+			oa.DRIVER_NUM=@order_dr_num
+			ORDER BY oa.ACCEPT_DATE DESC;
+		END;
 	END;
 	
 	--SELECT TOP 1 @driver_id=dr.BOLD_ID 
@@ -763,6 +793,8 @@ BEGIN
 			ON oa.DRIVER_ID=dr.BOLD_ID
 			WHERE oa.ORDER_ID=@order_id
 			ORDER BY dr.Vremya_poslednei_zayavki ASC;
+
+			SET @dr_count=@@ROWCOUNT;
 			
 			end;
 		END;
@@ -798,8 +830,7 @@ END
 
 
 GO
-
-/****** Object:  StoredProcedure [dbo].[AutoSetOrderFinished]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[AutoSetOrderFinished]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -860,7 +891,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[CalcBonusSumm]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[CalcBonusSumm]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -958,7 +989,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[CancelOrdersRClient]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[CancelOrdersRClient]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -989,7 +1020,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[CancelOrdersRClientFBot]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[CancelOrdersRClientFBot]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1032,7 +1063,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[CheckClientRegistration]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[CheckClientRegistration]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1178,7 +1209,7 @@ BEGIN
     
 END
 GO
-/****** Object:  StoredProcedure [dbo].[CheckDriverBusy]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[CheckDriverBusy]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1274,7 +1305,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[CheckDriversRatingExpires]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[CheckDriversRatingExpires]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1302,7 +1333,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ClearOrderAcceptByDrId]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[ClearOrderAcceptByDrId]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1330,7 +1361,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ClearOrderAcceptByDrNum]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[ClearOrderAcceptByDrNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1358,7 +1389,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[DecrementDrOrdPriorities]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[DecrementDrOrdPriorities]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1415,7 +1446,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[FixOrderAccepting]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[FixOrderAccepting]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1435,7 +1466,39 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetDrDateCalcBalance]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[GetDailyTaxParams]    Script Date: 10.05.2019 0:05:05 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[GetDailyTaxParams] 
+	-- Add the parameters for the stored procedure here
+	(@tax_percent decimal(18, 5) OUTPUT, @fix_payment decimal(18, 5) OUTPUT, 
+	@no_percent_max_summ decimal(18, 5) OUTPUT, @no_percent_ms_payment decimal(18, 5) OUTPUT)
+AS
+BEGIN   
+	DECLARE @startOfToday datetime, @now datetime;
+
+	SET @startOfToday = DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0);
+	SET @now = GETDATE();
+	SET @tax_percent = ISNULL(@tax_percent, 0);
+	SET @fix_payment = ISNULL(@fix_payment, 0);
+	SET @no_percent_max_summ = ISNULL(@no_percent_max_summ, 0);
+	SET @no_percent_ms_payment = ISNULL(@no_percent_ms_payment, 0);
+
+	SELECT TOP 1 @tax_percent = tax_percent, @fix_payment = fix_payment,
+	@no_percent_max_summ = no_percent_max_summ, @no_percent_ms_payment = no_percent_ms_payment
+	FROM DAILY_PARAMS
+	WHERE its_tax_percent = 1 AND start_time < end_time AND 
+	@now > (@startOfToday + start_time) AND @now < (@startOfToday + end_time);
+
+    return
+END
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[GetDrDateCalcBalance]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1514,7 +1577,7 @@ BEGIN
 			
 			SET @DrTakeSumm = ISNULL(@DrTakeSumm,0);
 
-			select @DrSumm=(SUM(Uslovn_stoim)*dbo.GetDrTakePercent(@dr_num)) 
+			select @DrSumm=(SUM(Uslovn_stoim)*dbo.GetDrTakePercent(@dr_num, 0)) 
 			from Zakaz where Nachalo_zakaza_data>@drcalc_start_date and
 			Pozyvnoi_ustan=@dr_num AND Arhivnyi=0 and Zavershyon=1 AND
 			Soobsheno_voditelyu=0
@@ -1547,7 +1610,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetDriverQueuePosition]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[GetDriverQueuePosition]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1607,7 +1670,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetDrLockOnCalcDebt]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[GetDrLockOnCalcDebt]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1686,7 +1749,7 @@ BEGIN
 			
 			SET @DrTakeSumm = ISNULL(@DrTakeSumm,0);
 
-			select @DrSumm=(SUM(Uslovn_stoim)*dbo.GetDrTakePercent(@dr_num)) 
+			select @DrSumm=(SUM(Uslovn_stoim)*dbo.GetDrTakePercent(@dr_num, 0)) 
 			from Zakaz where Nachalo_zakaza_data>@drcalc_start_date and
 			Pozyvnoi_ustan=@dr_num AND Arhivnyi=0 and Zavershyon=1 AND
 			Soobsheno_voditelyu=0
@@ -1720,7 +1783,7 @@ BEGIN
    RETURN(@res)
 END
 GO
-/****** Object:  StoredProcedure [dbo].[GetDrLockOnCalcDebtDyn]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[GetDrLockOnCalcDebtDyn]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS OFF
 GO
 SET QUOTED_IDENTIFIER OFF
@@ -1768,7 +1831,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetJSONDriverStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[GetJSONDriverStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2085,7 +2148,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetJSONRClientStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[GetJSONRClientStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2107,7 +2170,8 @@ BEGIN
 		@tarif_id int, @opt_comb varchar(255), @tplan_id int, 
 		@prev_price decimal(28,10), @cargo_desc varchar(5000), 
 		@end_adres varchar(1000), @client_name varchar(500), 
-		@prev_distance decimal(28,10), @prev_date datetime;
+		@prev_distance decimal(28,10), @prev_date datetime, 
+		@company_id int, @company_name varchar(255);
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -2174,7 +2238,11 @@ BEGIN
 			FOR
 			SELECT BOLD_ID, (Telefon_klienta+
 			':'+Adres_vyzova_vvodim) as order_data,
-			REMOTE_SYNC, WAITING, TARIFF_ID, OPT_COMB_STR, PR_POLICY_ID, REMOTE_SET, on_place, Uslovn_stoim, ISNULL(tmhistory,''), ISNULL(status_accumulate,''), dbo.GetDrJSONCoordsByNum(Pozyvnoi_ustan), CONVERT(varchar, DATEPART(hh, Nachalo_zakaza_data))+':'+CONVERT(varchar, DATEPART(mi, Nachalo_zakaza_data))+' '+CONVERT(varchar, DATEPART(dd, Nachalo_zakaza_data)) + '.' + CONVERT(varchar, DATEPART(mm, Nachalo_zakaza_data)) + '.' + CONVERT(varchar, DATEPART(yyyy, Nachalo_zakaza_data)), rclient_status
+			REMOTE_SYNC, WAITING, TARIFF_ID, OPT_COMB_STR, PR_POLICY_ID, 
+			REMOTE_SET, on_place, Uslovn_stoim, ISNULL(tmhistory,''), 
+			ISNULL(status_accumulate,''), dbo.GetDrJSONCoordsByNum(Pozyvnoi_ustan), 
+			CONVERT(varchar, DATEPART(hh, Nachalo_zakaza_data))+':'+CONVERT(varchar, DATEPART(mi, Nachalo_zakaza_data))+' '+CONVERT(varchar, DATEPART(dd, Nachalo_zakaza_data)) + '.' + CONVERT(varchar, DATEPART(mm, Nachalo_zakaza_data)) + '.' + CONVERT(varchar, DATEPART(yyyy, Nachalo_zakaza_data)), 
+			rclient_status
 			FROM Zakaz ord WHERE 
 			ord.rclient_id=@client_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
@@ -2199,10 +2267,12 @@ BEGIN
 			 ord.rclient_status, ISNULL(dr.Gos_nomernoi_znak,''), ISNULL(dr.Marka_avtomobilya,''),
 			 ISNULL(dr.phone_number, ''),
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
-			ord.Data_predvariteljnaya
+			ord.Data_predvariteljnaya, ord.company_id, sp.Naimenovanie
 			FROM Zakaz ord 
-			LEFT JOIN Voditelj dr ON ord.vypolnyaetsya_voditelem=dr.BOLD_ID  WHERE 
-			ord.rclient_id=@client_id AND
+			LEFT JOIN Voditelj dr ON ord.vypolnyaetsya_voditelem=dr.BOLD_ID  
+			LEFT JOIN Gruppa_voditelei gv ON ord.company_id = gv.BOLD_ID
+			LEFT JOIN Spravochnik sp ON gv.BOLD_ID = sp.BOLD_ID
+			WHERE ord.rclient_id=@client_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
 			AND Zavershyon=0 AND NO_TRANSMITTING=0 
 			AND REMOTE_SET NOT IN(16,100)
@@ -2214,7 +2284,7 @@ BEGIN
 		/*Открываем курсор*/
 		OPEN @CURSOR
 		/*Выбираем первую строку*/
-		FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, @opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, @order_start_date, @rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date;
+		FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, @opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, @order_start_date, @rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @company_id, @company_name;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2314,13 +2384,27 @@ BEGIN
 			REPLACE(REPLACE(ISNULL(@client_name,''),'"',' '),'''',' ')+'"';
 			END;
 
+			IF (ISNULL(@company_id,'')<>'')
+			BEGIN
+			SET @res=@res+',"ocid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@company_id as varchar(20))+'"';
+			END;
+
+			IF (ISNULL(@company_name,'')<>'')
+			BEGIN
+			SET @res=@res+',"ocpn'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(ISNULL(@company_name,''),'"',' '),'''',' ')+'"';
+			END;
+
 			SET @res=@res+',"oprd'+
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(DATEDIFF(second,{d '1970-01-01'},@prev_date) AS varchar(100))+'"';
 
 			SET @counter=@counter+1;
 			/*Выбираем следующую строку*/
-			FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, @opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, @order_start_date, @rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date;
+			FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, @opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, @order_start_date, @rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @company_id, @company_name;
 		END
 		CLOSE @CURSOR
 	END
@@ -2345,7 +2429,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[GetOrderRatingBonus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[GetOrderRatingBonus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2471,7 +2555,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[IncOrdersPriorityById]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[IncOrdersPriorityById]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2509,7 +2593,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[IncrementOrdersPriority]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[IncrementOrdersPriority]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2545,7 +2629,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertCompletedOrder]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertCompletedOrder]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2652,7 +2736,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertDriverRating]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertDriverRating]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2691,7 +2775,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertEvent]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertEvent]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2728,7 +2812,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertEvent2]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertEvent2]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2766,7 +2850,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertEvent3]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertEvent3]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2811,7 +2895,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertFictiveDrOrder]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertFictiveDrOrder]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2864,7 +2948,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertNewDriverIncome]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertNewDriverIncome]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2962,7 +3046,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertNewOrder]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertNewOrder]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3067,7 +3151,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertNewOrderDictItem]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertNewOrderDictItem]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3144,7 +3228,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertNewOrderRetNum]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertNewOrderRetNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3254,7 +3338,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertOnHandAttemptOrder]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertOnHandAttemptOrder]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3292,7 +3376,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertOrderWithParams]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertOrderWithParams]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3365,7 +3449,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsAlt]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsAlt]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3440,7 +3524,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRClient]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRClient]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3521,7 +3605,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRClientEx]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRClientEx]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3603,7 +3687,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRClientFBot]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRClientFBot]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3690,7 +3774,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRClientWCoords]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRClientWCoords]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3777,7 +3861,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRDispatcher]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertOrderWithParamsRDispatcher]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3861,7 +3945,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[InsertOrderWithStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[InsertOrderWithStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -3907,7 +3991,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ManualSetOrderRemoteStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[ManualSetOrderRemoteStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4059,7 +4143,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[MoveOrderToArhived]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[MoveOrderToArhived]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4193,7 +4277,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[MoveOrderToArhived2V]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[MoveOrderToArhived2V]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4293,7 +4377,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[MoveOrdPortionToArhived]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[MoveOrdPortionToArhived]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4427,7 +4511,7 @@ BEGIN
 	
 END
 GO
-/****** Object:  StoredProcedure [dbo].[MoveOrdPortionToArhived2V]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[MoveOrdPortionToArhived2V]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4608,7 +4692,7 @@ BEGIN
 	
 END
 GO
-/****** Object:  StoredProcedure [dbo].[One10SecTask]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[One10SecTask]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4743,7 +4827,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[One3SecTask]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[One3SecTask]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4769,7 +4853,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[OneMinuteTask]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[OneMinuteTask]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4797,7 +4881,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ProceedOperationRequest]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[ProceedOperationRequest]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -4979,6 +5063,11 @@ BEGIN
 
 		SET @op_answer = @op_answer + '"dr_order_late":"ok",';
 	end
+
+	if (@opnm='wtl')
+	begin
+		SET @op_answer = @op_answer + '"wtl":"ok",' + dbo.GetJSONWaitTimesList();
+	end
 	
 	SET @op_answer = @op_answer + '"msg_end":"ok"}';
 	
@@ -4988,7 +5077,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[RealizeReservePresent]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[RealizeReservePresent]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5044,7 +5133,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[RealizeTDEvent]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[RealizeTDEvent]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5072,7 +5161,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[RecalcCurrentOrderRatingBonuses]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[RecalcCurrentOrderRatingBonuses]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5119,7 +5208,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[RecoveryOrder]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[RecoveryOrder]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5244,7 +5333,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[RefreshDrOrdPriorityBroadcasts]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[RefreshDrOrdPriorityBroadcasts]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5298,7 +5387,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ReserveOrderPresent]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[ReserveOrderPresent]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5363,7 +5452,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[ResetRemoteDriversFlags]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[ResetRemoteDriversFlags]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5379,7 +5468,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[RestoreRemoteDriversFlags]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[RestoreRemoteDriversFlags]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5394,7 +5483,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetDriverDailyPaymStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetDriverDailyPaymStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5458,7 +5547,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetDriverFromPretendents]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetDriverFromPretendents]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5528,7 +5617,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetDriverOnLine]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetDriverOnLine]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5545,7 +5634,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetDriverOutLine]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetDriverOutLine]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5568,7 +5657,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetDriverRemoteStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetDriverRemoteStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5723,7 +5812,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetDriverSector]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetDriverSector]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5768,7 +5857,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetDriverSectWBrodcastStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetDriverSectWBrodcastStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5795,7 +5884,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetDriverStatSyncStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetDriverStatSyncStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5845,7 +5934,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetIndOrderSendStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetIndOrderSendStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5872,7 +5961,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOnHandOrderGoStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOnHandOrderGoStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5907,7 +5996,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderCompleteAttemptStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderCompleteAttemptStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -5976,7 +6065,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderCompleteAttemptStatus2]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderCompleteAttemptStatus2]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6048,7 +6137,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderCompleteAttemptStatus3]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderCompleteAttemptStatus3]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6109,7 +6198,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderDispCancelAllowStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderDispCancelAllowStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6144,7 +6233,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderDispCancelAttStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderDispCancelAttStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6180,7 +6269,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderDriverCancelAllowStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderDriverCancelAllowStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6215,7 +6304,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderDriverCancelAttStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderDriverCancelAttStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6248,7 +6337,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderGoStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderGoStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6326,7 +6415,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderOccupAttemptStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderOccupAttemptStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6407,7 +6496,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderOccupAttemptStatus2]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderOccupAttemptStatus2]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6493,7 +6582,7 @@ END
 
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderParam]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderParam]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6534,7 +6623,7 @@ BEGIN
     return
 END
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrderRemoteStatus]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrderRemoteStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6577,7 +6666,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetOrdersWideBroadcasts]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetOrdersWideBroadcasts]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -6624,7 +6713,7 @@ BEGIN
 END
 
 GO
-/****** Object:  StoredProcedure [dbo].[SetWideBroadcasts]    Script Date: 23.02.2019 0:40:28 ******/
+/****** Object:  StoredProcedure [dbo].[SetWideBroadcasts]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
