@@ -3321,15 +3321,38 @@ BEGIN
 				
 				DECLARE @CURSOR cursor, @opt_cnt int;
 				SET @opt_cnt=0;
+
+                DECLARE @startOfToday datetime, @now datetime, @has_cursor smallint;
+
+	            SET @startOfToday = DATEADD(day, DATEDIFF(day, 0, GETDATE()), 0);
+	            SET @now = GETDATE();
+                SET @has_cursor = 0;
 				
-				SELECT ID FROM ORDER_OPTION WHERE IF_DEF=1 
-				AND PR_POLICY_ID=@newPolicyId;
-				IF @@ROWCOUNT>0
+                SELECT ID FROM ORDER_OPTION 
+                WHERE PR_POLICY_ID=@newPolicyId AND start_time < end_time 
+                AND @now > (@startOfToday + start_time) 
+                AND @now < (@startOfToday + end_time);
+
+                IF @@ROWCOUNT>0 BEGIN
+                    SET @CURSOR  = CURSOR SCROLL
+					FOR SELECT ID FROM ORDER_OPTION 
+                    WHERE PR_POLICY_ID=@newPolicyId AND start_time < end_time 
+                    AND @now > (@startOfToday + start_time) 
+                    AND @now < (@startOfToday + end_time);
+                    SET @has_cursor = 1;
+                END ELSE BEGIN
+                    SELECT ID FROM ORDER_OPTION WHERE IF_DEF=1 
+				    AND PR_POLICY_ID=@newPolicyId;
+                    IF @@ROWCOUNT>0 BEGIN
+                        SET @CURSOR  = CURSOR SCROLL
+					    FOR SELECT ID FROM ORDER_OPTION WHERE IF_DEF=1 
+					    AND PR_POLICY_ID=@newPolicyId;
+                        SET @has_cursor = 1;
+                    END;
+                END;
+
+				IF @has_cursor>0
 				BEGIN
-					SET @CURSOR  = CURSOR SCROLL
-					FOR SELECT ID FROM ORDER_OPTION WHERE IF_DEF=1 
-					AND PR_POLICY_ID=@newPolicyId;
-					
 					/*Открываем курсор*/
 					OPEN @CURSOR
 					/*Выбираем первую строку*/

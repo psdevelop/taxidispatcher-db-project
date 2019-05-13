@@ -1,4 +1,4 @@
-USE [TD5R1081218SB]
+USE [TD5R1]
 GO
 --------------------------------------------------------------------
 --------------------------------------------------------------------
@@ -1546,9 +1546,6 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-SET ANSI_PADDING ON
-GO
-
 IF COL_LENGTH('PRICE_POLICY','company_id') IS NULL
 BEGIN
 	ALTER TABLE dbo.PRICE_POLICY 
@@ -1558,6 +1555,32 @@ END
 
 GO
 
-SET ANSI_PADDING OFF
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+-- ORDER_OPTION
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+IF COL_LENGTH('ORDER_OPTION','start_time') IS NULL
+BEGIN
+	ALTER TABLE dbo.ORDER_OPTION 
+	ADD [start_time] [time](7) NOT NULL
+	CONSTRAINT [DF_DAILY_PARAMS_start_time]  DEFAULT ('00:00');
+END
+
+GO
+
+IF COL_LENGTH('ORDER_OPTION','end_time') IS NULL
+BEGIN
+	ALTER TABLE dbo.ORDER_OPTION 
+	ADD [end_time] [time](7) NOT NULL
+	CONSTRAINT [DF_DAILY_PARAMS_end_time]  DEFAULT ('00:00');
+END
+
 GO
 

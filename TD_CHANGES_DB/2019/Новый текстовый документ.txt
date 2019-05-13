@@ -3,3 +3,4 @@ prise_only_online use_rating_levels dont_reset_que_early_complete
 auto_set_bonus_value use_driver_socket_server Settings
 rating_level dont_auto_asgn_by_radius Voditelj
 company_id PRICE_POLICY
+start_time end_time ORDER_OPTION
