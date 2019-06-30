@@ -430,12 +430,14 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	DECLARE @db_version INT, @has_dr_changes int,
-		@dont_reset_dr_queue smallint;
+		@dont_reset_dr_queue smallint,
+		@reset_time_after_dr_assign smallint;
 	
 	SET @has_dr_changes = 0;
 	
 	SELECT TOP 1 @db_version=ISNULL(db_version,3),
-		@dont_reset_dr_queue=ISNULL(dont_reset_dr_queue,0) 
+		@dont_reset_dr_queue=ISNULL(dont_reset_dr_queue,0),
+		@reset_time_after_dr_assign = reset_time_after_dr_assign
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
 	
@@ -540,6 +542,12 @@ BEGIN
 		IF ((@OldComplValue=0) AND
 			(@NewComplValue<>@OldComplValue))
 		BEGIN
+
+			IF @reset_time_after_dr_assign = 1 BEGIN
+                	    UPDATE Voditelj 
+			    SET Vremya_poslednei_zayavki = CURRENT_TIMESTAMP 
+			    WHERE BOLD_ID=@nOldValue;
+            		END;
 		
 			UPDATE Voditelj 
 			SET Na_pereryve=0 

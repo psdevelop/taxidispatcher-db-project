@@ -1010,6 +1010,15 @@ END
 
 GO
 
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','reset_time_after_dr_assign') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [reset_time_after_dr_assign] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_reset_time_after_dr_assign]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ «¿ ¿«Œ¬
