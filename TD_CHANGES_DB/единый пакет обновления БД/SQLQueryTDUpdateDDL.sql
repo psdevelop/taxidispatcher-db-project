@@ -1591,3 +1591,26 @@ END
 
 GO
 
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+-- Persona
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+IF COL_LENGTH('Persona','option_id') IS NULL
+BEGIN
+	ALTER TABLE dbo.Persona 
+	ADD [option_id] [int] NOT NULL 
+	CONSTRAINT [Persona_option_id]  DEFAULT ((-1));
+END
+
+GO
+
