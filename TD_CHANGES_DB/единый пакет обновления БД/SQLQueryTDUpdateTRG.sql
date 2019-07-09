@@ -3296,13 +3296,15 @@ BEGIN
 	BEGIN
 
 	DECLARE @nOldValue int, @newDrId int, @oldDrId int,
-		@newPolicyId int, @oldPolicyId int;
+		@newPolicyId int, @oldPolicyId int,
+        	@phone varchar(255), @phoneOptionId int;
 		
 	SELECT @nOldValue=b.BOLD_ID, 
 	@newDrId=a.vypolnyaetsya_voditelem,
 	@oldDrId=b.vypolnyaetsya_voditelem,
 	@newPolicyId=a.PR_POLICY_ID,
-	@oldPolicyId=b.PR_POLICY_ID
+	@oldPolicyId=b.PR_POLICY_ID,
+    	@phone=a.Telefon_klienta
 	FROM inserted a, deleted b;
 	
 	IF (@newDrId>0)
@@ -3310,6 +3312,13 @@ BEGIN
 	
 	IF ((@autotarif_by_tplan=1) AND (@newPolicyId>0) AND (@newPolicyId<>@oldPolicyId) )
 			BEGIN
+
+                SET @phoneOptionId = ISNULL(@phoneOptionId, -1);
+                IF ISNULL(@phone, '') <> '' BEGIN
+                    SELECT TOP 1 @phoneOptionId = option_id 
+                    FROM Sootvetstvie_parametrov_zakaza
+                    WHERE Telefon_klienta = @phone;
+                END;
 			
 			    SELECT ID FROM ORDER_TARIF 
 				WHERE PR_POLICY_ID=@newPolicyId AND IF_DEF=1;
@@ -3377,10 +3386,22 @@ BEGIN
 						FETCH NEXT FROM @CURSOR INTO @OPTION_ID;
 					END
 					CLOSE @CURSOR
+
+                    IF @phoneOptionId > 0 BEGIN
+                        if(@opt_cnt>0)
+					    BEGIN
+							SET @OPTION_STR = @OPTION_STR + ',';
+					    END;
+                        SET @OPTION_STR=@OPTION_STR + CAST(@phoneOptionId as varchar(20));
+						SET @opt_cnt=@opt_cnt+1;
+                    END;
 				END
 				ELSE
 				BEGIN
-					SET @OPTION_STR='-';
+                    SET @OPTION_STR='-';
+                    IF @phoneOptionId > 0 BEGIN
+                        SET @OPTION_STR = CAST(@phoneOptionId as varchar(20));
+                    END;
 				END;
 				
 				SET @OPTION_STR=ISNULL(@OPTION_STR,'-');
@@ -3399,6 +3420,7 @@ BEGIN
 	
 	
 END
+
 
 
 
