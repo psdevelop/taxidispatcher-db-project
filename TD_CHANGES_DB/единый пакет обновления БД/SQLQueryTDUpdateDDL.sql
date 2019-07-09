@@ -1522,6 +1522,15 @@ END
 
 GO
 
+IF COL_LENGTH('Sootvetstvie_parametrov_zakaza','option_id') IS NULL
+BEGIN
+	ALTER TABLE dbo.Sootvetstvie_parametrov_zakaza 
+	ADD [option_id] [int] NOT NULL 
+	CONSTRAINT [Sootvetstvie_parametrov_zakaza_option_id]  DEFAULT ((-1));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ “Œ◊≈  Œ¡À¿—“»
