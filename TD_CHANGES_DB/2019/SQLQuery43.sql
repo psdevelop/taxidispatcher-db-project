@@ -5,7 +5,7 @@ GO
 
 
 
-CREATE TRIGGER [dbo].[AFTER_TPLAN_ASSGN] 
+ALTER TRIGGER [dbo].[AFTER_TPLAN_ASSGN] 
    ON  [dbo].[Zakaz] 
    AFTER UPDATE
 AS 

@@ -152,6 +152,15 @@ END
 
 GO
 
+IF COL_LENGTH('Voditelj','allow_direct_assign') IS NULL
+BEGIN
+	ALTER TABLE dbo.Voditelj 
+	ADD [allow_direct_assign] [smallint] NOT NULL 
+	CONSTRAINT [DF_Voditelj_allow_direct_assign]  DEFAULT ((0));
+END
+
+GO
+
 ------------------------------------------------------
 ------------------------------------------------------
 ---- Œ√–¿Õ»◊≈Õ»ﬂ “¿¡À»÷€ ¬Œƒ»“≈Àﬂ
@@ -1015,6 +1024,15 @@ BEGIN
 	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
 	ADD [reset_time_after_dr_assign] [smallint] NOT NULL 
 	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_reset_time_after_dr_assign]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','allow_direct_driver_assign') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [allow_direct_driver_assign] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_allow_direct_driver_assign]  DEFAULT ((0));
 END
 
 GO

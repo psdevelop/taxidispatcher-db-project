@@ -248,3 +248,28 @@ GO
 --------------------------------
 --------------------------------
 --------------------------------
+USE [master]
+GO
+
+/* For security reasons the login is created disabled and with a random password. */
+/****** Object:  Login [admin_panel]    Script Date: 12.05.2019 16:35:30 ******/
+CREATE LOGIN [admin_panel] WITH PASSWORD='admin_panel', 
+DEFAULT_DATABASE=[TD5R1], DEFAULT_LANGUAGE=[русский], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF
+GO
+
+USE [TD5R1]
+GO
+
+/****** Object:  User [admin_panel]    Script Date: 12.05.2019 16:38:10 ******/
+CREATE USER [admin_panel] FOR LOGIN [admin_panel] WITH DEFAULT_SCHEMA=[dbo]
+GO
+
+ALTER ROLE db_datareader ADD MEMBER admin_panel
+GO
+ALTER ROLE db_datawriter ADD MEMBER admin_panel
+GO
+ALTER ROLE db_owner ADD MEMBER admin_panel
+GO
+--------------------------------
+--------------------------------
+--------------------------------
