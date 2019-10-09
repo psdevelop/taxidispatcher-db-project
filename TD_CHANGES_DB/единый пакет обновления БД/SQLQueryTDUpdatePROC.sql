@@ -366,6 +366,26 @@ IF OBJECT_ID('dbo.InsertNewDriverRetID') IS NOT NULL
 DROP PROCEDURE [dbo].[InsertNewDriverRetID]
 GO
 
+/****** Object:  StoredProcedure [dbo].[InsertNewSectorRetID]    Script Date: 09.10.2019 6:54:15 ******/
+IF OBJECT_ID('dbo.InsertNewSectorRetID') IS NOT NULL
+DROP PROCEDURE [dbo].[InsertNewSectorRetID]
+GO
+
+/****** Object:  StoredProcedure [dbo].[InsertNewDriverCompanyRetID]    Script Date: 09.10.2019 6:54:15 ******/
+IF OBJECT_ID('dbo.InsertNewDriverCompanyRetID') IS NOT NULL
+DROP PROCEDURE [dbo].[InsertNewDriverCompanyRetID]
+GO
+
+/****** Object:  StoredProcedure [dbo].[InsertPersonaRetID]    Script Date: 09.10.2019 6:54:15 ******/
+IF OBJECT_ID('dbo.InsertPersonaRetID') IS NOT NULL
+DROP PROCEDURE [dbo].[InsertPersonaRetID]
+GO
+
+/****** Object:  StoredProcedure [dbo].[InsertNewPhoneAddrRetID]    Script Date: 09.10.2019 6:54:15 ******/
+IF OBJECT_ID('dbo.InsertNewPhoneAddrRetID') IS NOT NULL
+DROP PROCEDURE [dbo].[InsertNewPhoneAddrRetID]
+GO
+
 /****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
@@ -6868,6 +6888,43 @@ BEGIN
 	
 	BEGIN TRAN
 	
+    EXEC [dbo].[InsertPersonaRetID] @bold_type = 19, @bold_id = @bold_id OUTPUT;
+    
+    INSERT INTO Voditelj (BOLD_ID, BOLD_TYPE, Pozyvnoi, Data_po_umolchaniyu) 
+	VALUES (@bold_id, 19, 0, GETDATE());
+      
+    COMMIT TRAN
+END
+
+
+
+
+
+
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+CREATE PROCEDURE [dbo].[InsertNewSectorRetID] 
+	-- Add the parameters for the stored procedure here
+	(@bold_id int OUT)
+AS
+BEGIN 
+    DECLARE @new_ord_num int, @last_ct datetime, @curr_dt datetime;
+    DECLARE @last_ts int, @bold_ts int;   
+
+	--SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	
+	SET @bold_id = -1;
+	
+	BEGIN TRAN
+	
 	SELECT TOP 1 @bold_id=BOLD_ID FROM BOLD_ID;
     
     UPDATE [BOLD_ID] set [BOLD_ID] = [BOLD_ID]+1;
@@ -6875,13 +6932,16 @@ BEGIN
     INSERT INTO BOLD_XFILES 
     (BOLD_ID, BOLD_TYPE, BOLD_TIME_STAMP, 
     EXTERNAL_ID) 
-	VALUES (@bold_id, 19, 0, '{'+CONVERT(varchar(36),NEWID())+'}') 
+	VALUES (@bold_id, 15, 0, '{'+CONVERT(varchar(36),NEWID())+'}') 
     
     INSERT INTO BOLD_OBJECT(BOLD_ID, BOLD_TYPE,
-    [READ_ONLY]) VALUES(@bold_id, 19, 0);
+    [READ_ONLY]) VALUES(@bold_id, 15, 0);
     
-    INSERT INTO Voditelj (BOLD_ID, BOLD_TYPE, Pozyvnoi, Data_po_umolchaniyu) 
-	VALUES (@bold_id, 19, 0, GETDATE());
+    INSERT INTO Sektor_raboty (BOLD_ID, BOLD_TYPE) 
+	VALUES (@bold_id, 15);
+
+    INSERT INTO Spravochnik (BOLD_ID, BOLD_TYPE, Naimenovanie, Kommentarii, Identifikator) 
+	VALUES (@bold_id, 15, 'ÕŒ¬€… —≈ “Œ–', '', 0);
 	
 	SELECT TOP 1 @last_ts=LastTimestamp, 
 	@last_ct=LastClockTime FROM BOLD_LASTCLOCK;
@@ -6913,4 +6973,221 @@ END
 
 
 
+
 GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+CREATE PROCEDURE [dbo].[InsertNewDriverCompanyRetID] 
+	-- Add the parameters for the stored procedure here
+	(@bold_id int OUT)
+AS
+BEGIN 
+    DECLARE @new_ord_num int, @last_ct datetime, @curr_dt datetime;
+    DECLARE @last_ts int, @bold_ts int;   
+
+	--SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	
+	SET @bold_id = -1;
+	
+	BEGIN TRAN
+	
+	SELECT TOP 1 @bold_id=BOLD_ID FROM BOLD_ID;
+    
+    UPDATE [BOLD_ID] set [BOLD_ID] = [BOLD_ID]+1;
+    
+    INSERT INTO BOLD_XFILES 
+    (BOLD_ID, BOLD_TYPE, BOLD_TIME_STAMP, 
+    EXTERNAL_ID) 
+	VALUES (@bold_id, 26, 0, '{'+CONVERT(varchar(36),NEWID())+'}') 
+    
+    INSERT INTO BOLD_OBJECT(BOLD_ID, BOLD_TYPE,
+    [READ_ONLY]) VALUES(@bold_id, 26, 0);
+    
+    INSERT INTO Gruppa_voditelei (BOLD_ID, BOLD_TYPE) 
+	VALUES (@bold_id, 26);
+
+    INSERT INTO Spravochnik (BOLD_ID, BOLD_TYPE, Naimenovanie, Kommentarii, Identifikator) 
+	VALUES (@bold_id, 26, 'ÕŒ¬¿ﬂ  ŒÃœ¿Õ»ﬂ', '', 0);
+	
+	SELECT TOP 1 @last_ts=LastTimestamp, 
+	@last_ct=LastClockTime FROM BOLD_LASTCLOCK;
+	
+	UPDATE [BOLD_TIMESTAMP] 
+	SET [BOLD_TIME_STAMP] = [BOLD_TIME_STAMP]+1;		
+    
+    SELECT TOP 1 @bold_ts=BOLD_TIME_STAMP 
+    FROM BOLD_TIMESTAMP;
+    
+    SET @curr_dt = GETDATE();
+    
+    INSERT INTO BOLD_CLOCKLOG (LastTimestamp, 
+    ThisTimestamp, LastClockTime, 
+	ThisClockTime) VALUES (@last_ts, @bold_ts, 
+	@last_ct, @curr_dt);
+	
+	UPDATE BOLD_LASTCLOCK SET LastTimestamp = @bold_ts, 
+	LastClockTime = @curr_dt;
+	
+	UPDATE BOLD_XFILES
+	SET BOLD_TIME_STAMP = @bold_ts
+	WHERE BOLD_ID = @bold_id;
+      
+    COMMIT TRAN
+END
+
+
+
+
+
+
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+CREATE PROCEDURE [dbo].[InsertPersonaRetID] 
+	-- Add the parameters for the stored procedure here
+	(@bold_type int, @bold_id int OUT)
+AS
+BEGIN 
+    DECLARE @new_ord_num int, @last_ct datetime, @curr_dt datetime;
+    DECLARE @last_ts int, @bold_ts int;   
+
+	--SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	
+	SET @bold_id = -1;
+	
+	BEGIN TRAN
+	
+	SELECT TOP 1 @bold_id=BOLD_ID FROM BOLD_ID;
+    
+    UPDATE [BOLD_ID] set [BOLD_ID] = [BOLD_ID]+1;
+    
+    INSERT INTO BOLD_XFILES 
+    (BOLD_ID, BOLD_TYPE, BOLD_TIME_STAMP, 
+    EXTERNAL_ID) 
+	VALUES (@bold_id, @bold_type, 0, '{'+CONVERT(varchar(36),NEWID())+'}') 
+    
+    INSERT INTO BOLD_OBJECT(BOLD_ID, BOLD_TYPE,
+    [READ_ONLY]) VALUES(@bold_id, @bold_type, 0);
+    
+    INSERT INTO Persona (BOLD_ID, BOLD_TYPE) 
+	VALUES (@bold_id, @bold_type);
+	
+	SELECT TOP 1 @last_ts=LastTimestamp, 
+	@last_ct=LastClockTime FROM BOLD_LASTCLOCK;
+	
+	UPDATE [BOLD_TIMESTAMP] 
+	SET [BOLD_TIME_STAMP] = [BOLD_TIME_STAMP]+1;		
+    
+    SELECT TOP 1 @bold_ts=BOLD_TIME_STAMP 
+    FROM BOLD_TIMESTAMP;
+    
+    SET @curr_dt = GETDATE();
+    
+    INSERT INTO BOLD_CLOCKLOG (LastTimestamp, 
+    ThisTimestamp, LastClockTime, 
+	ThisClockTime) VALUES (@last_ts, @bold_ts, 
+	@last_ct, @curr_dt);
+	
+	UPDATE BOLD_LASTCLOCK SET LastTimestamp = @bold_ts, 
+	LastClockTime = @curr_dt;
+	
+	UPDATE BOLD_XFILES
+	SET BOLD_TIME_STAMP = @bold_ts
+	WHERE BOLD_ID = @bold_id;
+      
+    COMMIT TRAN
+END
+
+
+
+
+
+
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+CREATE PROCEDURE [dbo].[InsertNewPhoneAddrRetID] 
+	-- Add the parameters for the stored procedure here
+	(@bold_id int OUT)
+AS
+BEGIN 
+    DECLARE @new_ord_num int, @last_ct datetime, @curr_dt datetime;
+    DECLARE @last_ts int, @bold_ts int;   
+
+	--SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	
+	SET @bold_id = -1;
+	
+	BEGIN TRAN
+	
+	SELECT TOP 1 @bold_id=BOLD_ID FROM BOLD_ID;
+    
+    UPDATE [BOLD_ID] set [BOLD_ID] = [BOLD_ID]+1;
+    
+    INSERT INTO BOLD_XFILES 
+    (BOLD_ID, BOLD_TYPE, BOLD_TIME_STAMP, 
+    EXTERNAL_ID) 
+	VALUES (@bold_id, 7, 0, '{'+CONVERT(varchar(36),NEWID())+'}') 
+    
+    INSERT INTO BOLD_OBJECT(BOLD_ID, BOLD_TYPE,
+    [READ_ONLY]) VALUES(@bold_id, 7, 0);
+    
+    INSERT INTO Sootvetstvie_parametrov_zakaza (BOLD_ID, BOLD_TYPE) 
+	VALUES (@bold_id, 7);
+	
+	SELECT TOP 1 @last_ts=LastTimestamp, 
+	@last_ct=LastClockTime FROM BOLD_LASTCLOCK;
+	
+	UPDATE [BOLD_TIMESTAMP] 
+	SET [BOLD_TIME_STAMP] = [BOLD_TIME_STAMP]+1;		
+    
+    SELECT TOP 1 @bold_ts=BOLD_TIME_STAMP 
+    FROM BOLD_TIMESTAMP;
+    
+    SET @curr_dt = GETDATE();
+    
+    INSERT INTO BOLD_CLOCKLOG (LastTimestamp, 
+    ThisTimestamp, LastClockTime, 
+	ThisClockTime) VALUES (@last_ts, @bold_ts, 
+	@last_ct, @curr_dt);
+	
+	UPDATE BOLD_LASTCLOCK SET LastTimestamp = @bold_ts, 
+	LastClockTime = @curr_dt;
+	
+	UPDATE BOLD_XFILES
+	SET BOLD_TIME_STAMP = @bold_ts
+	WHERE BOLD_ID = @bold_id;
+      
+    COMMIT TRAN
+END
+
+
+
+
+
+
+
+GO
+
+
