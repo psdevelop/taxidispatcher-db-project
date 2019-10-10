@@ -27,13 +27,13 @@ BEGIN
     INSERT INTO BOLD_XFILES 
     (BOLD_ID, BOLD_TYPE, BOLD_TIME_STAMP, 
     EXTERNAL_ID) 
-	VALUES (@bold_id, 7, 0, '{'+CONVERT(varchar(36),NEWID())+'}') 
+	VALUES (@bold_id, @bold_type, 0, '{'+CONVERT(varchar(36),NEWID())+'}') 
     
     INSERT INTO BOLD_OBJECT(BOLD_ID, BOLD_TYPE,
-    [READ_ONLY]) VALUES(@bold_id, 7, 0);
+    [READ_ONLY]) VALUES(@bold_id, @bold_type, 0);
     
-    INSERT INTO Sootvetstvie_parametrov_zakaza (BOLD_ID, BOLD_TYPE) 
-	VALUES (@bold_id, 7);
+    INSERT INTO Persona (BOLD_ID, BOLD_TYPE) 
+	VALUES (@bold_id, @bold_type);
 	
 	SELECT TOP 1 @last_ts=LastTimestamp, 
 	@last_ct=LastClockTime FROM BOLD_LASTCLOCK;

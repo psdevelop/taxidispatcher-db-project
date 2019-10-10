@@ -386,6 +386,11 @@ IF OBJECT_ID('dbo.InsertNewPhoneAddrRetID') IS NOT NULL
 DROP PROCEDURE [dbo].[InsertNewPhoneAddrRetID]
 GO
 
+/****** Object:  StoredProcedure [dbo].[InsertNewAbonentRetID]    Script Date: 09.10.2019 6:54:15 ******/
+IF OBJECT_ID('dbo.InsertNewAbonentRetID') IS NOT NULL
+DROP PROCEDURE [dbo].[InsertNewAbonentRetID]
+GO
+
 /****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
@@ -7190,4 +7195,41 @@ END
 
 GO
 
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+CREATE PROCEDURE [dbo].[InsertNewAbonentRetID] 
+	-- Add the parameters for the stored procedure here
+	(@bold_id int OUT)
+AS
+BEGIN 
+    DECLARE @new_ord_num int, @last_ct datetime, @curr_dt datetime;
+    DECLARE @last_ts int, @bold_ts int;   
+
+	--SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+	
+	SET @bold_id = -1;
+	
+	BEGIN TRAN
+	
+    EXEC [dbo].[InsertPersonaRetID] @bold_type = 5, @bold_id = @bold_id OUTPUT;
+    
+    UPDATE Persona SET Elektronnyi_adres = 'Индивидуальный клиент'
+    WHERE BOLD_ID = @bold_id;
+      
+    COMMIT TRAN
+END
+
+
+
+
+
+
+
+GO
 
