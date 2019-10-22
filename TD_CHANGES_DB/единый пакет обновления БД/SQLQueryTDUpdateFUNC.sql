@@ -256,6 +256,11 @@ IF OBJECT_ID('dbo.GetJSONWaitTimesList') IS NOT NULL
 DROP FUNCTION [dbo].[GetJSONWaitTimesList]
 GO
 
+/****** Object:  UserDefinedFunction [dbo].[GetJSONCompanyDriversList]    Script Date: 22.10.2019 6:16:40 ******/
+IF OBJECT_ID('dbo.GetJSONCompanyDriversList') IS NOT NULL 
+DROP FUNCTION [dbo].[GetJSONCompanyDriversList]
+GO
+
 /****** Object:  UserDefinedFunction [dbo].[DegToRad]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
@@ -3807,5 +3812,105 @@ BEGIN
 END
 
 
+
+GO
+
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE FUNCTION [dbo].[GetJSONCompanyDriversList] (@company_id int)
+RETURNS varchar(max)
+AS
+BEGIN
+	declare @res varchar(max);
+	DECLARE @CURSOR cursor;
+	DECLARE @driver_id int, @drivers_count int,
+		@driver_num int, @counter INT,
+		@online_dr_count INT, @busy_dr_count INT,
+		@onlaunch_count int, @driver_class varchar(255),
+        @driver_name varchar(500), @mark_auto varchar(255),
+        @driver_rating float, @last_lat varchar(50), 
+        @last_lon varchar(50);
+   
+	SET @res='{"command":"drivers_list","dcnt":"';
+	SET @counter = 0; 
+	
+	SELECT @online_dr_count=COUNT(BOLD_ID) FROM
+	Voditelj WHERE V_rabote>0;
+	
+	SELECT @busy_dr_count=COUNT(BOLD_ID) FROM
+	Voditelj WHERE V_rabote>0 AND Zanyat_drugim_disp>0;
+	
+    IF @company_id>0 BEGIN
+	    SELECT @drivers_count=COUNT(BOLD_ID) FROM Voditelj
+        WHERE otnositsya_k_gruppe = @company_id;
+    END ELSE BEGIN
+        SELECT @drivers_count=COUNT(BOLD_ID) FROM Voditelj;
+    END;
+	
+	IF (@drivers_count>0)
+	BEGIN
+	
+	SET @res=@res+CAST(@drivers_count as varchar(20))+'"';
+	
+    IF @company_id>0 BEGIN
+        SET @CURSOR  = CURSOR SCROLL
+        FOR
+        SELECT dr.BOLD_ID, dr.full_name, ac.name as driver_class,
+        dr.Marka_avtomobilya, dr.rating, dr.last_lat, dr.last_lon
+        FROM Voditelj dr LEFT JOIN AUTO_CLASS ac 
+        ON dr.auto_class_id = ac.id
+        WHERE dr.otnositsya_k_gruppe = @company_id;
+    END ELSE BEGIN
+        SET @CURSOR  = CURSOR SCROLL
+        FOR
+        SELECT dr.BOLD_ID, dr.full_name, ac.name as driver_class,
+        dr.Marka_avtomobilya, dr.rating, dr.last_lat, dr.last_lon
+        FROM Voditelj dr LEFT JOIN AUTO_CLASS ac 
+        ON dr.auto_class_id = ac.id;
+    END;
+	/*Открываем курсор*/
+	OPEN @CURSOR
+	/*Выбираем первую строку*/
+	FETCH NEXT FROM @CURSOR INTO @driver_id, @driver_name, @driver_class, @mark_auto, @driver_rating, @last_lat, @last_lon
+	/*Выполняем в цикле перебор строк*/
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+
+        SET @driver_class = ISNULL(@driver_class, '');
+
+        SET @res=@res+',"id'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@driver_id as varchar(20))+'","nm'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@driver_name,'"',' '),'''',' ')+'","cls'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@driver_class,'"',' '),'''',' ')+'","mrk'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@mark_auto,'"',' '),'''',' ')+'","rat'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@driver_rating as varchar(20))+'","lat'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@last_lat,'"',' '),'''',' ')+'","lon'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@last_lon,'"',' '),'''',' ')+'"';
+        SET @counter=@counter+1;
+		/*Выбираем следующую строку*/
+		FETCH NEXT FROM @CURSOR INTO @driver_id, @driver_name, @driver_class, @mark_auto, @driver_rating, @last_lat, @last_lon
+	END
+	CLOSE @CURSOR
+	
+	SET @res=@res+',"msg_end":"ok"}';
+	
+	END
+	ELSE
+	BEGIN
+		SET @res=@res+'0","msg_end":"ok"}';	
+	END;
+
+	RETURN(@res)
+END
 
 GO

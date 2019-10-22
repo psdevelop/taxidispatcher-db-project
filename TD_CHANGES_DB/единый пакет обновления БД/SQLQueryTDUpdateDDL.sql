@@ -161,6 +161,15 @@ END
 
 GO
 
+IF COL_LENGTH('Voditelj','auto_class_id') IS NULL
+BEGIN
+	ALTER TABLE dbo.Voditelj 
+	ADD [auto_class_id] [int] NULL
+	CONSTRAINT [DF_Voditelj_auto_class_id]  DEFAULT ((-1));
+END
+
+GO
+
 ------------------------------------------------------
 ------------------------------------------------------
 ---- нцпюмхвемхъ рюакхжш бндхрекъ
