@@ -6792,6 +6792,7 @@ CREATE PROCEDURE [dbo].[InsertOrderWithSectorAndTariffParams]
 	@ab_num varchar(255), @client_id int, 
 	@lat varchar(50), @lon varchar(50), @sector_id int, 
     @district_id int, @company_id int, @tplan_id int, @for_all smallint,
+    @driver_id int, @shedule_date DATETIME,
     @ord_num  int OUT, @order_id int OUT)
 AS
 BEGIN 
@@ -6852,6 +6853,9 @@ BEGIN
 		rclient_id=@client_id,
 		rclient_status=1,
 		alarmed=1,
+        vypolnyaetsya_voditelem = (CASE WHEN (@driver_id > 0) THEN @driver_id ELSE -1 END),
+        Predvariteljnyi = (CASE WHEN (@shedule_date IS NULL) THEN 0 ELSE 1 END),
+        Data_predvariteljnaya = (CASE WHEN (@shedule_date IS NULL) THEN GETDATE() ELSE @shedule_date END),
         detected_sector = (CASE WHEN (@sector_id > 0) THEN @sector_id ELSE detected_sector END),
         district_id = (CASE WHEN (@district_id > 0) THEN @district_id ELSE district_id END),
 		company_id = (CASE WHEN (@company_id > 0) THEN @company_id ELSE company_id END),
