@@ -1567,6 +1567,15 @@ END
 
 GO
 
+IF COL_LENGTH('Sootvetstvie_parametrov_zakaza','rate') IS NULL
+BEGIN
+	ALTER TABLE dbo.Sootvetstvie_parametrov_zakaza 
+	ADD [rate] [int] NOT NULL 
+	CONSTRAINT [Sootvetstvie_parametrov_zakaza_rate]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ “Œ◊≈  Œ¡À¿—“»
