@@ -170,6 +170,15 @@ END
 
 GO
 
+IF COL_LENGTH('Voditelj','rate') IS NULL
+BEGIN
+	ALTER TABLE dbo.Voditelj 
+	ADD [rate] [int] NULL
+	CONSTRAINT [DF_Voditelj_rate]  DEFAULT ((0));
+END
+
+GO
+
 ------------------------------------------------------
 ------------------------------------------------------
 ---- нцпюмхвемхъ рюакхжш бндхрекъ
