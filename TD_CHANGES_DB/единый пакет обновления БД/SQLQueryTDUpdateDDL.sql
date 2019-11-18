@@ -173,7 +173,7 @@ GO
 IF COL_LENGTH('Voditelj','rate') IS NULL
 BEGIN
 	ALTER TABLE dbo.Voditelj 
-	ADD [rate] [int] NULL
+	ADD [rate] [decimal](18, 5) NOT NULL
 	CONSTRAINT [DF_Voditelj_rate]  DEFAULT ((0));
 END
 
@@ -1590,7 +1590,7 @@ GO
 IF COL_LENGTH('Sootvetstvie_parametrov_zakaza','rate') IS NULL
 BEGIN
 	ALTER TABLE dbo.Sootvetstvie_parametrov_zakaza 
-	ADD [rate] [int] NOT NULL 
+	ADD [rate] [decimal](18, 5) NOT NULL 
 	CONSTRAINT [Sootvetstvie_parametrov_zakaza_rate]  DEFAULT ((0));
 END
 
@@ -1684,6 +1684,29 @@ BEGIN
 	ALTER TABLE dbo.Persona 
 	ADD [option_id] [int] NOT NULL 
 	CONSTRAINT [Persona_option_id]  DEFAULT ((-1));
+END
+
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+-- REMOTE_CLIENTS
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+IF COL_LENGTH('REMOTE_CLIENTS','rate') IS NULL
+BEGIN
+	ALTER TABLE dbo.REMOTE_CLIENTS 
+	ADD [rate] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [REMOTE_CLIENTS_rate]  DEFAULT ((0));
 END
 
 GO
