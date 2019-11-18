@@ -1232,7 +1232,7 @@ IF COL_LENGTH('Zakaz','driver_rating_diff') IS NULL
 BEGIN
 	ALTER TABLE dbo.Zakaz 
 	ADD [driver_rating_diff] [decimal](18, 5) NOT NULL 
-	CONSTRAINT [DF_Zakaz_rating_change_value]  DEFAULT ((0));
+	CONSTRAINT [DF_Zakaz_driver_rating_diff]  DEFAULT ((0));
 END
 
 GO
@@ -1369,6 +1369,26 @@ BEGIN
 END
 
 GO
+
+IF COL_LENGTH('Zakaz','current_sum') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [current_sum] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_current_sum]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','current_dist') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [current_dist] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_current_dist]  DEFAULT ((0));
+END
+
+GO
+
+
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
