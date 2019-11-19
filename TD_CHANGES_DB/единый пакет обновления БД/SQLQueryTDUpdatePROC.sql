@@ -391,6 +391,11 @@ IF OBJECT_ID('dbo.InsertNewAbonentRetID') IS NOT NULL
 DROP PROCEDURE [dbo].[InsertNewAbonentRetID]
 GO
 
+/****** Object:  StoredProcedure [dbo].[RateDriver]    Script Date: 19.11.2019 6:54:15 ******/
+IF OBJECT_ID('dbo.RateDriver') IS NOT NULL
+DROP PROCEDURE [dbo].[RateDriver]
+GO
+
 /****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
@@ -7244,6 +7249,43 @@ BEGIN
     COMMIT TRAN
 END
 
+
+
+
+
+
+
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[RateDriver] 
+	-- Add the parameters for the stored procedure here
+	(@rate [decimal](18, 5),
+	@driver_id int)
+AS
+BEGIN 
+
+    DECLARE @current_rate [decimal](18, 5);
+	
+	if (@driver_id>0)
+	BEGIN
+
+        SELECT @current_rate = rate FROM Voditelj
+        WHERE BOLD_ID = @driver_id;
+
+        SET @current_rate = (@current_rate + @rate) / 2
+
+		UPDATE Voditelj SET 
+		rate = @current_rate
+		WHERE BOLD_ID = @driver_id;
+	END;
+END
 
 
 
