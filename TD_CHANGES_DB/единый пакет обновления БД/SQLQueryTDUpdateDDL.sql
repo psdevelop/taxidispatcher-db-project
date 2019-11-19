@@ -179,6 +179,15 @@ END
 
 GO
 
+IF COL_LENGTH('Voditelj','rate_count') IS NULL
+BEGIN
+	ALTER TABLE dbo.Voditelj 
+	ADD [rate_count] [int] NOT NULL
+	CONSTRAINT [DF_Voditelj_rate_count]  DEFAULT ((0));
+END
+
+GO
+
 ------------------------------------------------------
 ------------------------------------------------------
 ---- Œ√–¿Õ»◊≈Õ»ﬂ “¿¡À»÷€ ¬Œƒ»“≈Àﬂ
@@ -1596,6 +1605,15 @@ END
 
 GO
 
+IF COL_LENGTH('Sootvetstvie_parametrov_zakaza','rate_count') IS NULL
+BEGIN
+	ALTER TABLE dbo.Sootvetstvie_parametrov_zakaza 
+	ADD [rate_count] [int] NOT NULL
+	CONSTRAINT [DF_Sootvetstvie_parametrov_zakaza_rate_count]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ “Œ◊≈  Œ¡À¿—“»
@@ -1707,6 +1725,15 @@ BEGIN
 	ALTER TABLE dbo.REMOTE_CLIENTS 
 	ADD [rate] [decimal](18, 5) NOT NULL 
 	CONSTRAINT [REMOTE_CLIENTS_rate]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('REMOTE_CLIENTS','rate_count') IS NULL
+BEGIN
+	ALTER TABLE dbo.REMOTE_CLIENTS 
+	ADD [rate_count] [int] NOT NULL
+	CONSTRAINT [DF_REMOTE_CLIENTS_rate_count]  DEFAULT ((0));
 END
 
 GO
