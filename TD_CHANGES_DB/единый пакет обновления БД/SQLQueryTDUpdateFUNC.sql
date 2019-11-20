@@ -261,6 +261,11 @@ IF OBJECT_ID('dbo.GetJSONCompanyDriversList') IS NOT NULL
 DROP FUNCTION [dbo].[GetJSONCompanyDriversList]
 GO
 
+/****** Object:  UserDefinedFunction [dbo].[GetJSONClientInfo]    Script Date: 20.11.2019 6:16:40 ******/
+IF OBJECT_ID('dbo.GetJSONClientInfo') IS NOT NULL 
+DROP FUNCTION [dbo].[GetJSONClientInfo]
+GO
+
 /****** Object:  UserDefinedFunction [dbo].[DegToRad]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
@@ -3914,3 +3919,46 @@ BEGIN
 END
 
 GO
+
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE FUNCTION [dbo].[GetJSONClientInfo] (@client_id int)
+RETURNS varchar(max)
+AS
+BEGIN
+	declare @res varchar(max);
+	DECLARE @client_data varchar(2000),
+		@client_count INT;
+   
+	SET @res='{"client_cnt":"';
+	
+	SELECT @client_count = COUNT(*)  
+	FROM REMOTE_CLIENTS
+    WHERE id = @client_id;
+	
+	IF (@client_count = 1)
+	BEGIN
+	
+    SELECT @client_data = '1","phone":"' + rc.phone + '","name":"' 
+     + rc.name + '","rate":"' + rc.rate + ',"bonus":"' + 
+     CAST(ISNULL(sp.bonus_summ, 0) as [varchar](255)) + '",'
+	FROM REMOTE_CLIENTS rc LEFT JOIN Sootvetstvie_parametrov_zakaza sp
+    ON rc.phone = sp.Telefon_klienta
+    WHERE rc.id = @client_id;
+	
+	SET @res=@res + @client_data + '"msg_end":"ok"}';
+	
+	END
+	ELSE
+	BEGIN
+		SET @res=@res+'0","msg_end":"ok"}';	
+	END;
+
+	RETURN(@res)
+END
+
+GO
+

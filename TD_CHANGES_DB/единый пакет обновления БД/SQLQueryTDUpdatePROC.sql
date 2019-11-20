@@ -396,6 +396,11 @@ IF OBJECT_ID('dbo.RateDriver') IS NOT NULL
 DROP PROCEDURE [dbo].[RateDriver]
 GO
 
+/****** Object:  StoredProcedure [dbo].[UpdateClientInfo]    Script Date: 20.11.2019 6:54:15 ******/
+IF OBJECT_ID('dbo.UpdateClientInfo') IS NOT NULL
+DROP PROCEDURE [dbo].[UpdateClientInfo]
+GO
+
 /****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
@@ -7291,6 +7296,23 @@ END
 
 
 
+
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[UpdateClientInfo] 
+	-- Add the parameters for the stored procedure here
+	(@name VARCHAR(255), @client_id int)
+AS
+BEGIN 
+	UPDATE REMOTE_CLIENTS 
+	SET name = @name 
+	WHERE id = @client_id;
+END
 
 GO
 
