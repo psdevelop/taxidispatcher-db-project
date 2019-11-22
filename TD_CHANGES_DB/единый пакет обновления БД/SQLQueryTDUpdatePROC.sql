@@ -1837,7 +1837,8 @@ GO
 CREATE PROCEDURE [dbo].[GetDrLockOnCalcDebtDyn]  ( @dr_num int, @res int OUT)
 AS
 BEGIN
-   declare @dr_count int, @use_dr_lock smallint, @driver_id int, @dr_debt decimal(28,10);
+   declare @dr_count int, @use_dr_lock smallint, @driver_id int, 
+   @dr_debt decimal(28,10), @min_debt decimal(28,10);
    
    SET @res=-1
    
@@ -1845,7 +1846,8 @@ BEGIN
    WHERE Pozyvnoi=@dr_num;
    
    if (@dr_count=1) and (@dr_num>0) begin
-		SELECT @use_dr_lock=rlock_on_calc_debt, @driver_id=BOLD_ID, @dr_debt=DRIVER_BALANCE FROM Voditelj 
+		SELECT @use_dr_lock=rlock_on_calc_debt, @driver_id=BOLD_ID, 
+        @dr_debt=DRIVER_BALANCE, @min_debt=min_balance FROM Voditelj 
 		WHERE Pozyvnoi=@dr_num;
 		if @use_dr_lock<>1 begin
 			SET @res=-1
@@ -1853,13 +1855,15 @@ BEGIN
 		else begin
 		
 			DECLARE @db_version INT, @drcalc_start_date date,
-			@ftime_tariff decimal(28,10), @min_debt decimal(28,10);
+			@ftime_tariff decimal(28,10);
 	
-			SELECT TOP 1 @db_version=ISNULL(db_version,3),
-			@drcalc_start_date=ISNULL(drcalc_start_date,GETDATE()),
-			@min_debt=ISNULL(MIN_DEBET,0)
-			FROM Objekt_vyborki_otchyotnosti
-			WHERE Tip_objekta='for_drivers';
+            IF @min_debt = 0 BEGIN
+                SELECT TOP 1 @db_version=ISNULL(db_version,3),
+                @drcalc_start_date=ISNULL(drcalc_start_date,GETDATE()),
+                @min_debt=ISNULL(MIN_DEBET,0)
+                FROM Objekt_vyborki_otchyotnosti
+                WHERE Tip_objekta='for_drivers';
+            END;
 			
 			if @min_debt>@dr_debt
 			begin

@@ -188,6 +188,15 @@ END
 
 GO
 
+IF COL_LENGTH('Voditelj','min_balance') IS NULL
+BEGIN
+	ALTER TABLE dbo.Voditelj 
+	ADD [min_balance] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [Voditelj_min_balance]  DEFAULT ((0));
+END
+
+GO
+
 ------------------------------------------------------
 ------------------------------------------------------
 ---- нцпюмхвемхъ рюакхжш бндхрекъ
