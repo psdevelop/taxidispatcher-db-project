@@ -266,6 +266,11 @@ IF OBJECT_ID('dbo.GetJSONClientInfo') IS NOT NULL
 DROP FUNCTION [dbo].[GetJSONClientInfo]
 GO
 
+/****** Object:  UserDefinedFunction [dbo].[GetDriverOrderOptionIncluded]    Script Date: 23.11.2019 6:16:40 ******/
+IF OBJECT_ID('dbo.GetDriverOrderOptionIncluded') IS NOT NULL 
+DROP FUNCTION [dbo].[GetDriverOrderOptionIncluded]
+GO
+
 /****** Object:  UserDefinedFunction [dbo].[DegToRad]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
@@ -3959,6 +3964,42 @@ BEGIN
 
 	RETURN(@res)
 END
+
+GO
+
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+CREATE FUNCTION [dbo].[GetDriverOrderOptionIncluded]  (@driver_id int, @option_id int, @last_days int)
+RETURNS int
+AS
+BEGIN
+	DECLARE @order_count int, @length_with_comma int, 
+    @left_option_str varchar(255), @rigth_option_str varchar(255);
+
+    SET @left_option_str = CAST(@option_id as [varchar](255)) + ','
+    SET @rigth_option_str = CAST(@option_id as [varchar](255)) + ','
+    SET @length_with_comma = LEN(@left_option_str)
+
+
+    SELECT @order_count = COUNT(BOLD_ID) FROM Zakaz ord
+    WHERE (ord.OPT_COMB_STR = CAST(@option_id as [varchar](255)) OR
+    ord.OPT_COMB_STR LIKE (',' + CAST(@option_id as [varchar](255)) + ',') OR 
+    (LEN(ord.OPT_COMB_STR) > @length_with_comma AND 
+    LEFT(ord.OPT_COMB_STR, @length_with_comma) = @left_option_str) OR 
+    (LEN(ord.OPT_COMB_STR) > @length_with_comma AND 
+    RIGHT(ord.OPT_COMB_STR, @length_with_comma) = @rigth_option_str) )
+    AND ord.vypolnyaetsya_voditelem = @driver_id
+    AND (@last_days = 0 OR ord.Nachalo_zakaza_data > DATEADD(day, -@last_days, GETDATE()))
+   
+	RETURN(@order_count)
+END
+
+
+
 
 GO
 

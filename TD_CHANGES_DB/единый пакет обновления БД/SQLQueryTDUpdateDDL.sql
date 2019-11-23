@@ -1692,6 +1692,15 @@ END
 
 GO
 
+IF COL_LENGTH('ORDER_OPTION','is_discount') IS NULL
+BEGIN
+	ALTER TABLE dbo.ORDER_OPTION 
+	ADD [is_discount] [smallint] NOT NULL 
+	CONSTRAINT [DF_ORDER_OPTION_is_discount]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- Persona

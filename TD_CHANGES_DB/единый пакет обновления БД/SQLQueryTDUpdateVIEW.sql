@@ -59,6 +59,10 @@ GO
 IF OBJECT_ID('dbo.ActiveDriversState') IS NOT NULL 
 DROP VIEW [dbo].[ActiveDriversState]
 GO
+/****** Object:  View [dbo].[DriverDiscountOptionsCounting]    Script Date: 08.12.2018 6:48:45 ******/
+IF OBJECT_ID('dbo.DriverDiscountOptionsCounting') IS NOT NULL 
+DROP VIEW [dbo].[DriverDiscountOptionsCounting]
+GO
 
 /****** Object:  View [dbo].[ActiveDriversState]    Script Date: 10.05.2019 0:00:37 ******/
 SET ANSI_NULLS ON
@@ -278,5 +282,21 @@ SELECT     TOP (300) BOLD_ID, Nachalo_zakaza_data
 FROM         dbo.Zakaz
 WHERE     (Zavershyon = 1) AND (AUTO_ARHIVED = 0)
 ORDER BY Nachalo_zakaza_data
+
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE VIEW [dbo].[DriverDiscountOptionsCounting]
+AS
+SELECT  TOP 3000  dr.Pozyvnoi, oo.OPTION_NAME, 
+dbo.GetDriverOrderOptionIncluded(dr.BOLD_ID, oo.ID, 0) as all_time,
+dbo.GetDriverOrderOptionIncluded(dr.BOLD_ID, oo.ID, 7) as for_week,
+dbo.GetDriverOrderOptionIncluded(dr.BOLD_ID, oo.ID, 30) as for_month
+FROM         dbo.ORDER_OPTION oo, dbo.Voditelj dr
+WHERE     oo.is_discount = 1
+ORDER BY dr.Pozyvnoi ASC, oo.ID ASC
 
 GO
