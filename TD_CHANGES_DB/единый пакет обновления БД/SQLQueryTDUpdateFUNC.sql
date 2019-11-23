@@ -3987,7 +3987,7 @@ BEGIN
 
     SELECT @order_count = COUNT(BOLD_ID) FROM Zakaz ord
     WHERE (ord.OPT_COMB_STR = CAST(@option_id as [varchar](255)) OR
-    ord.OPT_COMB_STR LIKE (',' + CAST(@option_id as [varchar](255)) + ',') OR 
+    ord.OPT_COMB_STR LIKE ('%,' + CAST(@option_id as [varchar](255)) + ',%') OR 
     (LEN(ord.OPT_COMB_STR) > @length_with_comma AND 
     LEFT(ord.OPT_COMB_STR, @length_with_comma) = @left_option_str) OR 
     (LEN(ord.OPT_COMB_STR) > @length_with_comma AND 
