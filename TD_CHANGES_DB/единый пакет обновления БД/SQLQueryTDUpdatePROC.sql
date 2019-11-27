@@ -7291,7 +7291,7 @@ BEGIN
         SET @current_rate = (@current_rate + @rate) / 2
 
 		UPDATE Voditelj SET 
-		rate = @current_rate
+		rate = @current_rate, rate_count = (rate_count + 1)
 		WHERE BOLD_ID = @driver_id;
 	END;
 END

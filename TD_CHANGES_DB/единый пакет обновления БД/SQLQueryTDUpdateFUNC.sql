@@ -3869,7 +3869,7 @@ BEGIN
         SET @CURSOR  = CURSOR SCROLL
         FOR
         SELECT dr.BOLD_ID, dr.full_name, ac.name as driver_class,
-        dr.Marka_avtomobilya, dr.rating, dr.last_lat, dr.last_lon
+        dr.Marka_avtomobilya, dr.rate, dr.last_lat, dr.last_lon
         FROM Voditelj dr LEFT JOIN AUTO_CLASS ac 
         ON dr.auto_class_id = ac.id
         WHERE dr.otnositsya_k_gruppe = @company_id;
@@ -3877,7 +3877,7 @@ BEGIN
         SET @CURSOR  = CURSOR SCROLL
         FOR
         SELECT dr.BOLD_ID, dr.full_name, ac.name as driver_class,
-        dr.Marka_avtomobilya, dr.rating, dr.last_lat, dr.last_lon
+        dr.Marka_avtomobilya, dr.rate, dr.last_lat, dr.last_lon
         FROM Voditelj dr LEFT JOIN AUTO_CLASS ac 
         ON dr.auto_class_id = ac.id;
     END;
@@ -3890,6 +3890,10 @@ BEGIN
 	BEGIN
 
         SET @driver_class = ISNULL(@driver_class, '');
+		SET @mark_auto = ISNULL(@mark_auto, '');
+		SET @last_lat = ISNULL(@last_lat, '');
+		SET @last_lon = ISNULL(@last_lon, '');
+		SET @driver_name = ISNULL(@driver_name, '');
 
         SET @res=@res+',"id'+
 			CAST(@counter as varchar(20))+'":"'+
@@ -3948,7 +3952,7 @@ BEGIN
 	BEGIN
 	
     SELECT @client_data = '1","phone":"' + rc.phone + '","name":"' 
-     + rc.name + '","rate":"' + rc.rate + ',"bonus":"' + 
+     + rc.name + '","rate":"' + CAST(rc.rate as [varchar](255)) + '","bonus":"' + 
      CAST(ISNULL(sp.bonus_summ, 0) as [varchar](255)) + '",'
 	FROM REMOTE_CLIENTS rc LEFT JOIN Sootvetstvie_parametrov_zakaza sp
     ON rc.phone = sp.Telefon_klienta
@@ -3981,7 +3985,7 @@ BEGIN
     @left_option_str varchar(255), @rigth_option_str varchar(255);
 
     SET @left_option_str = CAST(@option_id as [varchar](255)) + ','
-    SET @rigth_option_str = CAST(@option_id as [varchar](255)) + ','
+    SET @rigth_option_str = ',' + CAST(@option_id as [varchar](255))
     SET @length_with_comma = LEN(@left_option_str)
 
 
