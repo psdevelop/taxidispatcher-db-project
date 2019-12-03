@@ -271,6 +271,16 @@ IF OBJECT_ID('dbo.GetDriverOrderOptionIncluded') IS NOT NULL
 DROP FUNCTION [dbo].[GetDriverOrderOptionIncluded]
 GO
 
+/****** Object:  UserDefinedFunction [dbo].[GetSectorMediumAreaCoords]    Script Date: 03.12.2019 15:50:40 ******/
+IF OBJECT_ID('dbo.GetSectorMediumAreaCoords') IS NOT NULL 
+DROP FUNCTION [dbo].[GetSectorMediumAreaCoords]
+GO
+
+/****** Object:  UserDefinedFunction [dbo].[GetFirstQueueNearSectDriverId]    Script Date: 03.12.2019 15:50:40 ******/
+IF OBJECT_ID('dbo.GetFirstQueueNearSectDriverId') IS NOT NULL 
+DROP FUNCTION [dbo].[GetFirstQueueNearSectDriverId]
+GO
+
 /****** Object:  UserDefinedFunction [dbo].[DegToRad]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
@@ -4005,5 +4015,76 @@ END
 
 
 
+GO
+
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+
+CREATE FUNCTION [dbo].[GetSectorMediumAreaCoords] (@sector_id int, @oth_sector_id int)
+RETURNS varchar(5000)
+AS
+BEGIN
+	declare @res decimal(28,10);
+	DECLARE @lat decimal(28,10), @lon decimal(28,10),
+        @oth_lat decimal(28,10), @oth_lon decimal(28,10);
+
+    SET @res = 0;
+
+    EXECUTE [dbo].[GetSectorMediumCoords] 
+        @sector_id
+        ,@lat OUTPUT
+        ,@lon OUTPUT
+
+    EXECUTE [dbo].[GetSectorMediumCoords] 
+        @oth_sector_id
+        ,@oth_lat OUTPUT
+        ,@oth_lon OUTPUT
+
+    IF @lat <> 0 AND @lon <> 0 AND @oth_lat <> 0 AND @oth_lon <> 0
+    BEGIN
+        SET @res = SQRT(POWER(ABS(@lat - @oth_lat),2) + 
+            POWER(ABS(@lon - @oth_lon),2))
+    END;
+
+	RETURN(@res)
+END
+
+
+GO
+
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+CREATE FUNCTION [dbo].[GetFirstQueueNearSectDriverId]  ( @sector_id int)
+RETURNS int
+AS
+BEGIN
+    declare @res int
+   
+    SET @res=-1
+   
+    select TOP 1 @res=BOLD_ID   
+    from Voditelj where 
+    rabotaet_na_sektore = @sector_id AND Zanyat_drugim_disp = 0
+    AND V_rabote = 1
+    ORDER BY Vremya_poslednei_zayavki ASC
+
+    IF @@ROWCOUNT = 0 BEGIN
+        select TOP 1 @res = dr.BOLD_ID   
+        from Voditelj dr, Sektor_raboty sr where 
+        dr.rabotaet_na_sektore <> @sector_id AND dr.Zanyat_drugim_disp = 0
+        AND dr.V_rabote = 1 AND dr.rabotaet_na_sektore = sr.BOLD_ID
+        ORDER BY [dbo].[GetSectorMediumAreaCoords](@sector_id, sr.BOLD_ID) ASC, 
+        dr.Vremya_poslednei_zayavki ASC 
+    END;
+
+    SET @res = ISNULL(@res, -1) 
+
+    RETURN(@res)
+END
 GO
 

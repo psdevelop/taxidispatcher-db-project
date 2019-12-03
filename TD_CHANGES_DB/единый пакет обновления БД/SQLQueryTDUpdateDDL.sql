@@ -1073,6 +1073,15 @@ END
 
 GO
 
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','unasgn_ord_auto_dr_que_set_time') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [unasgn_ord_auto_dr_que_set_time] [int] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_unasgn_ord_auto_dr_que_set_time]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ «¿ ¿«Œ¬

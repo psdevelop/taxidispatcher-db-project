@@ -401,6 +401,11 @@ IF OBJECT_ID('dbo.UpdateClientInfo') IS NOT NULL
 DROP PROCEDURE [dbo].[UpdateClientInfo]
 GO
 
+/****** Object:  StoredProcedure [dbo].[GetSectorMediumCoords]    Script Date: 03.12.2019 15:50:15 ******/
+IF OBJECT_ID('dbo.GetSectorMediumCoords') IS NOT NULL
+DROP PROCEDURE [dbo].[GetSectorMediumCoords]
+GO
+
 /****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
@@ -4779,7 +4784,8 @@ BEGIN
 			@auto_for_all_longtime int,
 			@auto_for_all_empty_sector smallint,
 			@dont_auto_wtout_adr_appr smallint,
-			@early_orders_started_time smallint;
+			@early_orders_started_time smallint,
+            @unasgn_ord_auto_dr_que_set_time int;
 	
 	SELECT TOP 1 @auto_bsector_longorders=ISNULL(auto_bsector_longorders,0),
 	@auto_bsectorid_longorders=ISNULL(auto_bsectorid_longorders,-1),
@@ -4798,7 +4804,8 @@ BEGIN
 	@auto_for_all_longtime = auto_for_all_longtime,
 	@auto_for_all_empty_sector = auto_for_all_empty_sector,
 	@dont_auto_wtout_adr_appr = dont_auto_wtout_adr_appr,
-	@early_orders_started_time = early_orders_started_time
+	@early_orders_started_time = early_orders_started_time,
+    @unasgn_ord_auto_dr_que_set_time = unasgn_ord_auto_dr_que_set_time
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
 	
@@ -4814,6 +4821,19 @@ BEGIN
 	end
 
 	BEGIN TRY
+
+        IF @unasgn_ord_auto_dr_que_set_time > 0 BEGIN
+            UPDATE dbo.Zakaz 
+			SET 
+			REMOTE_SET = 8, REMOTE_SYNC = 1, vypolnyaetsya_voditelem = 
+            [dbo].[GetFirstQueueNearSectDriverId](SECTOR_ID)
+			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 2) AND (SECTOR_ID > 0) 
+			and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) AND for_all_sectors <> 1
+            AND vypolnyaetsya_voditelem <= 0
+			AND (ABS(DATEDIFF(SECOND, LAST_STATUS_TIME, GETDATE())) > @unasgn_ord_auto_dr_que_set_time)
+			AND Telefon_klienta<>'' AND ((Adres_vyzova_vvodim<>'' AND adr_manual_set=1) OR (@auto_bsect_notmanual_ord=1 AND adr_manual_set=0))
+        END;
+
 		UPDATE dbo.Zakaz 
 			SET is_started_early = 1
 			WHERE is_early = 1 AND is_started_early = 0 AND 
@@ -7319,4 +7339,39 @@ BEGIN
 END
 
 GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[GetSectorMediumCoords] 
+	-- Add the parameters for the stored procedure here
+	(@sector_id int, @lat decimal(28, 10) OUT, @lon decimal(28, 10) OUT)
+AS
+BEGIN
+
+    SET @lat = 0;
+    SET @lon = 0;
+
+    SELECT id
+    FROM AREA_LINES
+    WHERE sector_id = @sector_id;
+
+    IF @@ROWCOUNT > 0 BEGIN
+        SELECT @lat = AVG(lat), @lon = AVG(lon)
+        FROM AREA_LINES
+        WHERE sector_id = @sector_id;
+    END;
+
+    SET @lat = ISNULL(@lat, 0);
+    SET @lon = ISNULL(@lon, 0);
+END
+
+
+
+GO
+
 
