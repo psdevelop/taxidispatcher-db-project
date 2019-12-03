@@ -4827,8 +4827,8 @@ BEGIN
 			SET 
 			REMOTE_SET = 8, REMOTE_SYNC = 1, vypolnyaetsya_voditelem = 
             [dbo].[GetFirstQueueNearSectDriverId](SECTOR_ID)
-			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 2) AND (SECTOR_ID > 0) 
-			and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) AND for_all_sectors <> 1
+			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 2 OR REMOTE_SET = 3) AND (SECTOR_ID > 0) 
+			and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) 
             AND vypolnyaetsya_voditelem <= 0
 			AND (ABS(DATEDIFF(SECOND, LAST_STATUS_TIME, GETDATE())) > @unasgn_ord_auto_dr_que_set_time)
 			AND Telefon_klienta<>'' AND ((Adres_vyzova_vvodim<>'' AND adr_manual_set=1) OR (@auto_bsect_notmanual_ord=1 AND adr_manual_set=0))
