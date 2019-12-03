@@ -281,6 +281,11 @@ IF OBJECT_ID('dbo.GetFirstQueueNearSectDriverId') IS NOT NULL
 DROP FUNCTION [dbo].[GetFirstQueueNearSectDriverId]
 GO
 
+/****** Object:  UserDefinedFunction [dbo].[GetDrNumByDrId]    Script Date: 03.12.2019 20:50:40 ******/
+IF OBJECT_ID('dbo.GetDrNumByDrId') IS NOT NULL 
+DROP FUNCTION [dbo].[GetDrNumByDrId]
+GO
+
 /****** Object:  UserDefinedFunction [dbo].[DegToRad]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
@@ -4085,6 +4090,28 @@ BEGIN
     SET @res = ISNULL(@res, -1) 
 
     RETURN(@res)
+END
+GO
+
+SET ANSI_NULLS OFF
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+CREATE FUNCTION [dbo].[GetDrNumByDrId]  ( @driver_id int)
+RETURNS int
+AS
+BEGIN
+   declare @res int
+   
+   SET @res=0
+   
+  select @res=Pozyvnoi   
+   from Voditelj where 
+     BOLD_ID=@driver_id 
+
+   SET @res = ISNULL(@res, 0)
+
+   RETURN(@res)
 END
 GO
 

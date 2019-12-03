@@ -4826,7 +4826,9 @@ BEGIN
             UPDATE dbo.Zakaz 
 			SET 
 			REMOTE_SET = 8, REMOTE_SYNC = 1, vypolnyaetsya_voditelem = 
-            [dbo].[GetFirstQueueNearSectDriverId](SECTOR_ID)
+            [dbo].[GetFirstQueueNearSectDriverId](SECTOR_ID), 
+            REMOTE_DRNUM = [dbo].[GetDrNumByDrId]([dbo].[GetFirstQueueNearSectDriverId](SECTOR_ID)),
+			Pozyvnoi_ustan = [dbo].[GetDrNumByDrId]([dbo].[GetFirstQueueNearSectDriverId](SECTOR_ID))
 			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 2 OR REMOTE_SET = 3) AND (SECTOR_ID > 0) 
 			and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) 
             AND vypolnyaetsya_voditelem <= 0
