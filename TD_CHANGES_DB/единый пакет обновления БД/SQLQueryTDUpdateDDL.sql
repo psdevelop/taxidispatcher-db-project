@@ -1082,6 +1082,60 @@ END
 
 GO
 
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','load_driver_data_with_wsocket') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [load_driver_data_with_wsocket] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_load_driver_data_with_wsocket]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','prev_summ_over_taxometr') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [prev_summ_over_taxometr] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_prev_summ_over_taxometr]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','taxometr_over_small_prev_summ') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [taxometr_over_small_prev_summ] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_taxometr_over_small_prev_summ]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','dont_minimize_calc_price') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [dont_minimize_calc_price] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_dont_minimize_calc_price]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','disable_taxometr_report_edit') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [disable_taxometr_report_edit] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_disable_taxometr_report_edit]  DEFAULT ((1));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','max_order_price') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [max_order_price] [int] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_max_order_price]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ «¿ ¿«Œ¬

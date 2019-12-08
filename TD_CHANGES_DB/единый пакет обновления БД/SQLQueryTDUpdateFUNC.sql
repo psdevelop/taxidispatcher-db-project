@@ -2076,7 +2076,11 @@ BEGIN
 		@hide_other_sect_wait_orders smallint, @dont_wait_in_busy_state smallint,
 		@show_all_sectwait_manual smallint, @taxm_block_wtout_onplace smallint,
 		@start_free_distance int, @start_free_time int, 
-		@dispatcher_phone varchar(50), @reserved_ip varchar(50);
+		@dispatcher_phone varchar(50), @reserved_ip varchar(50),
+        @load_driver_data_with_wsocket smallint,
+        @prev_summ_over_taxometr smallint, @taxometr_over_small_prev_summ smallint,
+        @dont_minimize_calc_price smallint, @disable_taxometr_report_edit smallint,
+        @max_order_price int;
 	
 	SELECT TOP 1 @curr_mver=ISNULL(curr_mob_version,2102),
 	@min_mver=ISNULL(min_mob_version,2102),
@@ -2101,7 +2105,13 @@ BEGIN
 	@start_free_distance = start_free_distance, 
 	@start_free_time = start_free_time, 
 	@dispatcher_phone = dispatcher_phone, 
-	@reserved_ip = reserved_ip
+	@reserved_ip = reserved_ip,
+    @load_driver_data_with_wsocket = load_driver_data_with_wsocket,
+    @prev_summ_over_taxometr = prev_summ_over_taxometr, 
+    @taxometr_over_small_prev_summ = taxometr_over_small_prev_summ,
+    @dont_minimize_calc_price = dont_minimize_calc_price, 
+    @disable_taxometr_report_edit = disable_taxometr_report_edit,
+    @max_order_price = max_order_price
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
    
@@ -2267,6 +2277,49 @@ BEGIN
 	BEGIN
 		SET @tmetr_instr=@tmetr_instr+'"TBWOP":"no",';
 	END;
+
+    IF @load_driver_data_with_wsocket = 1 BEGIN
+		SET @tmetr_instr=@tmetr_instr+'"ldfs":"yes",';
+	END
+	ELSE 
+	BEGIN
+		SET @tmetr_instr=@tmetr_instr+'"ldfs":"no",';
+	END;
+        
+    IF @prev_summ_over_taxometr = 1 BEGIN
+    	SET @tmetr_instr=@tmetr_instr+'"psot":"yes",';
+	END
+	ELSE 
+	BEGIN
+		SET @tmetr_instr=@tmetr_instr+'"psot":"no",';
+	END;
+
+    IF @taxometr_over_small_prev_summ = 1 BEGIN
+    	SET @tmetr_instr=@tmetr_instr+'"tosp":"yes",';
+	END
+	ELSE 
+	BEGIN
+		SET @tmetr_instr=@tmetr_instr+'"tosp":"no",';
+	END;
+
+    IF @dont_minimize_calc_price = 1 BEGIN
+    	SET @tmetr_instr=@tmetr_instr+'"dmcp":"yes",';
+	END
+	ELSE 
+	BEGIN
+		SET @tmetr_instr=@tmetr_instr+'"dmcp":"no",';
+	END;
+
+    IF @disable_taxometr_report_edit = 1 BEGIN
+    	SET @tmetr_instr=@tmetr_instr+'"dtre":"1",';
+	END
+	ELSE 
+	BEGIN
+		SET @tmetr_instr=@tmetr_instr+'"dtre":"0",';
+	END;
+
+    SET @tmetr_instr=@tmetr_instr+'"MOPR":"' + 
+        CAST(@max_order_price as varchar(20)) + '",';
 		
 	if(@start_free_distance > 0)
 	BEGIN
