@@ -1636,6 +1636,14 @@ END
 
 GO
 
+IF COL_LENGTH('Personal','has_web_orders_updates') IS NULL
+BEGIN
+	ALTER TABLE dbo.Personal 
+	ADD [has_web_orders_updates] [smallint] NOT NULL 
+	CONSTRAINT [DF_Personal_has_web_orders_updates]  DEFAULT ((0));
+END
+
+GO
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- ярнкажш рюакхжш рекетнммнцн яопюбнвмхйю
