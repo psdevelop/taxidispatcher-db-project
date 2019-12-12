@@ -3465,6 +3465,15 @@ BEGIN
         @nOldadr_manual_setValue smallint, @nNewadr_manual_setValue smallint,
         @nOldprev_priceValue smallint, @nNewprev_priceValue smallint,
         @nOlddetected_sectorValue int, @nNewdetected_sectorValue int,
+        @nOldis_earlyValue smallint, @nNewis_earlyValue smallint,
+        @nOldis_started_earlyValue smallint, @nNewis_started_earlyValue smallint,
+        @nOldearly_dateValue datetime, @nNewearly_dateValue datetime,
+        @nOlddistrict_idValue int, @nNewdistrict_idValue int,
+        @nOldbonus_useValue decimal(28, 10), @nNewbonus_useValue decimal(28, 10),
+        @nOldend_adresValue varchar(1000), @nNewend_adresValue varchar(1000),
+        @nOldCLIENT_SMS_SEND_STATEValue int, @nNewCLIENT_SMS_SEND_STATEValue int,
+        @nOldCLIENT_CALL_STATEValue int, @nNewCLIENT_CALL_STATEValue int,
+        @nOldtmhistoryValue varchar(1000), @nNewtmhistoryValue varchar(1000),
 		@RSNewValue INT, @newDrId int, @newOrderId int, @RSOldValue int,
         @oldDrId int;
 
@@ -3511,6 +3520,24 @@ BEGIN
 	@nNewprev_priceValue=a.prev_price,
     @nOlddetected_sectorValue=b.detected_sector,
 	@nNewdetected_sectorValue=a.detected_sector,
+    @nOldis_earlyValue=b.is_early,
+	@nNewis_earlyValue=a.is_early,
+    @nOldis_started_earlyValue=b.is_started_early,
+	@nNewis_started_earlyValue=a.is_started_early,
+    @nOldearly_dateValue=b.early_date,
+	@nNewearly_dateValue=a.early_date,
+    @nOlddistrict_idValue=b.district_id,
+	@nNewdistrict_idValue=a.district_id,
+    @nOldbonus_useValue=b.bonus_use,
+	@nNewbonus_useValue=a.bonus_use,
+    @nOldend_adresValue=b.end_adres,
+	@nNewend_adresValue=a.end_adres,
+    @nOldCLIENT_SMS_SEND_STATEValue=b.CLIENT_SMS_SEND_STATE,
+	@nNewCLIENT_SMS_SEND_STATEValue=a.CLIENT_SMS_SEND_STATE,
+    @nOldCLIENT_CALL_STATEValue=b.CLIENT_CALL_STATE,
+	@nNewCLIENT_CALL_STATEValue=a.CLIENT_CALL_STATE,
+    @nOldtmhistoryValue=b.tmhistory,
+	@nNewtmhistoryValue=a.tmhistory,
 	@newDrId=a.vypolnyaetsya_voditelem,
     @oldDrId=b.vypolnyaetsya_voditelem
 	FROM inserted a, deleted b
@@ -3554,14 +3581,34 @@ BEGIN
     @nOldprev_priceValue <>
 	@nNewprev_priceValue OR
     @nOlddetected_sectorValue <>
-	@nNewdetected_sectorValue
+	@nNewdetected_sectorValue OR
+    @nOldis_earlyValue <>
+	@nNewis_earlyValue OR
+    @nOldis_started_earlyValue <>
+	@nNewis_started_earlyValue OR
+    @nOldearly_dateValue <>
+	@nNewearly_dateValue OR
+    @nOlddistrict_idValue <>
+	@nNewdistrict_idValue OR
+    @nOldbonus_useValue <>
+	@nNewbonus_useValue OR
+    @nOldend_adresValue <>
+	@nNewend_adresValue OR
+    @nOldCLIENT_SMS_SEND_STATEValue <>
+	@nNewCLIENT_SMS_SEND_STATEValue OR
+    @nOldCLIENT_CALL_STATEValue <>
+	@nNewCLIENT_CALL_STATEValue OR 
+    @nOldtmhistoryValue <>
+	@nNewtmhistoryValue
 	BEGIN
-		UPDATE Personal SET has_web_orders_updates=1;
+		UPDATE Personal SET has_web_orders_updates=1 WHERE Login <> SYSTEM_USER;
 	END;
 	
 END
 
 
+
 GO
 ALTER TABLE [dbo].[Zakaz] ENABLE TRIGGER [AFTER_WEB_DISP_DATA_CHANGE]
 GO
+
