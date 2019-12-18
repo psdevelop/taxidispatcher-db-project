@@ -2227,7 +2227,7 @@ BEGIN
 		@prev_distance decimal(28,10), @prev_date datetime, 
 		@company_id int, @company_name varchar(255),
         @current_sum decimal(18,5), @current_dist decimal(18,5),
-        @is_upcoming int;
+        @is_upcoming int, @driver_id int, @driver_name varchar(500);
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -2324,7 +2324,7 @@ BEGIN
 			 ISNULL(dr.phone_number, ''),
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.company_id, sp.Naimenovanie, ord.current_sum, ord.current_dist,
-            ord.Predvariteljnyi
+            ord.Predvariteljnyi, dr.full_name as driver_name, dr.BOLD_ID as driver_id
 			FROM Zakaz ord 
 			LEFT JOIN Voditelj dr ON ord.vypolnyaetsya_voditelem=dr.BOLD_ID  
 			LEFT JOIN Gruppa_voditelei gv ON ord.company_id = gv.BOLD_ID
@@ -2341,7 +2341,11 @@ BEGIN
 		/*Открываем курсор*/
 		OPEN @CURSOR
 		/*Выбираем первую строку*/
-		FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, @opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, @order_start_date, @rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @company_id, @company_name, @current_sum, @current_dist, @is_upcoming;
+		FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, 
+			@opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, @order_start_date, 
+			@rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, 
+			@client_name, @prev_distance, @prev_date, @company_id, @company_name, @current_sum, 
+			@current_dist, @is_upcoming, @driver_id, @driver_name;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2459,6 +2463,17 @@ BEGIN
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(@is_upcoming as varchar(20))+'"';
 
+			SET @driver_id = ISNULL(@driver_id, 0);
+			SET @driver_name = ISNULL(@driver_name, '');
+
+			SET @res=@res+',"drid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@driver_id as varchar(20))+'"';
+
+			SET @res=@res+',"drnm'+
+			CAST(@counter as varchar(20))+'":"'+
+			@driver_name+'"';
+
 			SET @res=@res+',"oprd'+
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(DATEDIFF(second,{d '1970-01-01'},@prev_date) AS varchar(100))+'"';
@@ -2473,7 +2488,11 @@ BEGIN
 
 			SET @counter=@counter+1;
 			/*Выбираем следующую строку*/
-			FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, @opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, @order_start_date, @rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @company_id, @company_name, @current_sum, @current_dist, @is_upcoming;
+			FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, 
+				@opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, 
+				@order_start_date, @rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, 
+				@cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @company_id, 
+				@company_name, @current_sum, @current_dist, @is_upcoming, @driver_id, @driver_name;
 		END
 		CLOSE @CURSOR
 	END
@@ -2491,7 +2510,6 @@ BEGIN
 	END;
 	
 END
-
 
 
 
