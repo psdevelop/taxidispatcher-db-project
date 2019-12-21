@@ -1469,7 +1469,50 @@ END
 
 GO
 
+IF COL_LENGTH('Zakaz','comment') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [comment] [varchar](255) NOT NULL 
+	CONSTRAINT [DF_Zakaz_comment]  DEFAULT ('');
+END
 
+GO
+
+IF COL_LENGTH('Zakaz','client_dist') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [client_dist] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_client_dist]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','current_time') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [current_time] [int] NOT NULL 
+	CONSTRAINT [DF_Zakaz_current_time]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','client_time') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [client_time] [int] NOT NULL 
+	CONSTRAINT [DF_Zakaz_client_time]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','client_prev_sum') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [client_prev_sum] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_client_prev_sum]  DEFAULT ((0));
+END
+
+GO
 
 --------------------------------------------------------------------
 --------------------------------------------------------------------
