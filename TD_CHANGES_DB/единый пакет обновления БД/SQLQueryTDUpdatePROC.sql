@@ -2147,6 +2147,26 @@ BEGIN
 			convert(varchar,convert(decimal(8,2),@prev_distance))+'"';
 			END;
 
+			SET @res=@res+',"cldst'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@client_dist))+'"';
+
+			SET @res=@res+',"clpsm'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@client_time))+'"';
+
+			SET @res=@res+',"clcmm'+
+			CAST(@counter as varchar(20))+'":"'+
+			@cl_comment+'"';
+
+			SET @res=@res+',"crrtm'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@current_time as varchar(20))+'"';
+
+			SET @res=@res+',"cltm'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@client_time as varchar(20))+'"';
+
 			IF (@bonus_use>0)
 			BEGIN
 			SET @res=@res+',"obus'+
@@ -2212,7 +2232,6 @@ BEGIN
 	END;
 	
 END
-
 
 
 
