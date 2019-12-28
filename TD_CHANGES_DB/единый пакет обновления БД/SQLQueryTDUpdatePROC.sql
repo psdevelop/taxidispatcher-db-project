@@ -2153,7 +2153,7 @@ BEGIN
 
 			SET @res=@res+',"clpsm'+
 			CAST(@counter as varchar(20))+'":"'+
-			convert(varchar,convert(decimal(18,5),@client_time))+'"';
+			convert(varchar,convert(decimal(18,5),@client_prev_sum))+'"';
 
 			SET @res=@res+',"clcmm'+
 			CAST(@counter as varchar(20))+'":"'+
