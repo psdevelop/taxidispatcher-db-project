@@ -1908,7 +1908,9 @@ BEGIN
 		@end_adres varchar(1000), @client_name varchar(500), 
 		@prev_distance decimal(28,10), @prev_date datetime,
 		@on_place smallint, @bonus_use decimal(28,10),
-		@show_region_in_addr smallint, @is_early smallint;
+		@show_region_in_addr smallint, @is_early smallint,
+		@cl_comment varchar(255), @client_dist [decimal](18, 5),
+		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5);
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -2008,7 +2010,9 @@ BEGIN
 			':'+ ord.Adres_vyzova_vvodim + (CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) as order_data,
 			ord.REMOTE_SYNC, ord.WAITING, ord.TARIFF_ID, ord.OPT_COMB_STR, ord.PR_POLICY_ID,
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
-			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early  
+			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
+			ord.comment, ord.client_dist,
+			ord.[current_time], ord.client_time, ord.client_prev_sum  
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
@@ -2025,7 +2029,9 @@ BEGIN
 			(CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) as order_data,
 			ord.REMOTE_SYNC, ord.WAITING, ord.TARIFF_ID, ord.OPT_COMB_STR, ord.PR_POLICY_ID,
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
-			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early  
+			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
+			ord.comment, ord.client_dist,
+			ord.[current_time], ord.client_time, ord.client_prev_sum    
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
@@ -2045,7 +2051,9 @@ BEGIN
 			':' + ord.Adres_vyzova_vvodim + (CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) as order_data,
 			ord.REMOTE_SYNC, ord.WAITING, ord.TARIFF_ID, ord.OPT_COMB_STR, ord.PR_POLICY_ID,
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
-			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early   
+			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
+			ord.comment, ord.client_dist,
+			ord.[current_time], ord.client_time, ord.client_prev_sum     
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
@@ -2062,7 +2070,9 @@ BEGIN
 			(CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) as order_data,
 			ord.REMOTE_SYNC, ord.WAITING, ord.TARIFF_ID, ord.OPT_COMB_STR, ord.PR_POLICY_ID,
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
-			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early   
+			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
+			ord.comment, ord.client_dist,
+			ord.[current_time], ord.client_time, ord.client_prev_sum     
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
@@ -2075,7 +2085,10 @@ BEGIN
 		/*Открываем курсор*/
 		OPEN @CURSOR
 		/*Выбираем первую строку*/
-		FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, @opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @on_place, @bonus_use, @is_early;
+		FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, 
+			@opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, 
+			@prev_distance, @prev_date, @on_place, @bonus_use, @is_early, @cl_comment, 
+			@client_dist, @current_time, @client_time, @client_prev_sum;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2178,7 +2191,10 @@ BEGIN
 			
 			SET @counter=@counter+1;
 			/*Выбираем следующую строку*/
-			FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, @opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @on_place, @bonus_use, @is_early;
+			FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, 
+				@opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, 
+				@prev_distance, @prev_date, @on_place, @bonus_use, @is_early, @cl_comment, 
+				@client_dist, @current_time, @client_time, @client_prev_sum;
 		END
 		CLOSE @CURSOR
 	END
@@ -2202,6 +2218,7 @@ END
 
 
 GO
+
 /****** Object:  StoredProcedure [dbo].[GetJSONRClientStatus]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
