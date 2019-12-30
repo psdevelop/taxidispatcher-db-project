@@ -2528,7 +2528,9 @@ BEGIN
 		@end_adres varchar(1000), @client_name varchar(500), 
 		@prev_distance decimal(28,10), @prev_date datetime,
 		@rating_bonus decimal(18, 5), @for_all_sectors smallint,
-		@company_id int, @show_region_in_addr smallint;
+		@company_id int, @show_region_in_addr smallint,
+		@cl_comment varchar(255), @client_dist [decimal](18, 5),
+		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5);
 
 	SET @show_region_in_addr = 0;
 
@@ -2545,13 +2547,17 @@ BEGIN
 	ord.Adres_vyzova_vvodim + (CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) as Adres_vyzova_vvodim, ord.SECTOR_ID,
 	ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 	ord.Data_predvariteljnaya, ord.driver_rating_diff, ord.for_all_sectors,
-	ISNULL(ds.company_id, 0) as company_id FROM Zakaz ord
+	ISNULL(ds.company_id, 0) as company_id, 
+	ord.comment, ord.client_dist,
+	ord.[current_time], ord.client_time, ord.client_prev_sum FROM Zakaz ord
 	LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 	WHERE Zavershyon=0 AND REMOTE_SET>0 AND REMOTE_SET<8;
 	/*Открываем курсор*/
 	OPEN @CURSOR
 	/*Выбираем первую строку*/
-	FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, @for_all_sectors, @company_id
+	FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, @cargo_desc, 
+	@end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, @for_all_sectors, 
+	@company_id, @cl_comment, @client_dist, @current_time, @client_time, @client_prev_sum
 	/*Выполняем в цикле перебор строк*/
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -2617,13 +2623,36 @@ BEGIN
 			REPLACE(REPLACE(ISNULL(@client_name,''),'"',' '),'''',' ')+'"';
 			END;
 
+			SET @res=@res+',"cldst'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@client_dist))+'"';
+
+			SET @res=@res+',"clpsm'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@client_prev_sum))+'"';
+
+			SET @res=@res+',"clcmm'+
+			CAST(@counter as varchar(20))+'":"'+
+			@cl_comment+'"';
+
+			SET @res=@res+',"crrtm'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@current_time as varchar(20))+'"';
+
+			SET @res=@res+',"cltm'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@client_time as varchar(20))+'"';
+
 			SET @res=@res+',"oprd'+
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(DATEDIFF(second,{d '1970-01-01'},@prev_date) AS varchar(100))+'"';
 		
 		SET @counter=@counter+1;
 		/*Выбираем следующую строку*/
-		FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, @for_all_sectors, @company_id
+		FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, 
+		@cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, 
+		@for_all_sectors, @company_id, @cl_comment, 
+		@client_dist, @current_time, @client_time, @client_prev_sum
 	END
 	CLOSE @CURSOR
 	

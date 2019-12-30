@@ -2263,7 +2263,9 @@ BEGIN
 		@prev_distance decimal(28,10), @prev_date datetime, 
 		@company_id int, @company_name varchar(255),
         @current_sum decimal(18,5), @current_dist decimal(18,5),
-        @is_upcoming int, @driver_id int, @driver_name varchar(500);
+        @is_upcoming int, @driver_id int, @driver_name varchar(500),
+		@cl_comment varchar(255), @client_dist [decimal](18, 5),
+		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5);
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -2334,7 +2336,9 @@ BEGIN
 			REMOTE_SET, on_place, Uslovn_stoim, ISNULL(tmhistory,''), 
 			ISNULL(status_accumulate,''), dbo.GetDrJSONCoordsByNum(Pozyvnoi_ustan), 
 			CONVERT(varchar, DATEPART(hh, Nachalo_zakaza_data))+':'+CONVERT(varchar, DATEPART(mi, Nachalo_zakaza_data))+' '+CONVERT(varchar, DATEPART(dd, Nachalo_zakaza_data)) + '.' + CONVERT(varchar, DATEPART(mm, Nachalo_zakaza_data)) + '.' + CONVERT(varchar, DATEPART(yyyy, Nachalo_zakaza_data)), 
-			rclient_status
+			rclient_status, 
+			ord.comment, ord.client_dist,
+			ord.[current_time], ord.client_time, ord.client_prev_sum
 			FROM Zakaz ord WHERE 
 			ord.rclient_id=@client_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
@@ -2360,7 +2364,9 @@ BEGIN
 			 ISNULL(dr.phone_number, ''),
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.company_id, sp.Naimenovanie, ord.current_sum, ord.current_dist,
-            ord.Predvariteljnyi, dr.full_name as driver_name, dr.BOLD_ID as driver_id
+            ord.Predvariteljnyi, dr.full_name as driver_name, dr.BOLD_ID as driver_id, 
+			ord.comment, ord.client_dist,
+			ord.[current_time], ord.client_time, ord.client_prev_sum
 			FROM Zakaz ord 
 			LEFT JOIN Voditelj dr ON ord.vypolnyaetsya_voditelem=dr.BOLD_ID  
 			LEFT JOIN Gruppa_voditelei gv ON ord.company_id = gv.BOLD_ID
@@ -2381,7 +2387,8 @@ BEGIN
 			@opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, @order_start_date, 
 			@rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, 
 			@client_name, @prev_distance, @prev_date, @company_id, @company_name, @current_sum, 
-			@current_dist, @is_upcoming, @driver_id, @driver_name;
+			@current_dist, @is_upcoming, @driver_id, @driver_name, @cl_comment, @client_dist, 
+			@current_time, @client_time, @client_prev_sum;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2502,6 +2509,26 @@ BEGIN
 			SET @driver_id = ISNULL(@driver_id, 0);
 			SET @driver_name = ISNULL(@driver_name, '');
 
+			SET @res=@res+',"cldst'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@client_dist))+'"';
+
+			SET @res=@res+',"clpsm'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@client_prev_sum))+'"';
+
+			SET @res=@res+',"clcmm'+
+			CAST(@counter as varchar(20))+'":"'+
+			@cl_comment+'"';
+
+			SET @res=@res+',"crrtm'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@current_time as varchar(20))+'"';
+
+			SET @res=@res+',"cltm'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@client_time as varchar(20))+'"';
+
 			SET @res=@res+',"drid'+
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(@driver_id as varchar(20))+'"';
@@ -2528,7 +2555,9 @@ BEGIN
 				@opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, 
 				@order_start_date, @rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, 
 				@cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @company_id, 
-				@company_name, @current_sum, @current_dist, @is_upcoming, @driver_id, @driver_name;
+				@company_name, @current_sum, @current_dist, @is_upcoming, @driver_id, 
+				@driver_name, @cl_comment, @client_dist, @current_time, @client_time, 
+				@client_prev_sum;
 		END
 		CLOSE @CURSOR
 	END
