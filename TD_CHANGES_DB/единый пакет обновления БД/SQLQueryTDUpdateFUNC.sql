@@ -1787,7 +1787,8 @@ BEGIN
 		@on_place smallint, @bonus_use decimal(28,10),
 		@last_order_time datetime, @position int, @rclient_id int,
 		@cl_comment varchar(255), @client_dist [decimal](18, 5),
-		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5);
+		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5),
+		@cl_name varchar(255), @client_rate [decimal](18, 5), @client_rate_count [int];
    
 	SET @res='{"command":"erlo"';
 	SET @counter = 0;
@@ -1806,8 +1807,10 @@ BEGIN
 	ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 	ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.rclient_id, 
 	ord.comment, ord.client_dist,
-	ord.[current_time], ord.client_time, ord.client_prev_sum  
-	FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id WHERE 
+	ord.[current_time], ord.client_time, ord.client_prev_sum,
+	ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)  
+	FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id
+	LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 	ord.vypolnyaetsya_voditelem=@driver_id AND
 	ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
 	AND ord.Zavershyon=0 AND ord.NO_TRANSMITTING=0 
@@ -1821,7 +1824,8 @@ BEGIN
 	FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, 
         @opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, 
         @prev_distance, @prev_date, @on_place, @bonus_use, @rclient_id, @cl_comment, 
-		@client_dist, @current_time, @client_time, @client_prev_sum;
+		@client_dist, @current_time, @client_time, @client_prev_sum,
+		@cl_name, @client_rate, @client_rate_count;
 	/*Выполняем в цикле перебор строк*/
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -1939,13 +1943,26 @@ BEGIN
 		SET @res=@res+',"cltm'+
 		CAST(@counter as varchar(20))+'":"'+
 		CAST(@client_time as varchar(20))+'"';
+
+		SET @res=@res+',"rclnm'+
+		CAST(@counter as varchar(20))+'":"'+
+		REPLACE(REPLACE(@cl_name,'"',' '),'''',' ')+'"';
+
+		SET @res=@res+',"clrat'+
+		CAST(@counter as varchar(20))+'":"'+
+		convert(varchar,convert(decimal(18,5),@client_rate))+'"';
+
+		SET @res=@res+',"crcnt'+
+		CAST(@counter as varchar(20))+'":"'+
+		CAST(@client_rate_count as varchar(20))+'"';
 			
 		SET @counter=@counter+1;
 			/*Выбираем следующую строку*/
 		FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, 
             @opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, 
             @prev_distance, @prev_date, @on_place, @bonus_use, @rclient_id, @cl_comment, 
-			@client_dist, @current_time, @client_time, @client_prev_sum;
+			@client_dist, @current_time, @client_time, @client_prev_sum,
+			@cl_name, @client_rate, @client_rate_count;
 	END
 	CLOSE @CURSOR
 	
@@ -1955,7 +1972,6 @@ BEGIN
 
 	RETURN(@res)
 END
-GO
 /****** Object:  UserDefinedFunction [dbo].[GetJSONDriverOrdersBCasts]    Script Date: 09.05.2019 23:45:49 ******/
 SET ANSI_NULLS OFF
 GO
@@ -1972,7 +1988,8 @@ BEGIN
 		@end_adres varchar(1000), @client_name varchar(500), 
 		@prev_distance decimal(28,10), @prev_date datetime, 
 		@rating_bonus decimal(18, 5), @for_all_sectors smallint,
-		@company_id int, @show_region_in_addr smallint;
+		@company_id int, @show_region_in_addr smallint,
+		@cl_name varchar(255), @client_rate [decimal](18, 5), @client_rate_count [int];
 
 	SET @show_region_in_addr = 0;
 
@@ -1989,16 +2006,20 @@ BEGIN
 	ord.Adres_vyzova_vvodim + (CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) as Adres_vyzova_vvodim, ord.SECTOR_ID,
 	ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, 
 	ord.prev_distance, ord.Data_predvariteljnaya, ord.driver_rating_diff,
-	ord.for_all_sectors, ISNULL(ds.company_id, 0) as company_id FROM Zakaz ord
+	ord.for_all_sectors, ISNULL(ds.company_id, 0) as company_id,
+	ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)  FROM Zakaz ord
 	INNER JOIN DR_ORD_PRIORITY dop ON ord.BOLD_ID=dop.order_id 
 	LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id
+	LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id
 	WHERE ord.Zavershyon=0 AND ord.REMOTE_SET>0 AND ord.REMOTE_SET<8 
 	AND dop.priority<=0 AND dop.driver_id=@driver_id;
 	--AND dop.priority>=-1
 	/*Открываем курсор*/
 	OPEN @CURSOR
 	/*Выбираем первую строку*/
-	FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, @for_all_sectors, @company_id
+	FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, @cargo_desc, 
+	@end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, @for_all_sectors, 
+	@company_id, @cl_name, @client_rate, @client_rate_count
 	/*Выполняем в цикле перебор строк*/
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -2067,10 +2088,24 @@ BEGIN
 			SET @res=@res+',"oprd'+
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(DATEDIFF(second,{d '1970-01-01'},@prev_date) AS varchar(100))+'"';
+
+			SET @res=@res+',"rclnm'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@cl_name,'"',' '),'''',' ')+'"';
+
+			SET @res=@res+',"clrat'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@client_rate))+'"';
+
+			SET @res=@res+',"crcnt'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@client_rate_count as varchar(20))+'"';
 		
 		SET @counter=@counter+1;
 		/*Выбираем следующую строку*/
-		FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, @cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, @for_all_sectors, @company_id
+		FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, @cargo_desc, 
+		@end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, @for_all_sectors, 
+		@company_id, @cl_name, @client_rate, @client_rate_count
 	END
 	CLOSE @CURSOR
 	
@@ -2530,7 +2565,8 @@ BEGIN
 		@rating_bonus decimal(18, 5), @for_all_sectors smallint,
 		@company_id int, @show_region_in_addr smallint,
 		@cl_comment varchar(255), @client_dist [decimal](18, 5),
-		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5);
+		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5),
+		@cl_name varchar(255), @client_rate [decimal](18, 5), @client_rate_count [int];
 
 	SET @show_region_in_addr = 0;
 
@@ -2549,15 +2585,18 @@ BEGIN
 	ord.Data_predvariteljnaya, ord.driver_rating_diff, ord.for_all_sectors,
 	ISNULL(ds.company_id, 0) as company_id, 
 	ord.comment, ord.client_dist,
-	ord.[current_time], ord.client_time, ord.client_prev_sum FROM Zakaz ord
+	ord.[current_time], ord.client_time, ord.client_prev_sum,
+	ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)  FROM Zakaz ord
 	LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
+	LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id
 	WHERE Zavershyon=0 AND REMOTE_SET>0 AND REMOTE_SET<8;
 	/*Открываем курсор*/
 	OPEN @CURSOR
 	/*Выбираем первую строку*/
 	FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, @cargo_desc, 
 	@end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, @for_all_sectors, 
-	@company_id, @cl_comment, @client_dist, @current_time, @client_time, @client_prev_sum
+	@company_id, @cl_comment, @client_dist, @current_time, @client_time, @client_prev_sum,
+	@cl_name, @client_rate, @client_rate_count
 	/*Выполняем в цикле перебор строк*/
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -2643,6 +2682,18 @@ BEGIN
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(@client_time as varchar(20))+'"';
 
+			SET @res=@res+',"rclnm'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@cl_name,'"',' '),'''',' ')+'"';
+
+			SET @res=@res+',"clrat'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@client_rate))+'"';
+
+			SET @res=@res+',"crcnt'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@client_rate_count as varchar(20))+'"';
+
 			SET @res=@res+',"oprd'+
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(DATEDIFF(second,{d '1970-01-01'},@prev_date) AS varchar(100))+'"';
@@ -2652,7 +2703,8 @@ BEGIN
 		FETCH NEXT FROM @CURSOR INTO @order_id, @order_adres, @end_sect, @prev_price, 
 		@cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @rating_bonus, 
 		@for_all_sectors, @company_id, @cl_comment, 
-		@client_dist, @current_time, @client_time, @client_prev_sum
+		@client_dist, @current_time, @client_time, @client_prev_sum,
+		@cl_name, @client_rate, @client_rate_count
 	END
 	CLOSE @CURSOR
 	

@@ -1910,7 +1910,8 @@ BEGIN
 		@on_place smallint, @bonus_use decimal(28,10),
 		@show_region_in_addr smallint, @is_early smallint,
 		@cl_comment varchar(255), @client_dist [decimal](18, 5),
-		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5);
+		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5),
+		@cl_name varchar(255), @client_rate [decimal](18, 5), @client_rate_count [int];
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -2012,8 +2013,10 @@ BEGIN
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
 			ord.comment, ord.client_dist,
-			ord.[current_time], ord.client_time, ord.client_prev_sum  
-			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id WHERE 
+			ord.[current_time], ord.client_time, ord.client_prev_sum,
+			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)   
+			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
+			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
 			AND ord.Zavershyon=0 AND ord.NO_TRANSMITTING=0 
@@ -2031,8 +2034,10 @@ BEGIN
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
 			ord.comment, ord.client_dist,
-			ord.[current_time], ord.client_time, ord.client_prev_sum    
-			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id WHERE 
+			ord.[current_time], ord.client_time, ord.client_prev_sum,
+			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)     
+			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
+			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
 			AND ord.Zavershyon=0 AND ord.NO_TRANSMITTING=0 
@@ -2053,8 +2058,10 @@ BEGIN
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
 			ord.comment, ord.client_dist,
-			ord.[current_time], ord.client_time, ord.client_prev_sum     
-			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id WHERE 
+			ord.[current_time], ord.client_time, ord.client_prev_sum,
+			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)      
+			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
+			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
 			AND ord.Zavershyon=0 AND ord.NO_TRANSMITTING=0 
@@ -2072,8 +2079,10 @@ BEGIN
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
 			ord.comment, ord.client_dist,
-			ord.[current_time], ord.client_time, ord.client_prev_sum     
-			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id WHERE 
+			ord.[current_time], ord.client_time, ord.client_prev_sum,
+			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)      
+			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
+			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
 			AND ord.Zavershyon=0 AND ord.NO_TRANSMITTING=0 
@@ -2088,7 +2097,8 @@ BEGIN
 		FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, 
 			@opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, 
 			@prev_distance, @prev_date, @on_place, @bonus_use, @is_early, @cl_comment, 
-			@client_dist, @current_time, @client_time, @client_prev_sum;
+			@client_dist, @current_time, @client_time, @client_prev_sum,
+			@cl_name, @client_rate, @client_rate_count;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2167,6 +2177,18 @@ BEGIN
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(@client_time as varchar(20))+'"';
 
+			SET @res=@res+',"rclnm'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(@cl_name,'"',' '),'''',' ')+'"';
+
+			SET @res=@res+',"clrat'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@client_rate))+'"';
+
+			SET @res=@res+',"crcnt'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@client_rate_count as varchar(20))+'"';
+
 			IF (@bonus_use>0)
 			BEGIN
 			SET @res=@res+',"obus'+
@@ -2214,7 +2236,8 @@ BEGIN
 			FETCH NEXT FROM @CURSOR INTO @order_id, @order_data, @rsync, @waiting, @tarif_id, 
 				@opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, 
 				@prev_distance, @prev_date, @on_place, @bonus_use, @is_early, @cl_comment, 
-				@client_dist, @current_time, @client_time, @client_prev_sum;
+				@client_dist, @current_time, @client_time, @client_prev_sum,
+				@cl_name, @client_rate, @client_rate_count;
 		END
 		CLOSE @CURSOR
 	END
@@ -2232,6 +2255,7 @@ BEGIN
 	END;
 	
 END
+
 
 
 
