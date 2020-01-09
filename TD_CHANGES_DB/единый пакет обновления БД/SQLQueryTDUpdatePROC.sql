@@ -6951,6 +6951,8 @@ CREATE PROCEDURE [dbo].[InsertOrderWithSectorAndTariffParams]
 	@lat varchar(50), @lon varchar(50), @sector_id int, 
     @district_id int, @company_id int, @tplan_id int, @for_all smallint,
     @driver_id int, @shedule_date DATETIME,
+    @cl_comment varchar(255), @client_time int, 
+    @client_distance [decimal](18, 5), @client_prev_summ [decimal](18, 5),
     @ord_num  int OUT, @order_id int OUT)
 AS
 BEGIN 
@@ -7018,7 +7020,11 @@ BEGIN
         district_id = (CASE WHEN (@district_id > 0) THEN @district_id ELSE district_id END),
 		company_id = (CASE WHEN (@company_id > 0) THEN @company_id ELSE company_id END),
         rclient_lat = (CASE WHEN (@lat <> '' AND @lat <> '0') THEN @lat ELSE rclient_lat END),
-        rclient_lon = (CASE WHEN (@lon <> '' AND @lon <> '0') THEN @lon ELSE rclient_lon END)
+        rclient_lon = (CASE WHEN (@lon <> '' AND @lon <> '0') THEN @lon ELSE rclient_lon END),
+        comment = @cl_comment, 
+        client_time = @client_time, 
+        client_dist = @client_distance, 
+        client_prev_sum = @client_prev_summ
         WHERE BOLD_ID=@order_id;
 
 	END
