@@ -1532,6 +1532,60 @@ END
 
 GO
 
+IF COL_LENGTH('Zakaz','first_stop_adr') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [first_stop_adr] [varchar](255) NOT NULL 
+	CONSTRAINT [DF_Zakaz_first_stop_adr]  DEFAULT ('');
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','first_stop_lat') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [first_stop_lat] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_first_stop_lat]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','first_stop_lon') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [first_stop_lon] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_first_stop_lon]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','second_stop_adr') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [second_stop_adr] [varchar](255) NOT NULL 
+	CONSTRAINT [DF_Zakaz_second_stop_adr]  DEFAULT ('');
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','second_stop_lat') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [second_stop_lat] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_second_stop_lat]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','second_stop_lon') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [second_stop_lon] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_second_stop_lon]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ —≈ “Œ–Œ¬
