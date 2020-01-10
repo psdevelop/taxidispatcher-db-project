@@ -1911,7 +1911,9 @@ BEGIN
 		@show_region_in_addr smallint, @is_early smallint,
 		@cl_comment varchar(255), @client_dist [decimal](18, 5),
 		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5),
-		@cl_name varchar(255), @client_rate [decimal](18, 5), @client_rate_count [int];
+		@cl_name varchar(255), @client_rate [decimal](18, 5), @client_rate_count [int],
+        @dest_lat [decimal](18, 5), @dest_lon [decimal](18, 5),
+        @rclient_lat varchar(50), @rclient_lon varchar(50);
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -2014,7 +2016,8 @@ BEGIN
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
 			ord.comment, ord.client_dist,
 			ord.[current_time], ord.client_time, ord.client_prev_sum,
-			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)   
+			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
+            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon   
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2035,7 +2038,8 @@ BEGIN
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
 			ord.comment, ord.client_dist,
 			ord.[current_time], ord.client_time, ord.client_prev_sum,
-			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)     
+			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
+            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon     
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2059,7 +2063,8 @@ BEGIN
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
 			ord.comment, ord.client_dist,
 			ord.[current_time], ord.client_time, ord.client_prev_sum,
-			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)      
+			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
+            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon      
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2080,7 +2085,8 @@ BEGIN
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
 			ord.comment, ord.client_dist,
 			ord.[current_time], ord.client_time, ord.client_prev_sum,
-			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0)      
+			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
+            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon      
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2098,7 +2104,8 @@ BEGIN
 			@opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, 
 			@prev_distance, @prev_date, @on_place, @bonus_use, @is_early, @cl_comment, 
 			@client_dist, @current_time, @client_time, @client_prev_sum,
-			@cl_name, @client_rate, @client_rate_count;
+			@cl_name, @client_rate, @client_rate_count,
+            @rclient_lat, @rclient_lon, @dest_lat, @dest_lon;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2189,6 +2196,22 @@ BEGIN
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(@client_rate_count as varchar(20))+'"';
 
+            SET @res=@res+',"stlat'+
+			CAST(@counter as varchar(20))+'":"'+
+			@rclient_lat+'"';
+
+            SET @res=@res+',"stlon'+
+			CAST(@counter as varchar(20))+'":"'+
+			@rclient_lon+'"';
+
+            SET @res=@res+',"dlat'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@dest_lat))+'"';
+
+            SET @res=@res+',"dlon'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@dest_lon))+'"';
+
 			IF (@bonus_use>0)
 			BEGIN
 			SET @res=@res+',"obus'+
@@ -2237,7 +2260,8 @@ BEGIN
 				@opt_comb, @tplan_id, @prev_price, @cargo_desc, @end_adres, @client_name, 
 				@prev_distance, @prev_date, @on_place, @bonus_use, @is_early, @cl_comment, 
 				@client_dist, @current_time, @client_time, @client_prev_sum,
-				@cl_name, @client_rate, @client_rate_count;
+				@cl_name, @client_rate, @client_rate_count,
+                @rclient_lat, @rclient_lon, @dest_lat, @dest_lon;
 		END
 		CLOSE @CURSOR
 	END
@@ -6953,6 +6977,7 @@ CREATE PROCEDURE [dbo].[InsertOrderWithSectorAndTariffParams]
     @driver_id int, @shedule_date DATETIME,
     @cl_comment varchar(255), @client_time int, 
     @client_distance [decimal](18, 5), @client_prev_summ [decimal](18, 5),
+    @dest_lat [decimal](18, 5), @dest_lon [decimal](18, 5),
     @ord_num  int OUT, @order_id int OUT)
 AS
 BEGIN 
@@ -7024,7 +7049,9 @@ BEGIN
         comment = @cl_comment, 
         client_time = @client_time, 
         client_dist = @client_distance, 
-        client_prev_sum = @client_prev_summ
+        client_prev_sum = @client_prev_summ,
+        dest_lat = @dest_lat,
+        dest_lon = @dest_lon
         WHERE BOLD_ID=@order_id;
 
 	END

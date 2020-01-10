@@ -1514,6 +1514,24 @@ END
 
 GO
 
+IF COL_LENGTH('Zakaz','dest_lat') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [dest_lat] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_dest_lat]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','dest_lon') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [dest_lon] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_dest_lon]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ —≈ “Œ–Œ¬
