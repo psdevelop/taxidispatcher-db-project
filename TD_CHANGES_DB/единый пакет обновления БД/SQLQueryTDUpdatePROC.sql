@@ -6978,6 +6978,9 @@ CREATE PROCEDURE [dbo].[InsertOrderWithSectorAndTariffParams]
     @cl_comment varchar(255), @client_time int, 
     @client_distance [decimal](18, 5), @client_prev_summ [decimal](18, 5),
     @dest_lat [decimal](18, 5), @dest_lon [decimal](18, 5),
+    @first_stop_adr [varchar](255), @first_stop_lat [decimal](18, 5),
+    @first_stop_lon [decimal](18, 5), @second_stop_adr [varchar](255),
+    @second_stop_lat [decimal](18, 5), @second_stop_lon [decimal](18, 5),
     @ord_num  int OUT, @order_id int OUT)
 AS
 BEGIN 
@@ -7051,7 +7054,13 @@ BEGIN
         client_dist = @client_distance, 
         client_prev_sum = @client_prev_summ,
         dest_lat = @dest_lat,
-        dest_lon = @dest_lon
+        dest_lon = @dest_lon,
+        first_stop_adr = @first_stop_adr,
+        first_stop_lat = @first_stop_lat,
+        first_stop_lon = @first_stop_lon,
+        second_stop_adr = @second_stop_adr,
+        second_stop_lat = @second_stop_lat,
+        second_stop_lon = @second_stop_lon
         WHERE BOLD_ID=@order_id;
 
 	END
