@@ -1913,6 +1913,9 @@ BEGIN
 		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5),
 		@cl_name varchar(255), @client_rate [decimal](18, 5), @client_rate_count [int],
         @dest_lat [decimal](18, 5), @dest_lon [decimal](18, 5),
+        @first_stop_adr [varchar](255), @first_stop_lat [decimal](18, 5),
+        @first_stop_lon [decimal](18, 5), @second_stop_adr [varchar](255),
+        @second_stop_lat [decimal](18, 5), @second_stop_lon [decimal](18, 5),
         @rclient_lat varchar(50), @rclient_lon varchar(50);
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
@@ -2017,7 +2020,9 @@ BEGIN
 			ord.comment, ord.client_dist,
 			ord.[current_time], ord.client_time, ord.client_prev_sum,
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
-            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon   
+            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
+            ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon   
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2039,7 +2044,9 @@ BEGIN
 			ord.comment, ord.client_dist,
 			ord.[current_time], ord.client_time, ord.client_prev_sum,
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
-            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon     
+            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
+            ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon     
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2064,7 +2071,9 @@ BEGIN
 			ord.comment, ord.client_dist,
 			ord.[current_time], ord.client_time, ord.client_prev_sum,
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
-            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon      
+            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
+            ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon      
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2086,7 +2095,9 @@ BEGIN
 			ord.comment, ord.client_dist,
 			ord.[current_time], ord.client_time, ord.client_prev_sum,
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
-            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon      
+            ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
+            ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon      
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2105,7 +2116,9 @@ BEGIN
 			@prev_distance, @prev_date, @on_place, @bonus_use, @is_early, @cl_comment, 
 			@client_dist, @current_time, @client_time, @client_prev_sum,
 			@cl_name, @client_rate, @client_rate_count,
-            @rclient_lat, @rclient_lon, @dest_lat, @dest_lon;
+            @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
+            @first_stop_adr, @first_stop_lat, @first_stop_lon,
+            @second_stop_adr, @second_stop_lat, @second_stop_lon;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2212,6 +2225,30 @@ BEGIN
 			CAST(@counter as varchar(20))+'":"'+
 			convert(varchar,convert(decimal(18,5),@dest_lon))+'"';
 
+            SET @res=@res+',"fsadr'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(ISNULL(@first_stop_adr,''),'"',' '),'''',' ')+'"';
+
+            SET @res=@res+',"fslat'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@first_stop_lat))+'"';
+
+            SET @res=@res+',"fslon'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@first_stop_lon))+'"';
+
+            SET @res=@res+',"ssadr'+
+			CAST(@counter as varchar(20))+'":"'+
+			REPLACE(REPLACE(ISNULL(@second_stop_adr,''),'"',' '),'''',' ')+'"';
+
+            SET @res=@res+',"sslat'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@second_stop_lat))+'"';
+
+            SET @res=@res+',"sslon'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@second_stop_lon))+'"';
+
 			IF (@bonus_use>0)
 			BEGIN
 			SET @res=@res+',"obus'+
@@ -2261,7 +2298,9 @@ BEGIN
 				@prev_distance, @prev_date, @on_place, @bonus_use, @is_early, @cl_comment, 
 				@client_dist, @current_time, @client_time, @client_prev_sum,
 				@cl_name, @client_rate, @client_rate_count,
-                @rclient_lat, @rclient_lon, @dest_lat, @dest_lon;
+                @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
+                @first_stop_adr, @first_stop_lat, @first_stop_lon,
+                @second_stop_adr, @second_stop_lat, @second_stop_lon;
 		END
 		CLOSE @CURSOR
 	END
