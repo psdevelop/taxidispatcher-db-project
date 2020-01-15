@@ -4468,7 +4468,8 @@ BEGIN
         FROM Voditelj dr LEFT JOIN AUTO_CLASS ac 
         ON dr.auto_class_id = ac.id
         WHERE dr.otnositsya_k_gruppe = @company_id
-        AND (@raduis = 0 OR @raduis <= dbo.DistanceBetweenTwoCoords(@lat, @lon, 
+        AND (ISNULL(dr.last_lat, '') <> '') AND (ISNULL(dr.last_lon, '') <> '') AND 
+            (@raduis = 0 OR @raduis >= dbo.DistanceBetweenTwoCoords(@lat, @lon, 
             CAST(dr.last_lat as decimal(28, 10)), CAST(dr.last_lon as decimal(28, 10))))
         AND (@only_active = 0 OR dr.V_rabote = 1);
     END ELSE BEGIN
@@ -4479,7 +4480,8 @@ BEGIN
         dr.Gos_nomernoi_znak, dr.rate_count
         FROM Voditelj dr LEFT JOIN AUTO_CLASS ac 
         ON dr.auto_class_id = ac.id
-        WHERE (@raduis = 0 OR @raduis <= dbo.DistanceBetweenTwoCoords(@lat, @lon, 
+        WHERE (ISNULL(dr.last_lat, '') <> '') AND (ISNULL(dr.last_lon, '') <> '') AND 
+            (@raduis = 0 OR @raduis >= dbo.DistanceBetweenTwoCoords(@lat, @lon, 
             CAST(dr.last_lat as decimal(28, 10)), CAST(dr.last_lon as decimal(28, 10))))
         AND (@only_active = 0 OR dr.V_rabote = 1);
     END;
