@@ -2123,6 +2123,9 @@ BEGIN
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 
+			SET @rclient_lat = ISNULL(@rclient_lat, '');
+            		SET @rclient_lon = ISNULL(@rclient_lon, '');
+
 			SET @res=@res+',"oid'+
 				CAST(@counter as varchar(20))+'":"'+
 				CAST(@order_id as varchar(20))+'","odt'+
