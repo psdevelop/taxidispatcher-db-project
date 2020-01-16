@@ -4436,7 +4436,7 @@ BEGIN
         @driver_name varchar(500), @mark_auto varchar(255),
         @driver_rating float, @last_lat varchar(50), 
         @last_lon varchar(50), @reg_num varchar(255),
-        @rate_count int;
+        @rate_count int, @busy int;
    
 	SET @res='{"command":"drivers_list","dcnt":"';
 	SET @counter = 0; 
@@ -4464,7 +4464,7 @@ BEGIN
         FOR
         SELECT dr.BOLD_ID, dr.full_name, ac.name as driver_class,
         dr.Marka_avtomobilya, dr.rate, dr.last_lat, dr.last_lon,
-        dr.Gos_nomernoi_znak, dr.rate_count
+        dr.Gos_nomernoi_znak, dr.rate_count, dr.Zanyat_drugim_disp
         FROM Voditelj dr LEFT JOIN AUTO_CLASS ac 
         ON dr.auto_class_id = ac.id
         WHERE dr.otnositsya_k_gruppe = @company_id
@@ -4477,7 +4477,7 @@ BEGIN
         FOR
         SELECT dr.BOLD_ID, dr.full_name, ac.name as driver_class,
         dr.Marka_avtomobilya, dr.rate, dr.last_lat, dr.last_lon,
-        dr.Gos_nomernoi_znak, dr.rate_count
+        dr.Gos_nomernoi_znak, dr.rate_count, dr.Zanyat_drugim_disp
         FROM Voditelj dr LEFT JOIN AUTO_CLASS ac 
         ON dr.auto_class_id = ac.id
         WHERE (ISNULL(dr.last_lat, '') <> '') AND (ISNULL(dr.last_lon, '') <> '') AND 
@@ -4489,7 +4489,7 @@ BEGIN
 	OPEN @CURSOR
 	/*Выбираем первую строку*/
 	FETCH NEXT FROM @CURSOR INTO @driver_id, @driver_name, @driver_class, @mark_auto, 
-        @driver_rating, @last_lat, @last_lon, @reg_num, @rate_count
+        @driver_rating, @last_lat, @last_lon, @reg_num, @rate_count, @busy
 	/*Выполняем в цикле перебор строк*/
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -4510,7 +4510,9 @@ BEGIN
 			CAST(@counter as varchar(20))+'":"'+
 			REPLACE(REPLACE(@mark_auto,'"',' '),'''',' ')+'","rgn'+
 			CAST(@counter as varchar(20))+'":"'+
-			REPLACE(REPLACE(@reg_num,'"',' '),'''',' ')+'","rtc'+
+			REPLACE(REPLACE(@reg_num,'"',' '),'''',' ')+'","bsy'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@busy as varchar(20))+'","rtc'+
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(@rate_count as varchar(20))+'","rat'+
 			CAST(@counter as varchar(20))+'":"'+
@@ -4522,7 +4524,7 @@ BEGIN
         SET @counter=@counter+1;
 		/*Выбираем следующую строку*/
 		FETCH NEXT FROM @CURSOR INTO @driver_id, @driver_name, @driver_class, @mark_auto, 
-            @driver_rating, @last_lat, @last_lon, @reg_num, @rate_count
+            @driver_rating, @last_lat, @last_lon, @reg_num, @rate_count, @busy
 	END
 	CLOSE @CURSOR
 	

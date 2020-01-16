@@ -1318,7 +1318,7 @@ BEGIN
 			WHERE vypolnyaetsya_voditelem=@driver_id
 			and Zavershyon=0  and Arhivnyi=0
 			and (REMOTE_SET IN (8,11,13,15,19,20,21,29,0)) 
-			and Soobsheno_voditelyu=0 and REMOTE_SYNC=0;
+			and Soobsheno_voditelyu=0 and REMOTE_SYNC=0 and (is_early = 0 or is_started_early = 1);
 		END
 		ELSE
 		BEGIN
@@ -1326,7 +1326,7 @@ BEGIN
 			WHERE vypolnyaetsya_voditelem=@driver_id
 			and Zavershyon=0  and Arhivnyi=0
 			and (REMOTE_SET IN (8,11,13,15,19,20,21,29,0)) 
-			and Soobsheno_voditelyu=0;
+			and Soobsheno_voditelyu=0 and (is_early = 0 or is_started_early = 1);
 		END;
     END
     ELSE
@@ -1334,7 +1334,7 @@ BEGIN
 		SELECT @counter=COUNT(*) FROM Zakaz
 		WHERE vypolnyaetsya_voditelem=@driver_id
 		and Zavershyon=0 and Arhivnyi=0 
-		and Soobsheno_voditelyu=0;
+		and Soobsheno_voditelyu=0 and (is_early = 0 or is_started_early = 1);
     END;
     
 	if(@counter>0)
