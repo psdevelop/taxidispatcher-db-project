@@ -1586,6 +1586,15 @@ END
 
 GO
 
+IF COL_LENGTH('Zakaz','auto_class_id') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [auto_class_id] [int] NOT NULL 
+	CONSTRAINT [DF_Zakaz_auto_class_id]  DEFAULT ((-1));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ —≈ “Œ–Œ¬

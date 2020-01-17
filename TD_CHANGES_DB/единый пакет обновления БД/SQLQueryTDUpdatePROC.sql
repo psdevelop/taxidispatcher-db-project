@@ -1916,7 +1916,7 @@ BEGIN
         @first_stop_adr [varchar](255), @first_stop_lat [decimal](18, 5),
         @first_stop_lon [decimal](18, 5), @second_stop_adr [varchar](255),
         @second_stop_lat [decimal](18, 5), @second_stop_lon [decimal](18, 5),
-        @rclient_lat varchar(50), @rclient_lon varchar(50);
+        @rclient_lat varchar(50), @rclient_lon varchar(50), @client_id int;
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -2022,7 +2022,7 @@ BEGIN
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
-            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon   
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id   
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2046,7 +2046,7 @@ BEGIN
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
-            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon     
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id     
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2073,7 +2073,7 @@ BEGIN
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
-            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon      
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id      
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2097,7 +2097,7 @@ BEGIN
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
-            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon      
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id      
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2118,13 +2118,14 @@ BEGIN
 			@cl_name, @client_rate, @client_rate_count,
             @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
             @first_stop_adr, @first_stop_lat, @first_stop_lon,
-            @second_stop_adr, @second_stop_lat, @second_stop_lon;
+            @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
 
-			SET @rclient_lat = ISNULL(@rclient_lat, '');
-            		SET @rclient_lon = ISNULL(@rclient_lon, '');
+            SET @rclient_lat = ISNULL(@rclient_lat, '');
+            SET @rclient_lon = ISNULL(@rclient_lon, '');
+            SET @client_id = ISNULL(@client_id, 0);
 
 			SET @res=@res+',"oid'+
 				CAST(@counter as varchar(20))+'":"'+
@@ -2199,6 +2200,10 @@ BEGIN
 			SET @res=@res+',"cltm'+
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(@client_time as varchar(20))+'"';
+
+            SET @res=@res+',"clid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@client_id as varchar(20))+'"';
 
 			SET @res=@res+',"rclnm'+
 			CAST(@counter as varchar(20))+'":"'+
@@ -2303,7 +2308,7 @@ BEGIN
 				@cl_name, @client_rate, @client_rate_count,
                 @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
                 @first_stop_adr, @first_stop_lat, @first_stop_lon,
-                @second_stop_adr, @second_stop_lat, @second_stop_lon;
+                @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id;
 		END
 		CLOSE @CURSOR
 	END
