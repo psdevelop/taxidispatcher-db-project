@@ -2477,7 +2477,7 @@ BEGIN
 			@opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, @order_start_date, 
 			@rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, 
 			@client_name, @prev_distance, @prev_date, @company_id, @company_name, @current_sum, 
-			@current_dist, @is_upcoming, @driver_id, @driver_name, @cl_comment, @client_dist, 
+			@current_dist, @is_upcoming, @driver_name, @driver_id, @cl_comment, @client_dist, 
 			@current_time, @client_time, @client_prev_sum;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
@@ -2645,8 +2645,8 @@ BEGIN
 				@opt_comb, @tplan_id, @ors, @opl, @osumm, @tmh, @stac, @dr_coords, 
 				@order_start_date, @rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, 
 				@cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @company_id, 
-				@company_name, @current_sum, @current_dist, @is_upcoming, @driver_id, 
-				@driver_name, @cl_comment, @client_dist, @current_time, @client_time, 
+				@company_name, @current_sum, @current_dist, @is_upcoming, 
+				@driver_name, @driver_id, @cl_comment, @client_dist, @current_time, @client_time, 
 				@client_prev_sum;
 		END
 		CLOSE @CURSOR
