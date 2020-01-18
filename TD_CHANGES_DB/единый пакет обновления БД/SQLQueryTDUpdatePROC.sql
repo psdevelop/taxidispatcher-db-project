@@ -406,6 +406,11 @@ IF OBJECT_ID('dbo.GetSectorMediumCoords') IS NOT NULL
 DROP PROCEDURE [dbo].[GetSectorMediumCoords]
 GO
 
+/****** Object:  StoredProcedure [dbo].[SetOrderTaxometrParameters]    Script Date: 18.01.2019 15:50:15 ******/
+IF OBJECT_ID('dbo.SetOrderTaxometrParameters') IS NOT NULL
+DROP PROCEDURE [dbo].[SetOrderTaxometrParameters]
+GO
+
 /****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
@@ -7572,4 +7577,23 @@ END
 
 GO
 
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[SetOrderTaxometrParameters] 
+	-- Add the parameters for the stored procedure here
+	(@current_sum decimal(18, 5), @current_dist decimal(18, 5), @order_id int, @res int OUTPUT)
+AS
+BEGIN 
+
+	SET @res = 0;
+ 
+	UPDATE Zakaz SET current_sum = @current_sum, current_dist = @current_dist 
+    WHERE BOLD_ID = @order_id;
+	SET @res = @@ROWCOUNT;
+
+    return
+END
+GO
 
