@@ -5020,7 +5020,7 @@ BEGIN
         END;
 
 		UPDATE dbo.Zakaz 
-			SET is_started_early = 1
+			SET is_started_early = 1, REMOTE_SYNC = 1, is_early = 0
 			WHERE is_early = 1 AND is_started_early = 0 AND 
 			Arhivnyi = 0 AND Zavershyon = 0  
 			AND ((ABS(DATEDIFF(MINUTE, early_date, GETDATE())) < @early_orders_started_time)
