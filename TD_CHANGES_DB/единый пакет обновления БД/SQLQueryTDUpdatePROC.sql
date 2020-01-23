@@ -7584,15 +7584,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SetOrderTaxometrParameters] 
 	-- Add the parameters for the stored procedure here
-	(@current_sum decimal(18, 5), @current_dist decimal(18, 5), @order_id int, @res int OUTPUT)
+	(@current_sum decimal(18, 5), @current_dist decimal(18, 5), @order_id int)
 AS
 BEGIN 
 
-	SET @res = 0;
  
 	UPDATE Zakaz SET current_sum = @current_sum, current_dist = @current_dist 
     WHERE BOLD_ID = @order_id;
-	SET @res = @@ROWCOUNT;
 
     return
 END
