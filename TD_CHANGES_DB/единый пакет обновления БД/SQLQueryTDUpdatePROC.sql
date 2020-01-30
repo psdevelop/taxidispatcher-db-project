@@ -2019,7 +2019,9 @@ BEGIN
 			FOR
 			SELECT ord.BOLD_ID, ((CASE WHEN (@show_region_in_addr = 1 AND ISNULL(ds.name, '') <> '') THEN ('(' + ds.name + ') ') ELSE '' END) + ord.Telefon_klienta+
 			':'+ ord.Adres_vyzova_vvodim + (CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) + 
-            (CASE WHEN (ISNULL(ord.comment, '') <> '') THEN (' (' + ord.comment + ') ') ELSE '' END) as order_data,
+            (CASE WHEN (ISNULL(ord.comment, '') <> '') THEN (' (' + ord.comment + ') ') ELSE '' END) + 
+            (CASE WHEN (ISNULL(ord.first_stop_adr, '') <> '') THEN (' (point1: ' + ord.first_stop_adr + ') ') ELSE '' END) + 
+            (CASE WHEN (ISNULL(ord.second_stop_adr, '') <> '') THEN (' (point2: ' + ord.second_stop_adr + ') ') ELSE '' END) as order_data,
 			ord.REMOTE_SYNC, ord.WAITING, ord.TARIFF_ID, ord.OPT_COMB_STR, ord.PR_POLICY_ID,
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
@@ -2044,7 +2046,9 @@ BEGIN
 			FOR
 			SELECT ord.BOLD_ID, ((CASE WHEN (@show_region_in_addr = 1 AND ISNULL(ds.name, '') <> '') THEN ('(' + ds.name + ') ') ELSE '' END) + ord.Adres_vyzova_vvodim + 
 			(CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) + 
-            (CASE WHEN (ISNULL(ord.comment, '') <> '') THEN (' (' + ord.comment + ') ') ELSE '' END) as order_data,
+            (CASE WHEN (ISNULL(ord.comment, '') <> '') THEN (' (' + ord.comment + ') ') ELSE '' END) + 
+            (CASE WHEN (ISNULL(ord.first_stop_adr, '') <> '') THEN (' (point1: ' + ord.first_stop_adr + ') ') ELSE '' END) + 
+            (CASE WHEN (ISNULL(ord.second_stop_adr, '') <> '') THEN (' (point2: ' + ord.second_stop_adr + ') ') ELSE '' END) as order_data,
 			ord.REMOTE_SYNC, ord.WAITING, ord.TARIFF_ID, ord.OPT_COMB_STR, ord.PR_POLICY_ID,
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
@@ -2072,7 +2076,9 @@ BEGIN
 			FOR
 			SELECT ord.BOLD_ID, ((CASE WHEN (@show_region_in_addr = 1 AND ISNULL(ds.name, '') <> '') THEN ('(' + ds.name + ') ') ELSE '' END) + ord.Telefon_klienta+
 			':' + ord.Adres_vyzova_vvodim + (CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) + 
-            (CASE WHEN (ISNULL(ord.comment, '') <> '') THEN (' (' + ord.comment + ') ') ELSE '' END) as order_data,
+            (CASE WHEN (ISNULL(ord.comment, '') <> '') THEN (' (' + ord.comment + ') ') ELSE '' END) + 
+            (CASE WHEN (ISNULL(ord.first_stop_adr, '') <> '') THEN (' (point1: ' + ord.first_stop_adr + ') ') ELSE '' END) + 
+            (CASE WHEN (ISNULL(ord.second_stop_adr, '') <> '') THEN (' (point2: ' + ord.second_stop_adr + ') ') ELSE '' END) as order_data,
 			ord.REMOTE_SYNC, ord.WAITING, ord.TARIFF_ID, ord.OPT_COMB_STR, ord.PR_POLICY_ID,
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
@@ -2097,7 +2103,9 @@ BEGIN
 			FOR
 			SELECT ord.BOLD_ID, ((CASE WHEN (@show_region_in_addr = 1 AND ISNULL(ds.name, '') <> '') THEN ('(' + ds.name + ') ') ELSE '' END) + ord.Adres_vyzova_vvodim + 
 			(CASE WHEN (ord.is_early = 1) THEN (' (' + CAST(ord.early_date as varchar(50)) + ') ') ELSE '' END)) + 
-            (CASE WHEN (ISNULL(ord.comment, '') <> '') THEN (' (' + ord.comment + ') ') ELSE '' END) as order_data,
+            (CASE WHEN (ISNULL(ord.comment, '') <> '') THEN (' (' + ord.comment + ') ') ELSE '' END) + 
+            (CASE WHEN (ISNULL(ord.first_stop_adr, '') <> '') THEN (' (point1: ' + ord.first_stop_adr + ') ') ELSE '' END) + 
+            (CASE WHEN (ISNULL(ord.second_stop_adr, '') <> '') THEN (' (point2: ' + ord.second_stop_adr + ') ') ELSE '' END) as order_data,
 			ord.REMOTE_SYNC, ord.WAITING, ord.TARIFF_ID, ord.OPT_COMB_STR, ord.PR_POLICY_ID,
 			ord.prev_price, ord.cargo_desc, ord.end_adres, ord.client_name, ord.prev_distance,
 			ord.Data_predvariteljnaya, ord.on_place, ord.bonus_use, ord.is_early, 
