@@ -7509,15 +7509,15 @@ CREATE PROCEDURE [dbo].[RateDriver]
 AS
 BEGIN 
 
-    DECLARE @current_rate [decimal](18, 5);
+    DECLARE @current_rate [decimal](18, 5), @rate_count int;
 	
 	if (@driver_id>0)
 	BEGIN
 
-        SELECT @current_rate = rate FROM Voditelj
+        SELECT @current_rate = rate, @rate_count = rate_count FROM Voditelj
         WHERE BOLD_ID = @driver_id;
 
-        SET @current_rate = (@current_rate + @rate) / 2
+        SET @current_rate = (@current_rate * @rate_count + @rate) / (@rate_count + 1)
 
 		UPDATE Voditelj SET 
 		rate = @current_rate, rate_count = (rate_count + 1)
