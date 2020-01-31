@@ -2011,5 +2011,9 @@ start_free_time = 0, start_free_distance = 0, auto_set_bonus_value = 0;
 
 GO
 
+UPDATE Voditelj SET V_rabote = 0;
+
+GO
+
 
 
