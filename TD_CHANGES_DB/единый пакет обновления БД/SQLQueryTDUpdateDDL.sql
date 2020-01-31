@@ -1670,6 +1670,15 @@ BEGIN
 	CONSTRAINT [DF_Sektor_raboty_for_all]  DEFAULT ((0));
 END
 
+GO
+
+IF COL_LENGTH('Sektor_raboty','IS_DEF') IS NULL
+BEGIN
+	ALTER TABLE dbo.Sektor_raboty 
+	ADD [IS_DEF] [smallint] NOT NULL 
+	CONSTRAINT [DF_Sektor_raboty_IS_DEF]  DEFAULT ((0));
+END
+
 GO	
 
 --------------------------------------------------------------------
@@ -1951,9 +1960,54 @@ END
 
 GO
 
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+-- Gruppa_voditelei
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF COL_LENGTH('Gruppa_voditelei','PR_POLICY_ID') IS NULL
+BEGIN
+	ALTER TABLE dbo.Gruppa_voditelei 
+	ADD [PR_POLICY_ID] [int] NOT NULL 
+	CONSTRAINT [DF_Gruppa_voditelei_PR_POLICY_ID]  DEFAULT ((-1));
+END
+
+GO
+
+IF COL_LENGTH('Gruppa_voditelei','IS_DEF') IS NULL
+BEGIN
+	ALTER TABLE dbo.Gruppa_voditelei 
+	ADD [IS_DEF] [smallint] NOT NULL 
+	CONSTRAINT [DF_Gruppa_voditelei_IS_DEF]  DEFAULT ((0));
+END
+
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+-- DISTRICTS
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF COL_LENGTH('DISTRICTS','IS_DEF') IS NULL
+BEGIN
+	ALTER TABLE dbo.DISTRICTS 
+	ADD [IS_DEF] [smallint] NOT NULL 
+	CONSTRAINT [DF_DISTRICTS_IS_DEF]  DEFAULT ((0));
+END
+
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+-- DATA UPDATES
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
 UPDATE Objekt_vyborki_otchyotnosti
 SET addit_rem_params = '"csw":"1","MSREF":"no","sopc":"yes","rstnok":"1","ovsdssum":"0","RESTTXM":"yes","CSLDN":"yes","TICAB":"yes","NETL":"no","UBLK":"no","CHKTAR":"yes","regbdst":"6","regbctm":"0","dstd":"0","rsbt":"1","tmminsp":"3","tmmaxsp":"220","tmminds":"2","tmmaxds":"800","UTDBL":"yes","UGPT":"yes","geocpref":"","SKINST":"yes",',
-start_free_time = 0, start_free_distance = 0;
+start_free_time = 0, start_free_distance = 0, auto_set_bonus_value = 0;
 
 GO
 
