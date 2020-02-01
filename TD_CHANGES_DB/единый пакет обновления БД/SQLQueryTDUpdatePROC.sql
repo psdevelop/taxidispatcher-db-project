@@ -1926,6 +1926,9 @@ BEGIN
 	DECLARE @position int;
 	
 	SET @last_order_time=GETDATE();
+
+	UPDATE Voditelj SET last_status_query_time = GETDATE()
+    	WHERE BOLD_ID = ISNULL(@driver_id, 0);
    
 	SET @res='{"command":"driver_status","did":"';
 	SET @dr_count = 0;

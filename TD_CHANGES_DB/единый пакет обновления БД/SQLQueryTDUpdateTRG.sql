@@ -3677,7 +3677,8 @@ BEGIN
                 SET OPT_COMB_STR = OPT_COMB_STR + 
                 (CASE WHEN (OPT_COMB_STR <> '') THEN ',' ELSE '' END) + 
                 CAST(@optionId as varchar(20))
-                WHERE (OPT_COMB_STR <> CAST(@optionId as varchar(20))) AND
+                WHERE BOLD_ID = @nOldValue AND 
+		(OPT_COMB_STR <> CAST(@optionId as varchar(20))) AND
                 (CHARINDEX (',' + CAST(@optionId as varchar(20)) + ',', OPT_COMB_STR) = 0) 
                 AND NOT ((LEN(OPT_COMB_STR) > @length_with_comma AND 
                 LEFT(OPT_COMB_STR, @length_with_comma) = @left_option_str) OR 

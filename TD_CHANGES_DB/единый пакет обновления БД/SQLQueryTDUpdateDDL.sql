@@ -197,6 +197,15 @@ END
 
 GO
 
+IF COL_LENGTH('Voditelj','last_status_query_time') IS NULL
+BEGIN
+	ALTER TABLE dbo.Voditelj 
+	ADD [last_status_query_time] [datetime] NOT NULL 
+	CONSTRAINT [DF_Voditelj_last_status_query_time]  DEFAULT (getdate());
+END
+
+GO
+
 ------------------------------------------------------
 ------------------------------------------------------
 ---- Œ√–¿Õ»◊≈Õ»ﬂ “¿¡À»÷€ ¬Œƒ»“≈Àﬂ
@@ -1132,6 +1141,15 @@ BEGIN
 	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
 	ADD [max_order_price] [int] NOT NULL 
 	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_max_order_price]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','dr_autoex_interval') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [dr_autoex_interval] [int] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_dr_autoex_interval]  DEFAULT ((0));
 END
 
 GO
