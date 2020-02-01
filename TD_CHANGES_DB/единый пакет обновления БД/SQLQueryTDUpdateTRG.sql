@@ -789,6 +789,13 @@ BEGIN
 			SET Vremya_poslednei_zayavki=CURRENT_TIMESTAMP
 			WHERE BOLD_ID=@nOldValue;
 		END
+
+		IF ((@newOnLineValue<>@oldOnLineValue) AND 
+			(@newOnLineValue=1)) BEGIN
+
+		    UPDATE Voditelj SET last_status_query_time = GETDATE()
+		    WHERE BOLD_ID = @nOldValue;
+		END;
 		
 		IF (((@newOnLineValue<>@oldOnLineValue) AND 
 			(@newOnLineValue=1)) or 

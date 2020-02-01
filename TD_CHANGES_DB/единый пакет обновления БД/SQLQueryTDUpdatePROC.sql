@@ -4983,7 +4983,8 @@ BEGIN
 			@auto_for_all_empty_sector smallint,
 			@dont_auto_wtout_adr_appr smallint,
 			@early_orders_started_time smallint,
-            @unasgn_ord_auto_dr_que_set_time int;
+            @unasgn_ord_auto_dr_que_set_time int,
+            @dr_autoex_interval int;
 	
 	SELECT TOP 1 @auto_bsector_longorders=ISNULL(auto_bsector_longorders,0),
 	@auto_bsectorid_longorders=ISNULL(auto_bsectorid_longorders,-1),
@@ -5003,7 +5004,8 @@ BEGIN
 	@auto_for_all_empty_sector = auto_for_all_empty_sector,
 	@dont_auto_wtout_adr_appr = dont_auto_wtout_adr_appr,
 	@early_orders_started_time = early_orders_started_time,
-    @unasgn_ord_auto_dr_que_set_time = unasgn_ord_auto_dr_que_set_time
+    @unasgn_ord_auto_dr_que_set_time = unasgn_ord_auto_dr_que_set_time,
+    @dr_autoex_interval = dr_autoex_interval
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
 	
@@ -5020,6 +5022,12 @@ BEGIN
 
 	BEGIN TRY
 
+        IF @dr_autoex_interval > 0 BEGIN
+            UPDATE Voditelj SET V_rabote = 0
+            WHERE V_rabote = 1 AND 
+            DATEDIFF(SECOND, GETDATE(), last_status_query_time) > @dr_autoex_interval;
+        END;
+
         IF @unasgn_ord_auto_dr_que_set_time > 0 BEGIN
             UPDATE dbo.Zakaz 
 			SET 
@@ -5027,7 +5035,7 @@ BEGIN
             [dbo].[GetFirstQueueNearSectDriverId](SECTOR_ID), 
             REMOTE_DRNUM = [dbo].[GetDrNumByDrId]([dbo].[GetFirstQueueNearSectDriverId](SECTOR_ID)),
 			Pozyvnoi_ustan = [dbo].[GetDrNumByDrId]([dbo].[GetFirstQueueNearSectDriverId](SECTOR_ID))
-			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 2 OR REMOTE_SET = 3) AND (SECTOR_ID > 0) 
+            WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 2 OR REMOTE_SET = 3) AND (SECTOR_ID > 0) 
 			and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) 
             AND vypolnyaetsya_voditelem <= 0
 			AND (ABS(DATEDIFF(SECOND, LAST_STATUS_TIME, GETDATE())) > @unasgn_ord_auto_dr_que_set_time)
