@@ -1905,6 +1905,15 @@ END
 
 GO
 
+IF COL_LENGTH('ORDER_OPTION','is_client_app') IS NULL
+BEGIN
+	ALTER TABLE dbo.ORDER_OPTION 
+	ADD [is_client_app] [smallint] NOT NULL 
+	CONSTRAINT [DF_ORDER_OPTION_is_client_app]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- Persona

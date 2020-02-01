@@ -137,6 +137,11 @@ IF OBJECT_ID('dbo.AFTER_WEB_DISP_DATA_CHANGE') IS NOT NULL
 DROP TRIGGER [dbo].[AFTER_WEB_DISP_DATA_CHANGE]
 GO
 
+/****** Object:  Trigger [AFTER_APP_CLIENT_ASSIGN]    Script Date: 01.02.2020 22:30:40 ******/
+IF OBJECT_ID('dbo.AFTER_APP_CLIENT_ASSIGN') IS NOT NULL
+DROP TRIGGER [dbo].[AFTER_APP_CLIENT_ASSIGN]
+GO
+
 /****** Object:  Trigger [dbo].[AFTER_DRIVER_RATING_INSERT]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
@@ -3610,5 +3615,89 @@ END
 
 GO
 ALTER TABLE [dbo].[Zakaz] ENABLE TRIGGER [AFTER_WEB_DISP_DATA_CHANGE]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE TRIGGER [dbo].[AFTER_APP_CLIENT_ASSIGN] 
+   ON  [dbo].[Zakaz] 
+   AFTER UPDATE
+AS 
+BEGIN
+
+	SET NOCOUNT ON;
+	
+	DECLARE @db_version INT;
+	
+	SELECT TOP 1 @db_version=ISNULL(db_version,3)
+	FROM Objekt_vyborki_otchyotnosti
+	WHERE Tip_objekta='for_drivers';
+	
+	IF((@db_version>=5))
+	BEGIN
+
+        DECLARE @nOldValue int, @newRemClientId int, @oldRemClientId int, 
+            @oldTarifPlanId int, @newTarifPlanId int, @optionId int, 
+            @CURSOR cursor, @length_with_comma int, 
+            @left_option_str varchar(255), @rigth_option_str varchar(255);
+            
+        SELECT @nOldValue=b.BOLD_ID, 
+        @newRemClientId = a.rclient_id,
+        @oldRemClientId = b.rclient_id,
+        @newTarifPlanId = a.PR_POLICY_ID,
+        @oldTarifPlanId = b.PR_POLICY_ID
+        FROM inserted a, deleted b;
+        
+        IF ( ((@newRemClientId <> @oldRemClientId)) OR 
+        (@newTarifPlanId <> @oldTarifPlanId ) ) and (@newTarifPlanId > 0) and 
+        (@newRemClientId > 0)
+        BEGIN
+            SET @CURSOR  = CURSOR SCROLL
+            FOR
+            SELECT ID  
+            FROM ORDER_OPTION  
+            WHERE PR_POLICY_ID = @newTarifPlanId AND is_client_app = 1;
+            /*Открываем курсор*/
+            OPEN @CURSOR
+            /*Выбираем первую строку*/
+            FETCH NEXT FROM @CURSOR INTO @optionId
+            /*Выполняем в цикле перебор строк*/
+            WHILE @@FETCH_STATUS = 0
+            BEGIN
+
+                SET @left_option_str = CAST(@optionId as [varchar](255)) + ','
+                SET @rigth_option_str = ',' + CAST(@optionId as [varchar](255))
+                SET @length_with_comma = LEN(@left_option_str)
+
+                UPDATE Zakaz 
+                SET OPT_COMB_STR = OPT_COMB_STR + 
+                (CASE WHEN (OPT_COMB_STR <> '') THEN ',' ELSE '' END) + 
+                CAST(@optionId as varchar(20))
+                WHERE (OPT_COMB_STR <> CAST(@optionId as varchar(20))) AND
+                (CHARINDEX (',' + CAST(@optionId as varchar(20)) + ',', OPT_COMB_STR) = 0) 
+                AND NOT ((LEN(OPT_COMB_STR) > @length_with_comma AND 
+                LEFT(OPT_COMB_STR, @length_with_comma) = @left_option_str) OR 
+                (LEN(OPT_COMB_STR) > @length_with_comma AND 
+                RIGHT(OPT_COMB_STR, @length_with_comma) = @rigth_option_str) )
+                
+                FETCH NEXT FROM @CURSOR INTO @optionId
+            END
+            CLOSE @CURSOR
+        END;
+
+	END;
+	
+	
+	
+END
+
+
+
+GO
+ALTER TABLE [dbo].[Zakaz] ENABLE TRIGGER [AFTER_APP_CLIENT_ASSIGN]
 GO
 
