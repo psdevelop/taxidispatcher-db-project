@@ -107,10 +107,11 @@ SELECT        dbo.Zakaz.BOLD_ID, dbo.Zakaz.Yavl_pochasovym, dbo.Zakaz.Kolichestv
                          AS det_sect_name, ISNULL(dbo.DISTRICTS.name, '') AS order_district, dbo.Zakaz.bonus_use, dbo.Zakaz.bonus_all, dbo.Zakaz.bonus_add, dbo.Zakaz.driver_rating_diff, dbo.Zakaz.driver_rating_expire_date, 
                          dbo.Zakaz.driver_rating_bonus_code, dbo.Zakaz.adr_detect_lat, dbo.Zakaz.adr_detect_lon, dbo.Zakaz.for_all_sectors, dbo.Zakaz.district_id, dbo.Zakaz.is_coordinates_upd, dbo.Zakaz.detected_sector, 
                          dbo.Zakaz.fail_app_coords_geocode, dbo.Zakaz.is_early, dbo.Zakaz.failed_adr_coords_detect, dbo.Zakaz.luggage, dbo.Zakaz.passengers, dbo.Zakaz.src_state, dbo.GetSetManualAddrChange() AS set_manual_addr_change, 
-                         dbo.Zakaz.early_date, dbo.Zakaz.is_started_early
+                         dbo.Zakaz.early_date, dbo.Zakaz.is_started_early, dbo.Zakaz.comment, ISNULL(dbo.PRICE_POLICY.POLICY_NAME, 'empty') as tariff_plan_name
 FROM            dbo.Zakaz LEFT OUTER JOIN
                          dbo.Voditelj ON dbo.Zakaz.vypolnyaetsya_voditelem = dbo.Voditelj.BOLD_ID LEFT OUTER JOIN
                          dbo.DISTRICTS ON dbo.Zakaz.district_id = dbo.DISTRICTS.id
+			LEFT JOIN dbo.PRICE_POLICY ON dbo.Zakaz.PR_POLICY_ID = dbo.PRICE_POLICY.ID
 
 
 GO
