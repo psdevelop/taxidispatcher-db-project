@@ -7146,6 +7146,12 @@ BEGIN
         second_stop_lon = @second_stop_lon
         WHERE BOLD_ID=@order_id;
 
+	IF ISNULL(@tplan_id, -1) > 0 BEGIN
+            UPDATE Zakaz
+            SET PR_POLICY_ID = ISNULL(@tplan_id, -1)
+            WHERE BOLD_ID=@order_id;
+        END;
+
 	END
 	END;
 END
