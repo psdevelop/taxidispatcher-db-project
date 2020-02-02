@@ -7121,6 +7121,7 @@ BEGIN
 		rclient_id=@client_id,
 		rclient_status=1,
 		alarmed=1,
+		adr_manual_set = 1,
         vypolnyaetsya_voditelem = (CASE WHEN (@driver_id > 0) THEN @driver_id ELSE -1 END),
 	REMOTE_SYNC = (CASE WHEN (@driver_id > 0) THEN 1 ELSE 0 END),
         Predvariteljnyi = (CASE WHEN (@shedule_date IS NULL OR @online_sheduled_as_lock_prev <> 1) THEN 0 ELSE 1 END),
