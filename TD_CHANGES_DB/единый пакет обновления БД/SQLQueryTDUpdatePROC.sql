@@ -7061,7 +7061,7 @@ CREATE PROCEDURE [dbo].[InsertOrderWithSectorAndTariffParams]
 AS
 BEGIN 
 
-	DECLARE @comment varchar(255);
+	DECLARE @comment varchar(255), @online_sheduled_as_lock_prev smallint;
 	
 	SET @order_id = -1;
 	SET @ord_num = -1;
@@ -7100,6 +7100,10 @@ BEGIN
 	BEGIN
 	EXEC InsertNewOrderRetNum @bold_id = @order_id OUTPUT, 
 		@order_num = @ord_num OUTPUT;
+
+	SELECT TOP 1 @online_sheduled_as_lock_prev = online_sheduled_as_lock_prev
+	FROM Objekt_vyborki_otchyotnosti
+	WHERE Tip_objekta='for_drivers';
 	
 	if (@order_id>0)
 	BEGIN
