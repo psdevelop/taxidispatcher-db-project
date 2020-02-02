@@ -1154,6 +1154,15 @@ END
 
 GO
 
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','online_sheduled_as_lock_prev') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [online_sheduled_as_lock_prev] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_online_sheduled_as_lock_prev]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ «¿ ¿«Œ¬
