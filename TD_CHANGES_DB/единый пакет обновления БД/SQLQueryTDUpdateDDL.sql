@@ -1622,29 +1622,29 @@ END
 
 GO
 
-IF COL_LENGTH('Zakaz','current_time') IS NULL
+IF COL_LENGTH('Zakaz','taxometer_time') IS NULL
 BEGIN
 	ALTER TABLE dbo.Zakaz 
-	ADD [current_time] [int] NOT NULL 
-	CONSTRAINT [DF_Zakaz_current_time]  DEFAULT ((0));
+	ADD [taxometer_time] [int] NOT NULL 
+	CONSTRAINT [DF_Zakaz_taxometer_time]  DEFAULT ((0));
 END
 
 GO
 
-IF COL_LENGTH('Zakaz','taxometr_lat') IS NULL
+IF COL_LENGTH('Zakaz','taxometer_lat') IS NULL
 BEGIN
 	ALTER TABLE dbo.Zakaz 
-	ADD [taxometr_lat] [decimal](18, 5) NOT NULL 
-	CONSTRAINT [DF_Zakaz_taxometr_lat]  DEFAULT ((0));
+	ADD [taxometer_lat] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_taxometer_lat]  DEFAULT ((0));
 END
 
 GO
 
-IF COL_LENGTH('Zakaz','taxometr_lon') IS NULL
+IF COL_LENGTH('Zakaz','taxometer_lon') IS NULL
 BEGIN
 	ALTER TABLE dbo.Zakaz 
-	ADD [taxometr_lon] [decimal](18, 5) NOT NULL 
-	CONSTRAINT [DF_Zakaz_taxometr_lon]  DEFAULT ((0));
+	ADD [taxometer_lon] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_taxometer_lon]  DEFAULT ((0));
 END
 
 GO
