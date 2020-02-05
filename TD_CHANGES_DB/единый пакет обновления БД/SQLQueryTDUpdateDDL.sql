@@ -1163,6 +1163,15 @@ END
 
 GO
 
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','enable_show_tplans_client') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [enable_show_tplans_client] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_enable_show_tplans_client]  DEFAULT ((1));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ «¿ ¿«Œ¬

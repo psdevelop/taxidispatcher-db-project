@@ -1509,9 +1509,14 @@ BEGIN
 		@timetr decimal(28,10), @tmetrtr decimal(28,10),
 		@os_coeff decimal(28,10), @os_comp decimal(28,10),
 		@tplan_id int, @short_name varchar(20), 
-		@miss_every_nkm int;
+		@miss_every_nkm int, @enable_show_tplans_client smallint;
+
+    select TOP 1 @enable_show_tplans_client = enable_show_tplans_client
+    from Objekt_vyborki_otchyotnosti where Tip_objekta='for_drivers'; 
    
-	SET @res=',"t_cnt":"';
+	SET @res = ',"en_sh_tpls":"' + 
+        CAST(ISNULL(@enable_show_tplans_client, 0) as varchar(20)) + 
+        '","t_cnt":"';
 	SET @counter = 0;
 	
 	SELECT @scount=COUNT(*)  
