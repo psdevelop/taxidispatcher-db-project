@@ -218,3 +218,39 @@ GO
 
 ALTER TABLE [dbo].[ROUTES_SUB_POINTS] ADD  CONSTRAINT [DF_ROUTES_SUB_POINTS_point_id]  DEFAULT ((-1)) FOR [point_id]
 GO
+
+/****** Object:  Table [dbo].[TARIFF_SCALES]    Script Date: 05.02.2020 23:54:48 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[TARIFF_SCALES](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[name] [varchar](255) NOT NULL,
+	[price] [decimal](18, 5) NOT NULL,
+	[start_sector_id] [int] NOT NULL,
+	[end_sector_id] [int] NOT NULL
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+ALTER TABLE [dbo].[TARIFF_SCALES] ADD  CONSTRAINT [DF_TARIFF_SCALES_name]  DEFAULT ('') FOR [name]
+GO
+
+ALTER TABLE [dbo].[TARIFF_SCALES] ADD  CONSTRAINT [DF_TARIFF_SCALES_price]  DEFAULT ((0)) FOR [price]
+GO
+
+ALTER TABLE [dbo].[TARIFF_SCALES] ADD  CONSTRAINT [DF_TARIFF_SCALES_start_sector_id]  DEFAULT ((-1)) FOR [start_sector_id]
+GO
+
+ALTER TABLE [dbo].[TARIFF_SCALES] ADD  CONSTRAINT [DF_TARIFF_SCALES_end_sector_id]  DEFAULT ((-1)) FOR [end_sector_id]
+GO
+
