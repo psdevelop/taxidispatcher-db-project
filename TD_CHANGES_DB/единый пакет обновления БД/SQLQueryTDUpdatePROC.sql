@@ -7641,12 +7641,14 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SetOrderTaxometrParameters] 
 	-- Add the parameters for the stored procedure here
-	(@current_sum decimal(18, 5), @current_dist decimal(18, 5), @order_id int)
+	(@current_sum decimal(18, 5), @current_dist decimal(18, 5), @order_id int, 
+        @current_time int, @lat decimal(18, 5), 
+        @lon decimal(18, 5))
 AS
 BEGIN 
-
  
-	UPDATE Zakaz SET current_sum = @current_sum, current_dist = @current_dist 
+	UPDATE Zakaz SET current_sum = @current_sum, current_dist = @current_dist,
+    taxometer_time = @current_time, taxometer_lat = @lat, taxometer_lon = @lon
     WHERE BOLD_ID = @order_id;
 
     return
