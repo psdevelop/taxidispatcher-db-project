@@ -1921,14 +1921,16 @@ BEGIN
         @first_stop_adr [varchar](255), @first_stop_lat [decimal](18, 5),
         @first_stop_lon [decimal](18, 5), @second_stop_adr [varchar](255),
         @second_stop_lat [decimal](18, 5), @second_stop_lon [decimal](18, 5),
-        @rclient_lat varchar(50), @rclient_lon varchar(50), @client_id int;
+        @rclient_lat varchar(50), @rclient_lon varchar(50), @client_id int,
+        @taxometer_lat [decimal](18, 5), @taxometer_lon [decimal](18, 5),
+	    @taxometer_time int;
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
 	SET @last_order_time=GETDATE();
 
-	UPDATE Voditelj SET last_status_query_time = GETDATE()
-    	WHERE BOLD_ID = ISNULL(@driver_id, 0);
+    UPDATE Voditelj SET last_status_query_time = GETDATE()
+    WHERE BOLD_ID = ISNULL(@driver_id, 0);
    
 	SET @res='{"command":"driver_status","did":"';
 	SET @dr_count = 0;
@@ -2033,7 +2035,8 @@ BEGIN
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
-            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id   
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
+            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time   
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2060,7 +2063,8 @@ BEGIN
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
-            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id     
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
+            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time     
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2090,7 +2094,8 @@ BEGIN
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
-            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id      
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
+            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time      
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2117,7 +2122,8 @@ BEGIN
 			ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
-            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id      
+            ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
+            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time      
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2138,7 +2144,8 @@ BEGIN
 			@cl_name, @client_rate, @client_rate_count,
             @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
             @first_stop_adr, @first_stop_lat, @first_stop_lon,
-            @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id;
+            @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id,
+            @taxometer_lat, @taxometer_lon, @taxometer_time;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2277,6 +2284,18 @@ BEGIN
 			CAST(@counter as varchar(20))+'":"'+
 			convert(varchar,convert(decimal(18,5),@second_stop_lon))+'"';
 
+            SET @res=@res+',"txlat'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@taxometer_lat))+'"';
+
+            SET @res=@res+',"txlon'+
+			CAST(@counter as varchar(20))+'":"'+
+			convert(varchar,convert(decimal(18,5),@taxometer_lon))+'"';
+
+            SET @res=@res+',"txtm'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@taxometer_time as varchar(20))+'"';
+
 			IF (@bonus_use>0)
 			BEGIN
 			SET @res=@res+',"obus'+
@@ -2328,7 +2347,8 @@ BEGIN
 				@cl_name, @client_rate, @client_rate_count,
                 @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
                 @first_stop_adr, @first_stop_lat, @first_stop_lon,
-                @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id;
+                @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id,
+                @taxometer_lat, @taxometer_lon, @taxometer_time;
 		END
 		CLOSE @CURSOR
 	END
