@@ -1,5 +1,478 @@
 USE [TD5R1]
 GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+-- TABLES
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'TARIFF_SCALES','U') IS NULL BEGIN
+    PRINT 'Table TARIFF_SCALES not exist, creating...';
+
+    /****** Object:  Table [dbo].[TARIFF_SCALES]    Script Date: 05.02.2020 23:54:48 ******/
+    SET ANSI_NULLS ON
+
+    SET QUOTED_IDENTIFIER ON
+
+    SET ANSI_PADDING ON
+
+    CREATE TABLE [dbo].[TARIFF_SCALES](
+        [id] [int] IDENTITY(1,1) NOT NULL,
+        [name] [varchar](255) NOT NULL,
+        [price] [decimal](18, 5) NOT NULL,
+        [start_sector_id] [int] NOT NULL,
+        [end_sector_id] [int] NOT NULL
+    ) ON [PRIMARY]
+
+    SET ANSI_PADDING OFF
+
+    ALTER TABLE [dbo].[TARIFF_SCALES] ADD  CONSTRAINT [DF_TARIFF_SCALES_name]  DEFAULT ('') FOR [name]
+
+    ALTER TABLE [dbo].[TARIFF_SCALES] ADD  CONSTRAINT [DF_TARIFF_SCALES_price]  DEFAULT ((0)) FOR [price]
+
+    ALTER TABLE [dbo].[TARIFF_SCALES] ADD  CONSTRAINT [DF_TARIFF_SCALES_start_sector_id]  DEFAULT ((-1)) FOR [start_sector_id]
+
+    ALTER TABLE [dbo].[TARIFF_SCALES] ADD  CONSTRAINT [DF_TARIFF_SCALES_end_sector_id]  DEFAULT ((-1)) FOR [end_sector_id]
+END
+ELSE BEGIN
+    PRINT 'Table TARIFF_SCALES exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'ROUTES_POINTS','U') IS NULL BEGIN
+    PRINT 'Table ROUTES_POINTS not exist, creating...';
+
+    	SET ANSI_NULLS ON
+
+	SET QUOTED_IDENTIFIER ON
+
+	SET ANSI_PADDING ON
+
+	CREATE TABLE [dbo].[ROUTES_POINTS](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[name] [varchar](255) NOT NULL,
+		[parent_id] [int] NOT NULL
+	) ON [PRIMARY]
+
+	SET ANSI_PADDING OFF
+
+	ALTER TABLE [dbo].[ROUTES_POINTS] ADD  CONSTRAINT [DF_ROUTES_POINTS_name]  DEFAULT ('') FOR [name]
+
+	ALTER TABLE [dbo].[ROUTES_POINTS] ADD  CONSTRAINT [DF_ROUTES_POINTS_parent_id]  DEFAULT ((-1)) FOR [parent_id]
+
+END
+ELSE BEGIN
+    PRINT 'Table ROUTES_POINTS exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'DRIVERS_OFFERS','U') IS NULL BEGIN
+    PRINT 'Table DRIVERS_OFFERS not exist, creating...';
+
+	/****** Object:  Table [dbo].[DRIVERS_OFFERS]    Script Date: 05.02.2020 15:37:55 ******/
+	SET ANSI_NULLS ON
+
+	SET QUOTED_IDENTIFIER ON
+
+	SET ANSI_PADDING ON
+
+	CREATE TABLE [dbo].[DRIVERS_OFFERS](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[driver_id] [int] NOT NULL,
+		[start_date] [datetime] NOT NULL,
+		[name] [varchar](255) NOT NULL,
+		[auto_id] [int] NOT NULL,
+		[start_point_id] [int] NOT NULL,
+		[end_point_id] [int] NOT NULL
+	) ON [PRIMARY]
+
+	SET ANSI_PADDING OFF
+
+	ALTER TABLE [dbo].[DRIVERS_OFFERS] ADD  CONSTRAINT [DF_DRIVERS_OFFERS_driver_id]  DEFAULT ((-1)) FOR [driver_id]
+
+	ALTER TABLE [dbo].[DRIVERS_OFFERS] ADD  CONSTRAINT [DF_DRIVERS_OFFERS_start_date]  DEFAULT (getdate()) FOR [start_date]
+
+	ALTER TABLE [dbo].[DRIVERS_OFFERS] ADD  CONSTRAINT [DF_DRIVERS_OFFERS_name]  DEFAULT ('') FOR [name]
+
+	ALTER TABLE [dbo].[DRIVERS_OFFERS] ADD  CONSTRAINT [DF_DRIVERS_OFFERS_auto_id]  DEFAULT ((-1)) FOR [auto_id]
+
+	ALTER TABLE [dbo].[DRIVERS_OFFERS] ADD  CONSTRAINT [DF_DRIVERS_OFFERS_start_point_id]  DEFAULT ((-1)) FOR [start_point_id]
+
+	ALTER TABLE [dbo].[DRIVERS_OFFERS] ADD  CONSTRAINT [DF_DRIVERS_OFFERS_end_point_id]  DEFAULT ((-1)) FOR [end_point_id]
+
+END
+ELSE BEGIN
+    PRINT 'Table DRIVERS_OFFERS exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'AUTO_CLASS','U') IS NULL BEGIN
+    PRINT 'Table AUTO_CLASS not exist, creating...';
+
+	SET ANSI_NULLS ON
+	
+	SET QUOTED_IDENTIFIER ON
+	
+	CREATE TABLE [dbo].[AUTO_CLASS](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[name] [varchar](255) NOT NULL
+	) ON [PRIMARY]
+	
+	ALTER TABLE [dbo].[AUTO_CLASS] ADD  CONSTRAINT [DF_AUTO_CLASS_name]  DEFAULT ('') FOR [name]
+
+END
+ELSE BEGIN
+    PRINT 'Table AUTO_CLASS exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'DAILY_PARAMS','U') IS NULL BEGIN
+    PRINT 'Table DAILY_PARAMS not exist, creating...';
+
+	/****** Object:  Table [dbo].[DAILY_PARAMS]    Script Date: 23.03.2019 2:36:08 ******/
+	SET ANSI_NULLS ON
+
+	SET QUOTED_IDENTIFIER ON
+
+	CREATE TABLE [dbo].[DAILY_PARAMS](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[start_time] [time](7) NOT NULL,
+		[end_time] [time](7) NOT NULL,
+		[its_tax_percent] [smallint] NOT NULL,
+		[tax_percent] [decimal](18, 5) NOT NULL,
+		[fix_payment] [decimal](18, 5) NOT NULL,
+		[no_percent_max_summ] [decimal](18, 5) NOT NULL,
+		[no_percent_ms_payment] [decimal](18, 5) NOT NULL
+	) ON [PRIMARY]
+
+
+	ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_start_time]  DEFAULT ('00:00') FOR [start_time]
+
+	ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_end_time]  DEFAULT ('00:00') FOR [end_time]
+
+	ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_its_tax_percent]  DEFAULT ((0)) FOR [its_tax_percent]
+
+	ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_tax_percent]  DEFAULT ((0)) FOR [tax_percent]
+
+	ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_fix_payment]  DEFAULT ((0)) FOR [fix_payment]
+
+	ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_no_percent_max_summ]  DEFAULT ((0)) FOR [no_percent_max_summ]
+
+	ALTER TABLE [dbo].[DAILY_PARAMS] ADD  CONSTRAINT [DF_DAILY_PARAMS_no_percent_ms_payment]  DEFAULT ((0)) FOR [no_percent_ms_payment]
+
+END
+ELSE BEGIN
+    PRINT 'Table DAILY_PARAMS exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'WAIT_TIMES','U') IS NULL BEGIN
+    PRINT 'Table WAIT_TIMES not exist, creating...';
+
+	/****** Object:  Table [dbo].[WAIT_TIMES]    Script Date: 14.03.2019 2:46:37 ******/
+	SET ANSI_NULLS ON
+
+	SET QUOTED_IDENTIFIER ON
+
+	SET ANSI_PADDING ON
+
+	CREATE TABLE [dbo].[WAIT_TIMES](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[tval] [smallint] NOT NULL,
+		[sound] [varchar](10) NOT NULL
+	) ON [PRIMARY]
+
+	SET ANSI_PADDING OFF
+
+	ALTER TABLE [dbo].[WAIT_TIMES] ADD  CONSTRAINT [DF_WAIT_TIMES_tval]  DEFAULT ((0)) FOR [tval]
+
+	ALTER TABLE [dbo].[WAIT_TIMES] ADD  CONSTRAINT [DF_WAIT_TIMES_sound]  DEFAULT ('0') FOR [sound]
+
+END
+ELSE BEGIN
+    PRINT 'Table WAIT_TIMES exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'RATING_LEVELS','U') IS NULL BEGIN
+    PRINT 'Table RATING_LEVELS not exist, creating...';
+
+	/****** Object:  Table [dbo].[RATING_LEVELS]    Script Date: 23.02.2019 0:47:04 ******/
+	SET ANSI_NULLS ON
+
+	SET QUOTED_IDENTIFIER ON
+
+	CREATE TABLE [dbo].[RATING_LEVELS](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[rating_start] [decimal](18, 5) NOT NULL CONSTRAINT [DF_RATING_LEVELS_rating_start]  DEFAULT ((0)),
+		[rating_end] [decimal](18, 5) NOT NULL CONSTRAINT [DF_RATING_LEVELS_rating_end]  DEFAULT ((0)),
+		[rating_level] [smallint] NOT NULL CONSTRAINT [DF_RATING_LEVELS_rating_level]  DEFAULT ((1))
+	) ON [PRIMARY]
+
+END
+ELSE BEGIN
+    PRINT 'Table RATING_LEVELS exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'DISTRICTS','U') IS NULL BEGIN
+    PRINT 'Table DISTRICTS not exist, creating...';
+
+	/****** Object:  Table [dbo].[DISTRICTS]    Script Date: 09.12.2018 3:50:53 ******/
+	SET ANSI_NULLS ON
+
+	SET QUOTED_IDENTIFIER ON
+
+	SET ANSI_PADDING ON
+
+	CREATE TABLE [dbo].[DISTRICTS](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[name] [varchar](500) NOT NULL CONSTRAINT [DF_DISTRICTS_name]  DEFAULT (''),
+		[company_id] [int] NOT NULL CONSTRAINT [DF_DISTRICTS_company_id]  DEFAULT ((-1)),
+		[address] [varchar](2000) NOT NULL CONSTRAINT [DF_DISTRICTS_address]  DEFAULT (''),
+		[default_sector_id] [int] NOT NULL CONSTRAINT [DF_DISTRICTS_default_sector_id]  DEFAULT ((-1))
+	) ON [PRIMARY]
+
+	SET ANSI_PADDING OFF
+
+END
+ELSE BEGIN
+    PRINT 'Table DISTRICTS exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'users','U') IS NULL BEGIN
+    PRINT 'Table users not exist, creating...';
+
+	SET ANSI_NULLS ON
+	
+	SET QUOTED_IDENTIFIER ON
+	
+	CREATE TABLE [dbo].[users](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[username] [nvarchar](80) NOT NULL,
+		[email] [nvarchar](254) NOT NULL,
+		[password] [nvarchar](60) NOT NULL,
+		[created_at] [datetime] NULL,
+		[updated_at] [datetime] NULL
+	) ON [PRIMARY]
+	
+	ALTER TABLE [dbo].[users] ADD PRIMARY KEY CLUSTERED 
+	(
+		[id] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	
+	SET ANSI_PADDING ON
+	
+	CREATE UNIQUE NONCLUSTERED INDEX [users_email_unique] ON [dbo].[users]
+	(
+		[email] ASC
+	)
+	WHERE ([email] IS NOT NULL)
+	WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	
+	SET ANSI_PADDING ON
+	
+	CREATE UNIQUE NONCLUSTERED INDEX [users_username_unique] ON [dbo].[users]
+	(
+		[username] ASC
+	)
+	WHERE ([username] IS NOT NULL)
+	WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+END
+ELSE BEGIN
+    PRINT 'Table users exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'tokens','U') IS NULL BEGIN
+    PRINT 'Table tokens not exist, creating...';
+
+	SET ANSI_NULLS ON
+	
+	SET QUOTED_IDENTIFIER ON
+	
+	CREATE TABLE [dbo].[tokens](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[user_id] [int] NULL,
+		[token] [nvarchar](255) NOT NULL,
+		[type] [nvarchar](80) NOT NULL,
+		[is_revoked] [bit] NULL,
+		[created_at] [datetime] NULL,
+		[updated_at] [datetime] NULL
+	) ON [PRIMARY]
+	
+	ALTER TABLE [dbo].[tokens] ADD PRIMARY KEY CLUSTERED 
+	(
+		[id] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	
+	SET ANSI_PADDING ON
+	
+	CREATE NONCLUSTERED INDEX [tokens_token_index] ON [dbo].[tokens]
+	(
+		[token] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	
+	SET ANSI_PADDING ON
+	
+	CREATE UNIQUE NONCLUSTERED INDEX [tokens_token_unique] ON [dbo].[tokens]
+	(
+		[token] ASC
+	)
+	WHERE ([token] IS NOT NULL)
+	WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	
+	ALTER TABLE [dbo].[tokens] ADD  DEFAULT ('0') FOR [is_revoked]
+	
+	ALTER TABLE [dbo].[tokens]  WITH CHECK ADD  CONSTRAINT [tokens_user_id_foreign] FOREIGN KEY([user_id])
+	REFERENCES [dbo].[users] ([id])
+	
+	ALTER TABLE [dbo].[tokens] CHECK CONSTRAINT [tokens_user_id_foreign]
+
+END
+ELSE BEGIN
+    PRINT 'Table tokens exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'contacts','U') IS NULL BEGIN
+    PRINT 'Table contacts not exist, creating...';
+
+	SET ANSI_NULLS ON
+	
+	SET QUOTED_IDENTIFIER ON
+	
+	CREATE TABLE [dbo].[contacts](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[name] [nvarchar](255) NULL,
+		[email] [nvarchar](255) NULL,
+		[title] [nvarchar](255) NULL,
+		[tel] [nvarchar](255) NULL,
+		[user_id] [int] NULL,
+		[created_at] [datetime] NULL,
+		[updated_at] [datetime] NULL
+	) ON [PRIMARY]
+	
+	ALTER TABLE [dbo].[contacts] ADD PRIMARY KEY CLUSTERED 
+	(
+		[id] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	
+	ALTER TABLE [dbo].[contacts]  WITH CHECK ADD  CONSTRAINT [contacts_user_id_foreign] FOREIGN KEY([user_id])
+	REFERENCES [dbo].[users] ([id])
+
+	ALTER TABLE [dbo].[contacts] CHECK CONSTRAINT [contacts_user_id_foreign]
+
+END
+ELSE BEGIN
+    PRINT 'Table contacts exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'adonis_schema','U') IS NULL BEGIN
+    PRINT 'Table adonis_schema not exist, creating...';
+
+	SET ANSI_NULLS ON
+	
+	SET QUOTED_IDENTIFIER ON
+	
+	CREATE TABLE [dbo].[adonis_schema](
+		[id] [int] IDENTITY(1,1) NOT NULL,
+		[name] [nvarchar](255) NULL,
+		[batch] [int] NULL,
+		[migration_time] [datetime] NULL
+	) ON [PRIMARY]
+	
+	ALTER TABLE [dbo].[adonis_schema] ADD PRIMARY KEY CLUSTERED 
+	(
+		[id] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	
+	ALTER TABLE [dbo].[adonis_schema] ADD  DEFAULT (getdate()) FOR [migration_time]
+
+END
+ELSE BEGIN
+    PRINT 'Table adonis_schema exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'TABLE_UNEXIST','U') IS NULL BEGIN
+    PRINT 'Table TABLE_UNEXIST not exist, creating...';
+
+
+
+END
+ELSE BEGIN
+    PRINT 'Table TABLE_UNEXIST exist.';
+END;
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF OBJECT_ID(N'TABLE_UNEXIST','U') IS NULL BEGIN
+    PRINT 'Table TABLE_UNEXIST not exist, creating...';
+
+
+
+END
+ELSE BEGIN
+    PRINT 'Table TABLE_UNEXIST exist.';
+END;
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ ¬Œƒ»“≈Àﬂ
@@ -2167,23 +2640,6 @@ BEGIN
 	ADD [IS_DEF] [smallint] NOT NULL 
 	CONSTRAINT [DF_DISTRICTS_IS_DEF]  DEFAULT ((0));
 END
-
-GO
-
---------------------------------------------------------------------
---------------------------------------------------------------------
--- DATA UPDATES
---------------------------------------------------------------------
---------------------------------------------------------------------
-
-UPDATE Objekt_vyborki_otchyotnosti
-SET addit_rem_params = '"csw":"1","MSREF":"no","sopc":"yes","rstnok":"1","ovsdssum":"0","RESTTXM":"yes","CSLDN":"yes","TICAB":"yes","NETL":"no","UBLK":"no","CHKTAR":"yes","regbdst":"6","regbctm":"0","dstd":"0","rsbt":"1","tmminsp":"3","tmmaxsp":"220","tmminds":"2","tmmaxds":"800","UTDBL":"yes","UGPT":"yes","geocpref":"","SKINST":"yes",',
-start_free_time = 0, start_free_distance = 0, auto_set_bonus_value = 0, robot_active_time_interval = 5,
-trip_bonus = 0;
-
-GO
-
-UPDATE Voditelj SET V_rabote = 0;
 
 GO
 
