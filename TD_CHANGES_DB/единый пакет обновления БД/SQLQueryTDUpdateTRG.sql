@@ -142,6 +142,11 @@ IF OBJECT_ID('dbo.AFTER_APP_CLIENT_ASSIGN') IS NOT NULL
 DROP TRIGGER [dbo].[AFTER_APP_CLIENT_ASSIGN]
 GO
 
+/****** Object:  Trigger [AFTER_ORDER_ROUTE_BUILD]    Script Date: 06.02.2020 22:30:40 ******/
+IF OBJECT_ID('dbo.AFTER_ORDER_ROUTE_BUILD') IS NOT NULL
+DROP TRIGGER [dbo].[AFTER_ORDER_ROUTE_BUILD]
+GO
+
 /****** Object:  Trigger [dbo].[AFTER_DRIVER_RATING_INSERT]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
@@ -3709,3 +3714,78 @@ GO
 ALTER TABLE [dbo].[Zakaz] ENABLE TRIGGER [AFTER_APP_CLIENT_ASSIGN]
 GO
 
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE TRIGGER [dbo].[AFTER_ORDER_ROUTE_BUILD] 
+   ON  [dbo].[Zakaz] 
+   AFTER UPDATE
+AS 
+BEGIN
+
+	SET NOCOUNT ON;
+	
+	DECLARE @db_version INT, @en_prev_price_from_route smallint,
+        @route_distance_tariff [decimal](18, 5),
+        @route_time_tariff [decimal](18, 5);
+	
+	SET @en_prev_price_from_route = 0;
+	
+	SELECT TOP 1 @db_version = ISNULL(db_version,3),
+	    @en_prev_price_from_route = ISNULL(en_prev_price_from_route,0),
+        @route_distance_tariff = route_distance_tariff,
+        @route_time_tariff = route_time_tariff
+	FROM Objekt_vyborki_otchyotnosti
+	WHERE Tip_objekta='for_drivers';
+	
+	IF(@db_version>=5)
+	BEGIN
+	
+		DECLARE @new_route_distance [decimal](18, 5),
+        @new_route_time [decimal](18, 5),
+        @old_route_distance [decimal](18, 5),
+        @old_route_time [decimal](18, 5),
+        @order_id int;
+			
+		SELECT @order_id = b.BOLD_ID, 
+		@new_route_distance = a.route_distance,
+		@new_route_time = a.route_time,
+        @old_route_distance = b.route_distance,
+		@old_route_time = b.route_time
+		FROM inserted a, deleted b
+
+		IF ((@new_route_distance <> @old_route_distance 
+			AND @new_route_distance > 0) OR 
+            (@new_route_time <> @old_route_time 
+			AND @new_route_time > 0))
+		BEGIN
+            DECLARE @route_price [decimal](18, 5);
+
+            SET @route_price = 
+                @new_route_distance * @route_distance_tariff / 1000 +
+                @new_route_time * @route_time_tariff / 60;
+
+            IF @en_prev_price_from_route = 1 BEGIN
+                UPDATE Zakaz SET route_price = @route_price,
+                    prev_price = @route_price
+                WHERE BOLD_ID = @order_id;
+            END ELSE BEGIN
+                UPDATE Zakaz SET route_price = @route_price 
+                WHERE BOLD_ID = @order_id;
+            END;
+		END;
+
+	END;
+	
+	
+	
+END
+
+
+
+GO
+ALTER TABLE [dbo].[Zakaz] ENABLE TRIGGER [AFTER_ORDER_ROUTE_BUILD]
+GO

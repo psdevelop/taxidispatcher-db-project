@@ -1172,6 +1172,42 @@ END
 
 GO
 
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','route_distance_tariff') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [route_distance_tariff] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_route_distance_tariff]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','route_time_tariff') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [route_time_tariff] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_route_time_tariff]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','en_prev_price_from_route') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [en_prev_price_from_route] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_en_prev_price_from_route]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','auto_build_route') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [auto_build_route] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_auto_build_route]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ «¿ ¿«Œ¬
@@ -1654,6 +1690,69 @@ BEGIN
 	ALTER TABLE dbo.Zakaz 
 	ADD [taxometer_lon] [decimal](18, 5) NOT NULL 
 	CONSTRAINT [DF_Zakaz_taxometer_lon]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','detected_end_sector') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [detected_end_sector] [int] NOT NULL 
+	CONSTRAINT [DF_Zakaz_detected_end_sector]  DEFAULT ((-1));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','failed_end_adr_coords_detect') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [failed_end_adr_coords_detect] [smallint] NOT NULL 
+	CONSTRAINT [DF_Zakaz_failed_end_adr_coords_detect]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','depr_lat') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [depr_lat] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_depr_lat]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','depr_lon') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [depr_lon] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_depr_lon]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','route_distance') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [route_distance] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_route_distance]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','route_time') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [route_time] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_route_time]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('Zakaz','route_price') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [route_price] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_route_price]  DEFAULT ((0));
 END
 
 GO
