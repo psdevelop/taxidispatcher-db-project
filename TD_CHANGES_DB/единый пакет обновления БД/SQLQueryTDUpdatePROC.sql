@@ -2412,7 +2412,8 @@ BEGIN
         @current_sum decimal(18,5), @current_dist decimal(18,5),
         @is_upcoming int, @driver_id int, @driver_name varchar(500),
 		@cl_comment varchar(255), @client_dist [decimal](18, 5),
-		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5);
+		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5), 
+        @rate [decimal](18, 5), @rate_count int;
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -2445,11 +2446,14 @@ BEGIN
 	EXEC CheckDriverBusy @client_id;
 	
 	SELECT @acc_status=acc_status, @group_id=group_id,
-	@last_order_time=last_visit 
+	@last_order_time=last_visit,
+    @rate = rate, @rate_count = rate_count  
 	FROM REMOTE_CLIENTS WHERE id=@client_id;
 	
 	SET @res=@res+CAST(@client_id as varchar(20))+
-		'","cst":"'+CAST(@acc_status as varchar(20))+'"';
+		'","cst":"'+CAST(@acc_status as varchar(20))+'","rate":"' +
+		convert(varchar,convert(decimal(18,5),@rate)) + '","rate_cnt":"' +
+		CAST(@rate_count as varchar(20)) + '"';
 	
 	SET @active_dr_count=-1;
 	if @dont_show_auto_count=0 begin
