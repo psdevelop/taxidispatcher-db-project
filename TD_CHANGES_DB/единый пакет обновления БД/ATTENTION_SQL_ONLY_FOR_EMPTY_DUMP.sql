@@ -4,7 +4,13 @@ GO
 ALTER TABLE Objekt_vyborki_otchyotnosti ALTER COLUMN addit_rem_params VARCHAR (8000) NOT NULL;
 GO
 
+ALTER TABLE Objekt_vyborki_otchyotnosti DROP CONSTRAINT DF_Objekt_vyborki_otchyotnosti_forders_wbroadcast;
+GO
+
 ALTER TABLE Objekt_vyborki_otchyotnosti ALTER COLUMN forders_wbroadcast VARCHAR (max) NOT NULL;
+GO
+
+ALTER TABLE [dbo].[Objekt_vyborki_otchyotnosti] ADD  CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_forders_wbroadcast]  DEFAULT (('')) FOR [forders_wbroadcast];
 GO
 
 

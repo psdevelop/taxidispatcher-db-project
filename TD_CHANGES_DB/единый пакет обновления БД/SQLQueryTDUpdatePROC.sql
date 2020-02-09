@@ -411,6 +411,11 @@ IF OBJECT_ID('dbo.SetOrderTaxometrParameters') IS NOT NULL
 DROP PROCEDURE [dbo].[SetOrderTaxometrParameters]
 GO
 
+/****** Object:  StoredProcedure [dbo].[RateClient]    Script Date: 09.02.2020 15:50:15 ******/
+IF OBJECT_ID('dbo.RateClient') IS NOT NULL
+DROP PROCEDURE [dbo].[RateClient]
+GO
+
 /****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
@@ -7601,6 +7606,8 @@ END
 
 GO
 
+/****** Object:  StoredProcedure [dbo].[GetSectorMediumCoords]    Script Date: 03.12.2019 15:50:15 ******/
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7635,6 +7642,8 @@ END
 
 GO
 
+/****** Object:  StoredProcedure [dbo].[SetOrderTaxometrParameters]    Script Date: 18.01.2019 15:50:15 ******/
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -7655,3 +7664,34 @@ BEGIN
 END
 GO
 
+
+/****** Object:  StoredProcedure [dbo].[RateClient]    Script Date: 09.02.2020 15:50:15 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[RateClient] 
+	-- Add the parameters for the stored procedure here
+	(@rate [decimal](18, 5), @client_id int)
+AS
+BEGIN 
+
+    DECLARE @current_rate [decimal](18, 5), @rate_count int;
+    SET @client_id = ISNULL(@client_id, 0);
+	
+	if @client_id > 0
+	BEGIN
+
+        SELECT @current_rate = rate, @rate_count = rate_count FROM REMOTE_CLIENTS
+        WHERE id = @client_id;
+
+        SET @current_rate = (@current_rate * @rate_count + @rate) / (@rate_count + 1)
+
+		UPDATE REMOTE_CLIENTS SET 
+		rate = @current_rate, rate_count = (rate_count + 1)
+		WHERE id = @client_id;
+	END;
+END
