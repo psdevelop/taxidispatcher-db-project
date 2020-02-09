@@ -416,6 +416,11 @@ IF OBJECT_ID('dbo.RateClient') IS NOT NULL
 DROP PROCEDURE [dbo].[RateClient]
 GO
 
+/****** Object:  StoredProcedure [dbo].[CancelOrdersRClientById]    Script Date: 09.02.2020 20:50:15 ******/
+IF OBJECT_ID('dbo.CancelOrdersRClientById') IS NOT NULL
+DROP PROCEDURE [dbo].[CancelOrdersRClientById]
+GO
+
 /****** Object:  StoredProcedure [dbo].[AddNewOrderNum]    Script Date: 10.05.2019 0:05:05 ******/
 SET ANSI_NULLS ON
 GO
@@ -7710,6 +7715,37 @@ END
 
 
 
+
+
+
+
+
+
+GO
+
+/****** Object:  StoredProcedure [dbo].[CancelOrdersRClientById]    Script Date: 09.02.2020 20:50:15 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[CancelOrdersRClientById] 
+	-- Add the parameters for the stored procedure here
+	(@order_id int)
+AS
+BEGIN 
+	
+	if (@order_id>0)
+	BEGIN
+		UPDATE Zakaz SET Adres_vyzova_vvodim = '(CLIENT CANCEL)' + 
+                REPLACE(Adres_vyzova_vvodim,'(ONLINE)',''),
+		    rclient_status = -1
+		WHERE rclient_status >= 0 AND Zavershyon = 0 AND 
+            BOLD_ID = @order_id AND REMOTE_SET < 100;
+	END;
+END
 
 
 
