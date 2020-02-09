@@ -1928,7 +1928,7 @@ BEGIN
         @second_stop_lat [decimal](18, 5), @second_stop_lon [decimal](18, 5),
         @rclient_lat varchar(50), @rclient_lon varchar(50), @client_id int,
         @taxometer_lat [decimal](18, 5), @taxometer_lon [decimal](18, 5),
-	    @taxometer_time int;
+	    @taxometer_time int, @rate [decimal](18, 5), @rate_count int;
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -1966,7 +1966,8 @@ BEGIN
 	EXEC CheckDriverBusy @driver_id;
 	
 	SELECT @busy=Zanyat_drugim_disp, @on_launch=Na_pereryve,
-	@last_order_time=Vremya_poslednei_zayavki 
+	@last_order_time=Vremya_poslednei_zayavki,
+    @rate = rate, @rate_count = rate_count 
 	FROM Voditelj 
 	WHERE BOLD_ID=@driver_id;
 	
@@ -1995,6 +1996,12 @@ BEGIN
 	
 	SET @res=@res+',"sid":"'+
 		CAST(@sector_id as varchar(20))+'"';
+
+    SET @res = @res + ',"rate":"' +
+		convert(varchar,convert(decimal(18,5),@rate)) + '"';
+
+    SET @res = @res + ',"rate_cnt":"' +
+		CAST(@rate_count as varchar(20)) + '"';
 		
 	SELECT @position=COUNT(*)+1 
 		FROM Voditelj dr WHERE
