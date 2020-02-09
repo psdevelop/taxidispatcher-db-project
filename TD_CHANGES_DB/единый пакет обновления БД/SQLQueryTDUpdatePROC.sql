@@ -6986,7 +6986,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE PROCEDURE [dbo].[SetOrdersWideBroadcasts] 
 	-- Add the parameters for the stored procedure here
-	(@set_owbcast int, @forders_bcasts varchar(5000) OUT)
+	(@set_owbcast int, @forders_bcasts varchar(max) OUT)
 AS
 BEGIN 
 

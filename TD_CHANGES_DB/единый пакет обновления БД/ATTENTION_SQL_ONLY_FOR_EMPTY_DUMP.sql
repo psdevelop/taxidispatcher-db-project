@@ -4,6 +4,9 @@ GO
 ALTER TABLE Objekt_vyborki_otchyotnosti ALTER COLUMN addit_rem_params VARCHAR (8000) NOT NULL;
 GO
 
+ALTER TABLE Objekt_vyborki_otchyotnosti ALTER COLUMN forders_wbroadcast VARCHAR (max) NOT NULL;
+GO
+
 
 ALTER TABLE REMOTE_CLIENTS ALTER COLUMN name varchar(255) NOT NULL;
 GO
