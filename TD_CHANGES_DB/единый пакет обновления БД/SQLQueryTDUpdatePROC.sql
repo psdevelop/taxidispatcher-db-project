@@ -7695,3 +7695,14 @@ BEGIN
 		WHERE id = @client_id;
 	END;
 END
+
+
+
+
+
+
+
+
+
+GO
+
