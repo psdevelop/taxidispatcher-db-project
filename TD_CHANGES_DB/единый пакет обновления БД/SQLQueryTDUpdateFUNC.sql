@@ -2641,7 +2641,8 @@ BEGIN
         @first_stop_adr [varchar](255), @first_stop_lat [decimal](18, 5),
         @first_stop_lon [decimal](18, 5), @second_stop_adr [varchar](255),
         @second_stop_lat [decimal](18, 5), @second_stop_lon [decimal](18, 5),
-        @rclient_lat varchar(50), @rclient_lon varchar(50), @client_id int;
+        @rclient_lat varchar(50), @rclient_lon varchar(50), @client_id int,
+        @opt_comb varchar(255);
 
 	SET @show_region_in_addr = 0;
 
@@ -2664,7 +2665,8 @@ BEGIN
 	ISNULL(rc.name, ''), ISNULL(rc.rate, 0), ISNULL(rc.rate_count, 0),
     ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
     ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
-    ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id   
+    ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
+    ord.OPT_COMB_STR      
     FROM Zakaz ord
 	LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 	LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id
@@ -2678,7 +2680,7 @@ BEGIN
 	@cl_name, @client_rate, @client_rate_count,
     @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
     @first_stop_adr, @first_stop_lat, @first_stop_lon,
-    @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id
+    @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id, @opt_comb
 	/*Выполняем в цикле перебор строк*/
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -2752,6 +2754,16 @@ BEGIN
 			SET @res=@res+',"cldst'+
 			CAST(@counter as varchar(20))+'":"'+
 			convert(varchar,convert(decimal(18,5),@client_dist))+'"';
+
+            SET @opt_comb=ISNULL(@opt_comb,'-');
+            IF (@opt_comb='')
+            BEGIN
+                SET @opt_comb='-';
+            END;
+
+            SET @res=@res+',"oo'+
+            CAST(@counter as varchar(20))+'":"'+
+            @opt_comb+'"';
 
 			SET @res=@res+',"clpsm'+
 			CAST(@counter as varchar(20))+'":"'+
@@ -2838,7 +2850,7 @@ BEGIN
 		@cl_name, @client_rate, @client_rate_count,
         @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
         @first_stop_adr, @first_stop_lat, @first_stop_lon,
-        @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id
+        @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id, @opt_comb
 	END
 	CLOSE @CURSOR
 	
@@ -4316,14 +4328,14 @@ BEGIN
 	DECLARE @order_count int, @length_with_comma int, 
     @left_option_str varchar(255), @rigth_option_str varchar(255);
 
-    SET @left_option_str = CAST(@option_id as [varchar](255)) + ','
-    SET @rigth_option_str = ',' + CAST(@option_id as [varchar](255))
+    SET @left_option_str = CAST(@option_id as [varchar](255)) + '.'
+    SET @rigth_option_str = '.' + CAST(@option_id as [varchar](255))
     SET @length_with_comma = LEN(@left_option_str)
 
 
     SELECT @order_count = COUNT(BOLD_ID) FROM Zakaz ord
     WHERE (ord.OPT_COMB_STR = CAST(@option_id as [varchar](255)) OR
-    ord.OPT_COMB_STR LIKE ('%,' + CAST(@option_id as [varchar](255)) + ',%') OR 
+    ord.OPT_COMB_STR LIKE ('%.' + CAST(@option_id as [varchar](255)) + '.%') OR 
     (LEN(ord.OPT_COMB_STR) > @length_with_comma AND 
     LEFT(ord.OPT_COMB_STR, @length_with_comma) = @left_option_str) OR 
     (LEN(ord.OPT_COMB_STR) > @length_with_comma AND 

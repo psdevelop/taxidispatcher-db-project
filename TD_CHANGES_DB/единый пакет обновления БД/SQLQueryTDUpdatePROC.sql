@@ -7093,7 +7093,7 @@ CREATE PROCEDURE [dbo].[InsertOrderWithSectorAndTariffParams]
     @first_stop_adr [varchar](255), @first_stop_lat [decimal](18, 5),
     @first_stop_lon [decimal](18, 5), @second_stop_adr [varchar](255),
     @second_stop_lat [decimal](18, 5), @second_stop_lon [decimal](18, 5),
-    @ord_num  int OUT, @order_id int OUT)
+    @opt_comb_str [varchar](255), @ord_num  int OUT, @order_id int OUT)
 AS
 BEGIN 
 
@@ -7158,6 +7158,7 @@ BEGIN
 		rclient_status=1,
 		alarmed=1,
 		adr_manual_set = 1,
+        OPT_COMB_STR = ISNULL(@opt_comb_str, '-'),
         vypolnyaetsya_voditelem = (CASE WHEN (@driver_id > 0) THEN @driver_id ELSE -1 END),
 	REMOTE_SYNC = (CASE WHEN (@driver_id > 0) THEN 1 ELSE 0 END),
         Predvariteljnyi = (CASE WHEN (@shedule_date IS NULL OR @online_sheduled_as_lock_prev <> 1) THEN 0 ELSE 1 END),

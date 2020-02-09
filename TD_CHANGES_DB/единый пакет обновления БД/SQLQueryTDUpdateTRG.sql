@@ -3681,17 +3681,17 @@ BEGIN
             WHILE @@FETCH_STATUS = 0
             BEGIN
 
-                SET @left_option_str = CAST(@optionId as [varchar](255)) + ','
-                SET @rigth_option_str = ',' + CAST(@optionId as [varchar](255))
+                SET @left_option_str = CAST(@optionId as [varchar](255)) + '.'
+                SET @rigth_option_str = '.' + CAST(@optionId as [varchar](255))
                 SET @length_with_comma = LEN(@left_option_str)
 
                 UPDATE Zakaz 
                 SET OPT_COMB_STR = OPT_COMB_STR + 
-                (CASE WHEN (OPT_COMB_STR <> '') THEN ',' ELSE '' END) + 
+                (CASE WHEN (OPT_COMB_STR <> '') THEN '.' ELSE '' END) + 
                 CAST(@optionId as varchar(20))
                 WHERE BOLD_ID = @nOldValue AND 
 		(OPT_COMB_STR <> CAST(@optionId as varchar(20))) AND
-                (CHARINDEX (',' + CAST(@optionId as varchar(20)) + ',', OPT_COMB_STR) = 0) 
+                (CHARINDEX ('.' + CAST(@optionId as varchar(20)) + '.', OPT_COMB_STR) = 0) 
                 AND NOT ((LEN(OPT_COMB_STR) > @length_with_comma AND 
                 LEFT(OPT_COMB_STR, @length_with_comma) = @left_option_str) OR 
                 (LEN(OPT_COMB_STR) > @length_with_comma AND 
