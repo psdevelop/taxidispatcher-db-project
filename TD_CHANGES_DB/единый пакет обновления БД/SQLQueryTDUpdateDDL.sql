@@ -679,6 +679,15 @@ END
 
 GO
 
+IF COL_LENGTH('Voditelj','default_pass_count') IS NULL
+BEGIN
+	ALTER TABLE dbo.Voditelj 
+	ADD [default_pass_count] [int] NOT NULL
+	CONSTRAINT [DF_Voditelj_default_pass_count]  DEFAULT ((0));
+END
+
+GO
+
 ------------------------------------------------------
 ------------------------------------------------------
 ---- Œ√–¿Õ»◊≈Õ»ﬂ “¿¡À»÷€ ¬Œƒ»“≈Àﬂ
@@ -2639,6 +2648,30 @@ BEGIN
 	ALTER TABLE dbo.DISTRICTS 
 	ADD [IS_DEF] [smallint] NOT NULL 
 	CONSTRAINT [DF_DISTRICTS_IS_DEF]  DEFAULT ((0));
+END
+
+GO
+
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+-- DRIVERS_OFFERS
+--------------------------------------------------------------------
+--------------------------------------------------------------------
+
+IF COL_LENGTH('DRIVERS_OFFERS','pass_count') IS NULL
+BEGIN
+	ALTER TABLE dbo.DRIVERS_OFFERS 
+	ADD [pass_count] [int] NOT NULL 
+	CONSTRAINT [DF_DRIVERS_OFFERS_pass_count]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('DRIVERS_OFFERS','comment') IS NULL
+BEGIN
+	ALTER TABLE dbo.DRIVERS_OFFERS 
+	ADD [comment] varchar(1000) NOT NULL 
+	CONSTRAINT [DF_DRIVERS_OFFERS_comment]  DEFAULT ((''));
 END
 
 GO
