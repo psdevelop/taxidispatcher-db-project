@@ -5066,7 +5066,7 @@ BEGIN
         IF @dr_autoex_interval > 0 BEGIN
             UPDATE Voditelj SET V_rabote = 0
             WHERE V_rabote = 1 AND 
-            DATEDIFF(SECOND, GETDATE(), last_status_query_time) > @dr_autoex_interval;
+            DATEDIFF(SECOND, last_status_query_time, GETDATE()) > @dr_autoex_interval;
         END;
 
         IF @unasgn_ord_auto_dr_que_set_time > 0 BEGIN
