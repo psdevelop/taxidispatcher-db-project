@@ -2642,7 +2642,8 @@ BEGIN
         @first_stop_lon [decimal](18, 5), @second_stop_adr [varchar](255),
         @second_stop_lat [decimal](18, 5), @second_stop_lon [decimal](18, 5),
         @rclient_lat varchar(50), @rclient_lon varchar(50), @client_id int,
-        @opt_comb varchar(255);
+        @opt_comb varchar(255), @tplan_id int, @tariff_id int, 
+        @started_early smallint, @early smallint, @early_date datetime;
 
 	SET @show_region_in_addr = 0;
 
@@ -2666,7 +2667,8 @@ BEGIN
     ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
     ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
     ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
-    ord.OPT_COMB_STR      
+    ord.OPT_COMB_STR, ord.PR_POLICY_ID, ord.TARIFF_ID, ord.is_started_early,
+    ord.is_early, ord.early_date
     FROM Zakaz ord
 	LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 	LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id
@@ -2680,7 +2682,8 @@ BEGIN
 	@cl_name, @client_rate, @client_rate_count,
     @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
     @first_stop_adr, @first_stop_lat, @first_stop_lon,
-    @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id, @opt_comb
+    @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id, @opt_comb, 
+    @tplan_id, @tariff_id, @started_early, @early, @early_date
 	/*Выполняем в цикле перебор строк*/
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
@@ -2797,6 +2800,26 @@ BEGIN
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(@client_rate_count as varchar(20))+'"';
 
+            SET @res=@res+',"tplid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@tplan_id as varchar(20))+'"';
+
+            SET @res=@res+',"tarid'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@tariff_id as varchar(20))+'"';
+
+            SET @res=@res+',"stearl'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@started_early as varchar(20))+'"';
+
+            SET @res=@res+',"isearl'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@started_early as varchar(20))+'"';
+
+            SET @res=@res+',"earldt'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@early_date as varchar(50))+'"';
+
             SET @res=@res+',"stlat'+
 			CAST(@counter as varchar(20))+'":"'+
 			@rclient_lat+'"';
@@ -2850,7 +2873,8 @@ BEGIN
 		@cl_name, @client_rate, @client_rate_count,
         @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
         @first_stop_adr, @first_stop_lat, @first_stop_lon,
-        @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id, @opt_comb
+        @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id, @opt_comb, 
+        @tplan_id, @tariff_id, @started_early, @early, @early_date
 	END
 	CLOSE @CURSOR
 	
