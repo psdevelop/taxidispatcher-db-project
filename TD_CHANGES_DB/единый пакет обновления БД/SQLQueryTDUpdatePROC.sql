@@ -2418,7 +2418,8 @@ BEGIN
         @is_upcoming int, @driver_id int, @driver_name varchar(500),
 		@cl_comment varchar(255), @client_dist [decimal](18, 5),
 		@current_time [int], @client_time [int], @client_prev_sum [decimal](18, 5), 
-        @rate [decimal](18, 5), @rate_count int;
+        @rate [decimal](18, 5), @rate_count int, 
+        @started_early smallint, @early smallint, @early_date datetime;
 	DECLARE @last_order_time datetime;
 	DECLARE @position int;
 	
@@ -2452,7 +2453,7 @@ BEGIN
 	
 	SELECT @acc_status=acc_status, @group_id=group_id,
 	@last_order_time=last_visit,
-    @rate = rate, @rate_count = rate_count  
+    @rate = rate, @rate_count = rate_count 
 	FROM REMOTE_CLIENTS WHERE id=@client_id;
 	
 	SET @res=@res+CAST(@client_id as varchar(20))+
@@ -2494,7 +2495,8 @@ BEGIN
 			CONVERT(varchar, DATEPART(hh, Nachalo_zakaza_data))+':'+CONVERT(varchar, DATEPART(mi, Nachalo_zakaza_data))+' '+CONVERT(varchar, DATEPART(dd, Nachalo_zakaza_data)) + '.' + CONVERT(varchar, DATEPART(mm, Nachalo_zakaza_data)) + '.' + CONVERT(varchar, DATEPART(yyyy, Nachalo_zakaza_data)), 
 			rclient_status, 
 			ord.comment, ord.client_dist,
-			ord.[current_time], ord.client_time, ord.client_prev_sum
+			ord.[current_time], ord.client_time, ord.client_prev_sum, 
+            ord.is_started_early, ord.is_early, ord.early_date
 			FROM Zakaz ord WHERE 
 			ord.rclient_id=@client_id AND
 			ord.Arhivnyi=0 AND ord.Soobsheno_voditelyu=0
@@ -2522,7 +2524,8 @@ BEGIN
 			ord.Data_predvariteljnaya, ord.company_id, sp.Naimenovanie, ord.current_sum, ord.current_dist,
             ord.Predvariteljnyi, dr.full_name as driver_name, dr.BOLD_ID as driver_id, 
 			ord.comment, ord.client_dist,
-			ord.[current_time], ord.client_time, ord.client_prev_sum
+			ord.[current_time], ord.client_time, ord.client_prev_sum, 
+            ord.is_started_early, ord.is_early, ord.early_date
 			FROM Zakaz ord 
 			LEFT JOIN Voditelj dr ON ord.vypolnyaetsya_voditelem=dr.BOLD_ID  
 			LEFT JOIN Gruppa_voditelei gv ON ord.company_id = gv.BOLD_ID
@@ -2544,7 +2547,8 @@ BEGIN
 			@rc_status, @dr_gn, @dr_mark, @dr_phone, @prev_price, @cargo_desc, @end_adres, 
 			@client_name, @prev_distance, @prev_date, @company_id, @company_name, @current_sum, 
 			@current_dist, @is_upcoming, @driver_name, @driver_id, @cl_comment, @client_dist, 
-			@current_time, @client_time, @client_prev_sum;
+			@current_time, @client_time, @client_prev_sum, @started_early, 
+            @early, @early_date;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2689,6 +2693,18 @@ BEGIN
 			CAST(@counter as varchar(20))+'":"'+
 			CAST(@driver_id as varchar(20))+'"';
 
+            SET @res=@res+',"stearl'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@started_early as varchar(20))+'"';
+
+            SET @res=@res+',"isearl'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@early as varchar(20))+'"';
+
+            SET @res=@res+',"earldt'+
+			CAST(@counter as varchar(20))+'":"'+
+			CAST(@early_date as varchar(50))+'"';
+
 			SET @res=@res+',"drnm'+
 			CAST(@counter as varchar(20))+'":"'+
 			@driver_name+'"';
@@ -2713,7 +2729,7 @@ BEGIN
 				@cargo_desc, @end_adres, @client_name, @prev_distance, @prev_date, @company_id, 
 				@company_name, @current_sum, @current_dist, @is_upcoming, 
 				@driver_name, @driver_id, @cl_comment, @client_dist, @current_time, @client_time, 
-				@client_prev_sum;
+				@client_prev_sum, @started_early, @early, @early_date;
 		END
 		CLOSE @CURSOR
 	END

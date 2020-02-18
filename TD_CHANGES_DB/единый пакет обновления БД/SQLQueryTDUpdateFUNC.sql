@@ -2814,7 +2814,7 @@ BEGIN
 
             SET @res=@res+',"isearl'+
 			CAST(@counter as varchar(20))+'":"'+
-			CAST(@started_early as varchar(20))+'"';
+			CAST(@early as varchar(20))+'"';
 
             SET @res=@res+',"earldt'+
 			CAST(@counter as varchar(20))+'":"'+
