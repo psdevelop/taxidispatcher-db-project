@@ -2223,7 +2223,7 @@ BEGIN
         @load_driver_data_with_wsocket smallint,
         @prev_summ_over_taxometr smallint, @taxometr_over_small_prev_summ smallint,
         @dont_minimize_calc_price smallint, @disable_taxometr_report_edit smallint,
-        @max_order_price int;
+        @max_order_price int, @manual_start_time_calc smallint;
 	
 	SELECT TOP 1 @curr_mver=ISNULL(curr_mob_version,2102),
 	@min_mver=ISNULL(min_mob_version,2102),
@@ -2254,7 +2254,8 @@ BEGIN
     @taxometr_over_small_prev_summ = taxometr_over_small_prev_summ,
     @dont_minimize_calc_price = dont_minimize_calc_price, 
     @disable_taxometr_report_edit = disable_taxometr_report_edit,
-    @max_order_price = max_order_price
+    @max_order_price = max_order_price,
+    @manual_start_time_calc = manual_start_time_calc
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
    
@@ -2291,6 +2292,12 @@ BEGIN
 	BEGIN
 		SET @tmetr_instr=@tmetr_instr+'"iuse_tm":"yes",';
 	END;
+    if(@manual_start_time_calc=1)
+	BEGIN
+		SET @tmetr_instr=@tmetr_instr+'"stcwm":"yes",';
+	END ELSE BEGIN
+        SET @tmetr_instr=@tmetr_instr+'"stcwm":"no",';
+    END;
 	if(@use_nlocserv=0)
 	BEGIN
 		SET @tmetr_instr=@tmetr_instr+'"iuse_nls":"no",';

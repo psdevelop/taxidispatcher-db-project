@@ -1690,6 +1690,15 @@ END
 
 GO
 
+IF COL_LENGTH('Objekt_vyborki_otchyotnosti','manual_start_time_calc') IS NULL
+BEGIN
+	ALTER TABLE dbo.Objekt_vyborki_otchyotnosti 
+	ADD [manual_start_time_calc] [smallint] NOT NULL 
+	CONSTRAINT [DF_Objekt_vyborki_otchyotnosti_manual_start_time_calc]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ «¿ ¿«Œ¬
