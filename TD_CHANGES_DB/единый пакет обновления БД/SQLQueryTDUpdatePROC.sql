@@ -7118,7 +7118,8 @@ CREATE PROCEDURE [dbo].[InsertOrderWithSectorAndTariffParams]
 AS
 BEGIN 
 
-	DECLARE @comment varchar(255), @online_sheduled_as_lock_prev smallint;
+	DECLARE @comment varchar(255), @online_sheduled_as_lock_prev smallint,
+	@dr_num int;
 	
 	SET @order_id = -1;
 	SET @ord_num = -1;
@@ -7161,6 +7162,11 @@ BEGIN
 	SELECT TOP 1 @online_sheduled_as_lock_prev = online_sheduled_as_lock_prev
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
+
+    IF @driver_id > 0 BEGIN
+        SELECT @dr_num = Pozyvnoi FROM Voditelj
+        WHERE BOLD_ID = @driver_id
+    END
 	
 	if (@order_id>0)
 	BEGIN
@@ -7175,6 +7181,8 @@ BEGIN
 		end_adres = @enadres,
 		Primechanie=@comment,
 		REMOTE_SET = (CASE WHEN (@driver_id > 0) THEN 8 ELSE @status END),
+        Pozyvnoi_ustan = (CASE WHEN (@driver_id > 0) THEN @dr_num ELSE 0 END),
+        REMOTE_DRNUM = (CASE WHEN (@driver_id > 0) THEN @dr_num ELSE 0 END),
 		rclient_id=@client_id,
 		rclient_status=1,
 		alarmed=1,
