@@ -34,3 +34,7 @@ UPDATE Voditelj SET V_rabote = 0;
 
 GO
 
+DELETE FROM AREA_LINES;
+
+GO
+
