@@ -5041,6 +5041,7 @@ BEGIN
 			@dont_auto_wtout_adr_appr smallint,
 			@early_orders_started_time smallint,
             @unasgn_ord_auto_dr_que_set_time int,
+            @auto_bsector_only_prev smallint,
             @dr_autoex_interval int;
 	
 	SELECT TOP 1 @auto_bsector_longorders=ISNULL(auto_bsector_longorders,0),
@@ -5062,7 +5063,8 @@ BEGIN
 	@dont_auto_wtout_adr_appr = dont_auto_wtout_adr_appr,
 	@early_orders_started_time = early_orders_started_time,
     @unasgn_ord_auto_dr_que_set_time = unasgn_ord_auto_dr_que_set_time,
-    @dr_autoex_interval = dr_autoex_interval
+    @dr_autoex_interval = dr_autoex_interval,
+    @auto_bsector_only_prev = auto_bsector_only_prev
 	FROM Objekt_vyborki_otchyotnosti
 	WHERE Tip_objekta='for_drivers';
 	
@@ -5114,9 +5116,10 @@ BEGIN
 			--SECTOR_ID = (CASE WHEN (detected_sector > 0) THEN detected_sector ELSE @auto_bsectorid_longorders END),
 			REMOTE_SET=2, Priority_counter=0, for_all_sectors = 1
 			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 2)  
-			and (Predvariteljnyi=0) and (rclient_status=0) AND for_all_sectors <> 1
+			and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) and (rclient_status=0) AND for_all_sectors <> 1
 			AND (ABS(DATEDIFF(SECOND, LAST_STATUS_TIME, GETDATE())) > @auto_for_all_longtime)
 			AND Telefon_klienta<>'' AND ((Adres_vyzova_vvodim<>'' AND adr_manual_set=1) OR (@auto_bsect_notmanual_ord=1 AND adr_manual_set=0))
+            AND (Predvariteljnyi = 1 OR @auto_bsector_only_prev = 0)
 			
 			IF @@ROWCOUNT > 0 BEGIN
 
@@ -5125,7 +5128,7 @@ BEGIN
 				DELETE FROM DR_ORD_PRIORITY WHERE order_id IN 
 				(SELECT BOLD_ID FROM Zakaz 
 					WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 2 OR REMOTE_SET = 3)  
-					and (Predvariteljnyi=0) and (rclient_status=0) AND for_all_sectors <> 1
+					and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) and (rclient_status=0) AND for_all_sectors <> 1
 					AND (ABS(DATEDIFF(SECOND, LAST_STATUS_TIME, GETDATE())) > @auto_for_all_longtime)
 					AND Telefon_klienta<>'' AND ((Adres_vyzova_vvodim<>'' AND adr_manual_set=1) OR (@auto_bsect_notmanual_ord=1 AND adr_manual_set=0)));
 			END;
@@ -5142,30 +5145,30 @@ BEGIN
 			SECTOR_ID = (CASE WHEN (detected_sector > 0) THEN detected_sector ELSE @auto_bsectorid_longorders END), REMOTE_SET=2, Priority_counter=0, 
 			for_all_sectors = (CASE WHEN (detected_sector > 0 AND failed_adr_coords_detect <= 0 AND (dbo.GetSectorDrCount(detected_sector) > 0 OR @auto_for_all_empty_sector <> 1)) THEN 0 ELSE 1 END),
 			Adres_vyzova_vvodim = CAST(CASE WHEN (adr_manual_set=0 AND @auto_bsect_notmanual_ord=1) THEN 'позвони клиенту' ELSE Adres_vyzova_vvodim END AS varchar(255))
-			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 0) and (Predvariteljnyi=0) and (rclient_status=0)
+			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 0) and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) and (rclient_status=0)
 			AND (ABS(DATEDIFF(SECOND, Nachalo_zakaza_data, GETDATE())) > @auto_bsector_longtime)
 			AND Telefon_klienta<>'' AND ((Adres_vyzova_vvodim<>'' AND adr_manual_set=1) OR (@auto_bsect_notmanual_ord=1 AND adr_manual_set=0)) AND
-			((adr_manual_set = 1) OR (@dont_auto_wtout_adr_appr=0))
+			((adr_manual_set = 1) OR (@dont_auto_wtout_adr_appr=0)) AND (Predvariteljnyi = 1 OR @auto_bsector_only_prev = 0)
 			SET @success=1;
 		end
 		if @auto_bsector_onlineorders>0 and @auto_bsector_onlinetime>0 and @auto_bsectorid_onlineorders>-1 begin
 			UPDATE dbo.Zakaz SET konechnyi_sektor_raboty=(CASE WHEN (detected_sector > 0) THEN detected_sector ELSE @auto_bsectorid_onlineorders END), 
 			SECTOR_ID=(CASE WHEN (detected_sector > 0) THEN detected_sector ELSE @auto_bsectorid_onlineorders END), REMOTE_SET=2, Priority_counter=0,
 			for_all_sectors = (CASE WHEN (detected_sector > 0 AND failed_adr_coords_detect <= 0 AND (dbo.GetSectorDrCount(detected_sector) > 0 OR @auto_for_all_empty_sector <> 1)) THEN 0 ELSE 1 END)
-			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 0) and (Predvariteljnyi=0) AND rclient_id>-1 and (rclient_status>0)
+			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET = 0) and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) AND rclient_id>-1 and (rclient_status>0)
 			AND (ABS(DATEDIFF(SECOND, Nachalo_zakaza_data, GETDATE())) > @auto_bsector_onlinetime)
 			AND Telefon_klienta<>'' AND Adres_vyzova_vvodim<>''
 			SET @success=1;
 		end
 		if @auto_close_client_canceling>0 and @auto_close_clcancel_time>0 begin
 			UPDATE dbo.Zakaz SET REMOTE_SET=100, Zavershyon=1
-			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET <= 8) and (Predvariteljnyi=0) AND (rclient_id > -1 OR src > 0) and (rclient_status=-1)
+			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET <= 8) and (Predvariteljnyi=0 OR Zadeistv_predvarit = 1) AND (rclient_id > -1 OR src > 0) and (rclient_status=-1)
 			AND (ABS(DATEDIFF(SECOND, LAST_STATUS_TIME, GETDATE())) > @auto_close_clcancel_time)
 			SET @success=1;
 		end
 		if @auto_arh_empty_orders = 1 begin
 			UPDATE dbo.Zakaz SET REMOTE_SET = 100, Zavershyon = 1, Arhivnyi = 1, arhive_sms_state = 1
-			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET < 8) AND (Predvariteljnyi = 0) 
+			WHERE (Arhivnyi = 0) AND (Zavershyon = 0) AND (REMOTE_SET < 8) AND (Predvariteljnyi = 0 OR Zadeistv_predvarit = 1) 
 			AND Pozyvnoi_ustan = 0 AND (ABS(DATEDIFF(HOUR, LAST_STATUS_TIME, GETDATE())) > 5)
 			SET @success = 1;
 		end
@@ -5175,6 +5178,14 @@ BEGIN
 	END CATCH;
 
 END
+
+
+
+
+
+
+
+
 
 GO
 /****** Object:  StoredProcedure [dbo].[One3SecTask]    Script Date: 10.05.2019 0:05:05 ******/
@@ -5388,7 +5399,7 @@ BEGIN
 					'dr_refuse', @order_refusal_rating_fine, 0;
 			END;
 
-			IF @order_refusal_balance_fine > 0 BEGIN
+			IF @order_refusal_balance_fine > 0 AND @use_drivers_rating = 1 BEGIN
 				UPDATE Voditelj 
 				SET DRIVER_BALANCE = DRIVER_BALANCE - @order_refusal_balance_fine
 				WHERE BOLD_ID = @driver_id;
@@ -5422,6 +5433,7 @@ BEGIN
 	SET @op_answer = @op_answer + '"msg_end":"ok"}';
 	
 END
+
 
 
 
@@ -6666,18 +6678,30 @@ CREATE PROCEDURE [dbo].[SetOrderDriverCancelAttStatus]
 	(@order_id int, @dr_id int, @count int OUT)
 AS
 BEGIN 
-	--DECLARE @count int;
+	DECLARE @order_refusal_balance_fine decimal(18, 5);
 	SET @count = 0;
+
+    SELECT TOP 1 
+		@order_refusal_balance_fine = order_refusal_balance_fine
+		FROM Objekt_vyborki_otchyotnosti
+		WHERE Tip_objekta='for_drivers';
 	
 	UPDATE Zakaz 
 	SET Zakaz.REMOTE_SET=13 
 	WHERE (Zakaz.REMOTE_SET=8) AND  
 	(Zakaz.BOLD_ID=@order_id) AND
 	(Zakaz.vypolnyaetsya_voditelem=@dr_id);
+
+    IF @order_refusal_balance_fine > 0 BEGIN
+				UPDATE Voditelj 
+				SET DRIVER_BALANCE = DRIVER_BALANCE - @order_refusal_balance_fine
+				WHERE BOLD_ID = @dr_id;
+			END;
 	
 	SET @count=@@ROWCOUNT;
 	
 END
+
 
 
 
