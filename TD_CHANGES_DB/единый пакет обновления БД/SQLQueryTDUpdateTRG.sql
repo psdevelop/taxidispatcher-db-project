@@ -3791,3 +3791,77 @@ END
 GO
 ALTER TABLE [dbo].[Zakaz] ENABLE TRIGGER [AFTER_ORDER_ROUTE_BUILD]
 GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE TRIGGER [dbo].[AFTER_ORDER_TARIFF_SCALES_CALC] 
+   ON  [dbo].[Zakaz] 
+   AFTER UPDATE
+AS 
+BEGIN
+
+	SET NOCOUNT ON;
+	
+	DECLARE @db_version INT, @en_prprice_from_tscales smallint;
+	
+	SET @en_prprice_from_tscales = 0;
+	
+	SELECT TOP 1 @db_version = ISNULL(db_version,3),
+	    @en_prprice_from_tscales = ISNULL(en_prprice_from_tscales,0)
+	FROM Objekt_vyborki_otchyotnosti
+	WHERE Tip_objekta='for_drivers';
+	
+	IF(@db_version>=5 AND @en_prprice_from_tscales = 1)
+	BEGIN
+	
+		DECLARE @new_start_sector int,
+        @new_end_sector int,
+        @old_start_sector int,
+        @old_end_sector int,
+        @order_id int;
+			
+		SELECT @order_id = b.BOLD_ID, 
+		@new_start_sector = a.detected_sector,
+		@new_end_sector = a.detected_end_sector,
+        @old_start_sector = b.detected_sector,
+		@old_end_sector = b.detected_end_sector
+		FROM inserted a, deleted b
+
+		IF ((@new_start_sector <> @old_start_sector OR @new_end_sector <> @old_end_sector)
+			AND @new_start_sector > 0 AND @new_end_sector > 0)
+		BEGIN
+            DECLARE @route_price [decimal](18, 5);
+
+		SELECT TOP(1) @route_price = price FROM TARIFF_SCALES
+		WHERE (start_sector_id = @new_start_sector AND end_sector_id = @new_end_sector) OR
+			(start_sector_id = @new_end_sector AND end_sector_id = @new_start_sector)
+
+
+	    
+
+            IF @@ROWCOUNT>0 BEGIN
+
+		SET @route_price = CAST(ROUND(@route_price,0) as int);
+
+                UPDATE Zakaz SET 
+		--route_price = @route_price,
+                    prev_price = @route_price
+                WHERE BOLD_ID = @order_id;
+            END;
+		END;
+
+	END;
+	
+	
+	
+END
+
+
+
+GO
+ALTER TABLE [dbo].[Zakaz] ENABLE TRIGGER [AFTER_ORDER_TARIFF_SCALES_CALC]
+GO
