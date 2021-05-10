@@ -3768,6 +3768,8 @@ BEGIN
                 @new_route_distance * @route_distance_tariff / 1000 +
                 @new_route_time * @route_time_tariff / 60;
 
+	    SET @route_price = CAST(ROUND(@route_price,0) as int);
+
             IF @en_prev_price_from_route = 1 BEGIN
                 UPDATE Zakaz SET route_price = @route_price,
                     prev_price = @route_price
