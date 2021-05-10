@@ -1,3 +1,0 @@
-Zakaz fixed_time int not null 0
-	  fixed_summ decimal(28,10) not null 0 
-Object_vyb_otch ftime_tariff decimal(28,10) not null 0

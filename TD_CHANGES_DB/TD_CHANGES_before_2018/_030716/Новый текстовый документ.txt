@@ -1,9 +1,0 @@
-Settings
-auto_bsector_longorders small not null 0
-auto_bsectorid_longorders int not null -1
-auto_bsector_longtime int not null 60
-auto_bsector_onlineorders small not null 0
-auto_bsectorid_onlineorders int not null -1
-auto_bsector_onlinetime int not null 20
-auto_neardriver_onlineorders small not null 0
-auto_neardriver_onlinetime int not null 60

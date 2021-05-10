@@ -1,1 +1,0 @@
-IS_DEF smallint def 0 3 поля в POLiCY, oPT, TAR

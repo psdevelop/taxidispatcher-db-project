@@ -1,2 +1,0 @@
-send_wait_info
-send_prev_wait

@@ -1,3 +1,0 @@
-forders_wbroadcast varchar max not null '' voditelj
-new table DR_ORD_PRIORITY
-use_fordbroadcast_priority small Settings

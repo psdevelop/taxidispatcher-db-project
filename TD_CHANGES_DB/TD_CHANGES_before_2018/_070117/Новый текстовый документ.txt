@@ -1,6 +1,0 @@
-clsms_offlinedr_assign Settings 1 small
-use_kladr --||--
-kladr_object_code varchar(50) '' nn
-
-KLADR_KLADR
-KLADR_STREET

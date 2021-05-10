@@ -1,2 +1,0 @@
-online_set_uname varchar(255) not null def '' Voditelj
-UNAME varchar(255) not null def '' TD_EVENTS

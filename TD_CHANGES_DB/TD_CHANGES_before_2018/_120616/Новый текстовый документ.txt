@@ -1,2 +1,0 @@
-rclient_lat, rclient_lon varchar(50) zakaz null
-REMOTE_CLIENTS last_lat, last_lon varchar(50) null

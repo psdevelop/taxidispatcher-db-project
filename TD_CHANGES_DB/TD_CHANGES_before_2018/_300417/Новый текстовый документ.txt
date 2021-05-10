@@ -1,1 +1,0 @@
-currency_short varchar(50) null “аблица настроек - валюта сокращенно

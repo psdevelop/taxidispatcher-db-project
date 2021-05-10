@@ -1,5 +1,0 @@
-Zakaz is_early is_started_early early_date
-Settings dont_auto_wtout_adr_appr auto_assign_wait_orders
-early_orders_started_time autoasg_drby_coord_by_rating
-prev_orders_started_time show_phone_in_orders 
-set_manual_addr_change set_addr_manual_enter

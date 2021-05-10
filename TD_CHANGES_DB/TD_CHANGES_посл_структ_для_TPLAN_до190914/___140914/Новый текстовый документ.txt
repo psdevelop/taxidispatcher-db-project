@@ -1,1 +1,0 @@
-SETTINGS taropt_accounting smallint not null 0

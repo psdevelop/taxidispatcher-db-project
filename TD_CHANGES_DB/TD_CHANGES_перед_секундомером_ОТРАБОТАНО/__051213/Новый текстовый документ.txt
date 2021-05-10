@@ -1,4 +1,0 @@
-has_fords
-
-has_sect_fords
-has_forall_fords

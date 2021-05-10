@@ -1,4 +1,0 @@
-curr_mob_version
-min_mob_version
-mandatory_update
-addit_rem_params

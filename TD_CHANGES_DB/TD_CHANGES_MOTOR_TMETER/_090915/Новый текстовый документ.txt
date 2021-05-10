@@ -1,1 +1,0 @@
-ORDER_TARIF outher_tarid outher_tplid int not null def -1

@@ -1,3 +1,0 @@
-to_show_fords
-
-and two to_show_fords

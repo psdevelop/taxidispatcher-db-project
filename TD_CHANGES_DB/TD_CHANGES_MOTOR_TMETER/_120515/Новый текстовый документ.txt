@@ -1,9 +1,0 @@
-avar1 - 10 Voditelj smallint not null def 0
-test_phone disp_phone manager_phone Settings varchar(50)
-call_demon_locsip_name 
-call_demon_netsip_name
-demon_call_ctx
-demon_call_virtext
-demon_call_priority
-demon_call_timeout
-demon_callerid

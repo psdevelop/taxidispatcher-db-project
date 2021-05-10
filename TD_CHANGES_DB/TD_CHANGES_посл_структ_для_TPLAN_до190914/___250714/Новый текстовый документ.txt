@@ -1,2 +1,0 @@
-dr_assign_date datetime Zakaz null 
-order_sort_dr_assign Settt not null smallint 0

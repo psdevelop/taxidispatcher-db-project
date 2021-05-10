@@ -1,2 +1,0 @@
-Personal ITSRemProgramm int def 0 not null
-LastActivityTime datetime def gatdate() not null

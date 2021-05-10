@@ -1,1 +1,0 @@
-Zakaz OPT_COMB_STR varchar(255) not null '-'

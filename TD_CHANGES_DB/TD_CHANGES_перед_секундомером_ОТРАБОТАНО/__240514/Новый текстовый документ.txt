@@ -1,1 +1,0 @@
-odirect_to_dsect smallint def 0 not null

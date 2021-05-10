@@ -1,8 +1,0 @@
-AREA_LINES sector_id
-Zakaz detected_sector is_coordinates_upd for_all_sectors fail_app_coords_geocode
-Settings auto_detect_sector_by_addr 
-	geocode_default_prefix auto_detect_driver_sector 
-	use_opengts_monitoring on_gps_signaling
-Voditelj cc_monitoring_upd
-Personal drivers_coord_updated
-orders_coord_updated

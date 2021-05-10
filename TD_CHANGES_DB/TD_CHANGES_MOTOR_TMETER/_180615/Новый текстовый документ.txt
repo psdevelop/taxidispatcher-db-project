@@ -1,1 +1,0 @@
-zakaz call_it smallint not null def 0 

@@ -1,2 +1,0 @@
-dont_show_auto_count, dont_show_auto_coords, dont_show_driver_info sett smallint 0 not null
-remote_client has_send_data smallint 0 not null

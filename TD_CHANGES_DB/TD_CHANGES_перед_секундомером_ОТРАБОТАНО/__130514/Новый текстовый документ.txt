@@ -1,3 +1,0 @@
-direct_sect_id
-
-DESCRIPTION->DESCRIPT TD_EVENTS

@@ -1,2 +1,0 @@
-zakaz on_place smallint not null def 0
-settings recalc_on_timeset smallint not null def 0
