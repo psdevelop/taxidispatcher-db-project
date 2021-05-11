@@ -38,3 +38,7 @@ DELETE FROM AREA_LINES;
 
 GO
 
+DELETE FROM Sootvetstvie_parametrov_zakaza;
+
+GO
+

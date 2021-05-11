@@ -2498,6 +2498,15 @@ END
 
 GO
 
+IF COL_LENGTH('Sootvetstvie_parametrov_zakaza','coupon_code') IS NULL
+BEGIN
+	ALTER TABLE dbo.Sootvetstvie_parametrov_zakaza 
+	ADD [coupon_code] [varchar](255) NOT NULL
+	CONSTRAINT [DF_Sootvetstvie_parametrov_zakaza_coupon_code]  DEFAULT ((''));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ “Œ◊≈  Œ¡À¿—“»
