@@ -2266,6 +2266,15 @@ END
 
 GO
 
+IF COL_LENGTH('Zakaz','start_prev_price') IS NULL
+BEGIN
+	ALTER TABLE dbo.Zakaz 
+	ADD [start_prev_price] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_Zakaz_start_prev_price]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- —“ŒÀ¡÷€ “¿¡À»÷€ —≈ “Œ–Œ¬
