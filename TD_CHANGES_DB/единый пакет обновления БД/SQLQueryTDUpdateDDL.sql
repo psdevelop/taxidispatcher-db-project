@@ -2594,6 +2594,24 @@ END
 
 GO
 
+IF COL_LENGTH('ORDER_OPTION','is_option_for_prev_price') IS NULL
+BEGIN
+	ALTER TABLE dbo.ORDER_OPTION 
+	ADD [is_option_for_prev_price] [smallint] NOT NULL 
+	CONSTRAINT [DF_ORDER_OPTION_is_option_for_prev_price]  DEFAULT ((0));
+END
+
+GO
+
+IF COL_LENGTH('ORDER_OPTION','min_order_prev_price') IS NULL
+BEGIN
+	ALTER TABLE dbo.ORDER_OPTION 
+	ADD [min_order_prev_price] [decimal](18, 5) NOT NULL 
+	CONSTRAINT [DF_ORDER_OPTION_min_order_prev_price]  DEFAULT ((0));
+END
+
+GO
+
 --------------------------------------------------------------------
 --------------------------------------------------------------------
 -- Persona
