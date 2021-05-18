@@ -2268,11 +2268,11 @@ BEGIN
 
             SET @res=@res+',"stlat'+
 			CAST(@counter as varchar(20))+'":"'+
-			ISNULL(@rclient_lat, @adr_detect_lat)+'"';
+			(CASE WHEN ISNULL(@rclient_lat, '') = '' THEN ISNULL(@adr_detect_lat, '') ELSE @rclient_lat END) +'"';
 
             SET @res=@res+',"stlon'+
 			CAST(@counter as varchar(20))+'":"'+
-			ISNULL(@rclient_lon, @adr_detect_lon)+'"';
+			(CASE WHEN ISNULL(@rclient_lon, '') = '' THEN ISNULL(@adr_detect_lon, '') ELSE @rclient_lon END) +'"';
 
             SET @res=@res+',"dlat'+
 			CAST(@counter as varchar(20))+'":"'+
