@@ -1932,6 +1932,7 @@ BEGIN
         @first_stop_lon [decimal](18, 5), @second_stop_adr [varchar](255),
         @second_stop_lat [decimal](18, 5), @second_stop_lon [decimal](18, 5),
         @rclient_lat varchar(50), @rclient_lon varchar(50), @client_id int,
+        @adr_detect_lat varchar(50), @adr_detect_lon varchar(50),
         @taxometer_lat [decimal](18, 5), @taxometer_lon [decimal](18, 5),
 	    @taxometer_time int, @rate [decimal](18, 5), @rate_count int;
 	DECLARE @last_order_time datetime;
@@ -2053,7 +2054,8 @@ BEGIN
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
             ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
-            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time   
+            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time, 
+            ord.adr_detect_lat, ord.adr_detect_lon   
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2081,7 +2083,8 @@ BEGIN
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
             ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
-            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time     
+            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time, 
+            ord.adr_detect_lat, ord.adr_detect_lon     
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2112,7 +2115,8 @@ BEGIN
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
             ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
-            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time      
+            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time, 
+            ord.adr_detect_lat, ord.adr_detect_lon      
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2140,7 +2144,8 @@ BEGIN
             ord.rclient_lat, ord.rclient_lon, ord.dest_lat, ord.dest_lon,
             ord.first_stop_adr, ord.first_stop_lat, ord.first_stop_lon,
             ord.second_stop_adr, ord.second_stop_lat, ord.second_stop_lon, ord.rclient_id,
-            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time      
+            ord.taxometer_lat, ord.taxometer_lon, ord.taxometer_time, 
+            ord.adr_detect_lat, ord.adr_detect_lon     
 			FROM Zakaz ord LEFT JOIN DISTRICTS ds ON ord.district_id = ds.id 
 			LEFT JOIN REMOTE_CLIENTS rc ON ord.rclient_id = rc.id WHERE 
 			ord.vypolnyaetsya_voditelem=@driver_id AND
@@ -2162,7 +2167,7 @@ BEGIN
             @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
             @first_stop_adr, @first_stop_lat, @first_stop_lon,
             @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id,
-            @taxometer_lat, @taxometer_lon, @taxometer_time;
+            @taxometer_lat, @taxometer_lon, @taxometer_time, @adr_detect_lat, @adr_detect_lon;
 		/*Выполняем в цикле перебор строк*/
 		WHILE @@FETCH_STATUS = 0
 		BEGIN
@@ -2263,11 +2268,11 @@ BEGIN
 
             SET @res=@res+',"stlat'+
 			CAST(@counter as varchar(20))+'":"'+
-			@rclient_lat+'"';
+			ISNULL(@rclient_lat, @adr_detect_lat)+'"';
 
             SET @res=@res+',"stlon'+
 			CAST(@counter as varchar(20))+'":"'+
-			@rclient_lon+'"';
+			ISNULL(@rclient_lon, @adr_detect_lon)+'"';
 
             SET @res=@res+',"dlat'+
 			CAST(@counter as varchar(20))+'":"'+
@@ -2365,7 +2370,7 @@ BEGIN
                 @rclient_lat, @rclient_lon, @dest_lat, @dest_lon,
                 @first_stop_adr, @first_stop_lat, @first_stop_lon,
                 @second_stop_adr, @second_stop_lat, @second_stop_lon, @client_id,
-                @taxometer_lat, @taxometer_lon, @taxometer_time;
+                @taxometer_lat, @taxometer_lon, @taxometer_time, @adr_detect_lat, @adr_detect_lon;
 		END
 		CLOSE @CURSOR
 	END
@@ -2383,6 +2388,16 @@ BEGIN
 	END;
 	
 END
+
+
+
+
+
+
+
+
+
+
 
 
 
