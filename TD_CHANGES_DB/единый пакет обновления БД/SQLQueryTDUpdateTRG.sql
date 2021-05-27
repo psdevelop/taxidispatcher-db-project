@@ -147,12 +147,16 @@ IF OBJECT_ID('dbo.AFTER_ORDER_ROUTE_BUILD') IS NOT NULL
 DROP TRIGGER [dbo].[AFTER_ORDER_ROUTE_BUILD]
 GO
 
+/****** Object:  Trigger [AFTER_ORDER_TARIFF_SCALES_CALC]    Script Date: 06.02.2021 22:30:40 ******/
+IF OBJECT_ID('dbo.AFTER_ORDER_TARIFF_SCALES_CALC') IS NOT NULL
+DROP TRIGGER [dbo].[AFTER_ORDER_TARIFF_SCALES_CALC]
+GO
+
 /****** Object:  Trigger [dbo].[AFTER_DRIVER_RATING_INSERT]    Script Date: 10.05.2019 0:20:42 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 -- =============================================
 -- Author:		<Author,,Name>
